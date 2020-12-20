@@ -1,10 +1,10 @@
-package org.example.mirai.plugin
+package com.github.samarium150.mirai.plugin
 
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.utils.info
 
-object PluginMain : KotlinPlugin(
+object Main : KotlinPlugin(
     JvmPluginDescription(
         id = "org.example.mirai-plugin",
         version = "0.1.0"
