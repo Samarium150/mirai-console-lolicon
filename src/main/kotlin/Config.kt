@@ -7,7 +7,7 @@ import net.mamoe.mirai.console.data.value
 /**
  * Object for auto saving plugin configuration
  */
-object Config: AutoSavePluginConfig("Lolicon") {
+object Config: AutoSavePluginConfig("Config") {
 
     /**
      * Whether the plugin should be enabled
