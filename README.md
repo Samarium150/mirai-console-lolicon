@@ -5,7 +5,7 @@
 <br>
 受启发 [ACGPro](https://github.com/ShrBox/ACGPro) 而写
 <br>
-在群内随机发送图片，支持关键词检索
+在群内随机发送图片(30s自动撤回)，支持关键词检索
 <br>
 适配Mirai-console ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/mamoe/mirai-console)
 <br>

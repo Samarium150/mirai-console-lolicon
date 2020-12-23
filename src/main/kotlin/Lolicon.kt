@@ -1,9 +1,13 @@
 package com.github.samarium150.mirai.plugin
 
+import kotlinx.coroutines.*
+import net.mamoe.mirai.Mirai
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
+import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.User
+import net.mamoe.mirai.message.MessageReceipt
 import net.mamoe.mirai.utils.sendImage
 import java.net.URL
 
@@ -31,6 +35,22 @@ object Lolicon: CompositeCommand(
     }
 
     /**
+     * Asynchronously recall the image sent by the bot
+     *
+     * @param receipt [MessageReceipt]<[Contact]> Receipt of sending the image
+     * @return [Deferred]<[Boolean]> The result of the recall
+     */
+    private suspend fun recallAsync(receipt: MessageReceipt<Contact>) = GlobalScope.async(start = CoroutineStart.LAZY) {
+        delay(30000L)
+        try {
+            Mirai.recallMessage(receipt.target.bot, receipt.source)
+        } catch (e: Exception) {
+            return@async false
+        }
+        return@async true
+    }
+
+    /**
      * Subcommand get, get image according to [keyword]
      *
      * @receiver [CommandSender]
@@ -54,11 +74,20 @@ object Lolicon: CompositeCommand(
             val response: Response = RequestHandler.get(request)
             Main.logger.info(response.toReadable())
             for (imageData in response.data) {
-                this.subject?.sendImage(RequestHandler.download(imageData.url))
+                val receipt = this.subject?.sendImage(RequestHandler.download(imageData.url))
                 sendMessage(imageData.toReadable())
+                if (receipt != null) {
+                    coroutineScope {
+                        val result = recallAsync(receipt).await()
+                        withContext(Dispatchers.Default) {
+                            if (!result) Main.logger.warning("撤回失败")
+                            else Main.logger.info("图片已撤回")
+                        }
+                    }
+                }
             }
         } catch (e: Exception) {
-            sendMessage(e.message.toString())
+            Main.logger.error(e)
         }
     }
 

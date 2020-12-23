@@ -23,7 +23,7 @@ import net.mamoe.mirai.utils.info
 /**
  * Plugin instance
  */
-object Main : KotlinPlugin(
+object Main: KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.samarium150.mirai-console-lolicon",
         version = "0.1.0",
