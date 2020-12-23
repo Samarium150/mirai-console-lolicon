@@ -1,7 +1,7 @@
 # mirai-console-lolicon
-![GitHub top language](https://img.shields.io/github/languages/top/Samarium150/mirai-console-lolicon)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/Samarium150/mirai-console-lolicon/Build)
-![GitHub](https://img.shields.io/github/license/Samarium150/mirai-console-lolicon)
+![GitHub top language](https://img.shields.io/github/languages/top/Samarium150/mirai-console-lolicon?style=flat)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/Samarium150/mirai-console-lolicon/CI?style=flat)
+![GitHub](https://img.shields.io/github/license/Samarium150/mirai-console-lolicon?style=flat)
 <br>
 受启发 [ACGPro](https://github.com/ShrBox/ACGPro) 而写
 <br>
