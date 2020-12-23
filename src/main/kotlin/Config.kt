@@ -4,11 +4,20 @@ import net.mamoe.mirai.console.data.AutoSavePluginConfig
 import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
 
+/**
+ * Object for auto saving plugin configuration
+ */
 object Config: AutoSavePluginConfig("Lolicon") {
 
+    /**
+     * Whether the plugin should be enabled
+     */
     @ValueDescription("是否启用插件")
     var enabled: Boolean by value(true)
 
-    @ValueDescription("默认API key")
+    /**
+     * Default apikey
+     */
+    @ValueDescription("默认的apikey")
     var key: String by value("")
 }

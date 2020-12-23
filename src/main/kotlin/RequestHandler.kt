@@ -7,12 +7,28 @@ import com.google.gson.Gson
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 
+/**
+ * Object for handling GET request
+ */
 object RequestHandler {
 
+    /**
+     * The Gson instance
+     */
     private val gson = Gson()
 
+    /**
+     * The lambda function for making GET request
+     */
     private val getResponse: (String) -> (ResponseResultOf<String>) = { url -> Fuel.get(url).responseString() }
 
+    /**
+     * Makes a GET request to Lolicon API
+     * with the given [request] parameters
+     *
+     * @param request [Request]
+     * @return [Response]
+     */
     fun get(request: Request): Response {
         val url = "https://api.lolicon.app/setu/?$request"
         val (_, response, result) = getResponse(url)
@@ -22,6 +38,12 @@ object RequestHandler {
         return feedback
     }
 
+    /**
+     * Downloads the image from [url]
+     *
+     * @param url [String] URL from [ImageData.url]
+     * @return [InputStream] The image [ByteArrayInputStream]
+     */
     fun download(url: String): InputStream {
         val (_, response, result) = getResponse(url)
         if (result is Result.Failure) throw result.getException()

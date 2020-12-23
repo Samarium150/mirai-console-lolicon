@@ -20,17 +20,36 @@ import net.mamoe.mirai.event.events.MessageEvent
 import net.mamoe.mirai.event.subscribeAlways
 import net.mamoe.mirai.utils.info
 
+/**
+ * Plugin instance
+ */
 object Main : KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.samarium150.mirai-console-lolicon",
-        version = "0.1.0"
+        version = "0.1.0",
+        name = "mirai-console-lolicon"
     )
 ) {
+    /**
+     * The listener for listening message events
+     * Contacts send commands as messages
+     */
     private lateinit var commandListener: Listener<MessageEvent>
+
+    /**
+     * Will be invoked when the plugin is enabled
+     */
     @OptIn(ConsoleExperimentalApi::class, ExperimentalCommandDescriptors::class)
     override fun onEnable() {
+        /**
+         * Load configurations and data
+         */
         Config.reload()
         PluginData.reload()
+
+        /**
+         * Subscribe events
+         */
         commandListener = subscribeAlways(
             coroutineContext = CoroutineExceptionHandler { _, throwable ->
                 logger.error(throwable)
@@ -60,11 +79,23 @@ object Main : KotlinPlugin(
                 }
             }
         }
+
+        /**
+         * Register commands
+         */
         Lolicon.register()
+
+        /**
+         * Grant permissions
+         */
         AbstractPermitteeId.AnyContact.permit(Lolicon.permission)
+
         logger.info { "Plugin mirai-console-lolicon loaded" }
     }
 
+    /**
+     * Will be invoked when the plugin is disabled
+     */
     override fun onDisable() {
         Lolicon.unregister()
         logger.info { "Plugin mirai-console-lolicon unloaded" }

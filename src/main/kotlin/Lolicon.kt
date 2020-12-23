@@ -7,12 +7,21 @@ import net.mamoe.mirai.contact.User
 import net.mamoe.mirai.utils.sendImage
 import java.net.URL
 
-
+/**
+ * Command instance
+ */
 object Lolicon: CompositeCommand(
-    Main, primaryName = "lolicon"
+    Main, primaryName = "lolicon",
+    secondaryNames = arrayOf("llc")
 ) {
+    /**
+     * Help information
+     */
     private val help: String
 
+    /**
+     * Read help info from text when initializing
+     */
     init {
         val helpFileName = "help.txt"
         val helpFile: URL? = javaClass.classLoader.getResource(helpFileName)
@@ -21,6 +30,12 @@ object Lolicon: CompositeCommand(
         } else throw Exception("$helpFileName does not found")
     }
 
+    /**
+     * Subcommand get, get image according to [keyword]
+     *
+     * @receiver [CommandSender]
+     * @param keyword [String]
+     */
     @SubCommand("get")
     @Description("根据关键字发送涩图, 不提供关键字则随机发送一张")
     suspend fun CommandSender.get(keyword: String = "") {
@@ -47,6 +62,13 @@ object Lolicon: CompositeCommand(
         }
     }
 
+    /**
+     * Subcommand set, set [property] and its [value]
+     *
+     * @receiver [CommandSender]
+     * @param property [String]
+     * @param value [String]
+     */
     @SubCommand("set")
     @Description("设置属性, 详见帮助信息")
     suspend fun CommandSender.set(property: String, value: String) {
@@ -84,6 +106,11 @@ object Lolicon: CompositeCommand(
         }
     }
 
+    /**
+     * SubCommand help, send back help information
+     *
+     * @receiver [CommandSender]
+     */
     @SubCommand("help")
     @Description("获取帮助信息")
     suspend fun CommandSender.help() {
