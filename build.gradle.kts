@@ -15,3 +15,13 @@ repositories {
     jcenter()
     maven("https://dl.bintray.com/kotlin/kotlin-eap")
 }
+
+dependencies {
+    implementation("com.google.code.gson:gson:+")
+    implementation("com.github.kittinunf.fuel:fuel:+")
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
+    kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+    kotlinOptions.jvmTarget = "11"
+}
