@@ -6,7 +6,7 @@ apikey可以在<https://api.lolicon.app/#/setu?id=apikey>申请
 
 可用指令:
 /lolicon help    # 获取帮助信息
-/lolicon get [keyword]    # 根据关键字发送涩图, 不提供关键字则随机发送一张
+/lolicon get [keyword]    # (冷却时间60s)根据关键字发送涩图, 不提供关键字则随机发送一张
 /lolicon set <property> <value>
     # 设置属性
     # 可选属性:

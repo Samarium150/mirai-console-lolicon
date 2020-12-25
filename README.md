@@ -5,7 +5,7 @@
 <br>
 受启发 [ACGPro](https://github.com/ShrBox/ACGPro) 而写
 <br>
-在群内随机发送图片(30s自动撤回)，支持关键词检索
+在群内随机发送图片(30s自动撤回+60s冷却)，支持关键词检索
 <br>
 适配Mirai-console ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/mamoe/mirai-console)
 <br>
@@ -30,7 +30,7 @@ customAPIKeyGroups: {}
 ## Usage
 ```text
 /lolicon help    # 获取帮助信息
-/lolicon get [keyword]    # 根据关键字发送涩图, 不提供关键字则随机发送一张
+/lolicon get [keyword]    # (冷却时间60s)根据关键字发送涩图, 不提供关键字则随机发送一张
 /lolicon set <property> <value>
     # 设置属性
     # 可选属性:

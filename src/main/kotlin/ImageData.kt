@@ -30,7 +30,7 @@ data class ImageData (
     val tags: ArrayList<String>
 ) {
     /**
-     * Returns the string representation
+     * Return the string representation
      *
      * @return [String] Representation of the data class
      */
@@ -44,7 +44,7 @@ data class ImageData (
     }
 
     /**
-     * Returns the readable information
+     * Return the readable information
      *
      * @return [String] Useful and readable information for users
      */

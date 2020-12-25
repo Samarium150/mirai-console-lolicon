@@ -57,11 +57,15 @@ object Lolicon: CompositeCommand(
      * @param keyword [String]
      */
     @SubCommand("get")
-    @Description("根据关键字发送涩图, 不提供关键字则随机发送一张")
+    @Description("(冷却时间60s)根据关键字发送涩图, 不提供关键字则随机发送一张")
     suspend fun CommandSender.get(keyword: String = "") {
-        val r18 = if (this.subject is User) false else PluginData.r18Groups.contains(this.subject?.id)
+        if (!Timer.getCoolDown(subject)) {
+            sendMessage("你怎么冲得到处都是")
+            return
+        }
+        val r18 = if (subject is User) false else PluginData.r18Groups.contains(subject?.id)
         val key: String
-        val id = this.subject?.id
+        val id = subject?.id
         key = if (id == null) Config.key
         else if (this.subject is User && PluginData.customAPIKeyUsers.contains(id))
             PluginData.customAPIKeyUsers.getValue(id)
@@ -74,14 +78,21 @@ object Lolicon: CompositeCommand(
             val response: Response = RequestHandler.get(request)
             Main.logger.info(response.toReadable())
             for (imageData in response.data) {
-                val receipt = this.subject?.sendImage(RequestHandler.download(imageData.url))
+                val receipt = subject?.sendImage(RequestHandler.download(imageData.url))
                 sendMessage(imageData.toReadable())
                 if (receipt != null) {
+                    Timer.setCoolDown(subject)
                     coroutineScope {
                         val result = recallAsync(receipt).await()
                         withContext(Dispatchers.Default) {
-                            if (!result) Main.logger.warning("撤回失败")
-                            else Main.logger.info("图片已撤回")
+                            if (!result) Main.logger.warning(receipt.target.toString()+"撤回失败")
+                            else Main.logger.info(receipt.target.toString()+"图片已撤回")
+                        }
+                    }
+                    coroutineScope {
+                        Timer.coolingDown(subject)
+                        withContext(Dispatchers.Default) {
+                            Main.logger.info(receipt.target.toString()+"命令已冷却")
                         }
                     }
                 }
@@ -103,25 +114,25 @@ object Lolicon: CompositeCommand(
     suspend fun CommandSender.set(property: String, value: String) {
         when(property) {
             "r18" -> {
-                if (this.subject is Group) {
+                if (subject is Group) {
                     if (value.toBoolean()) {
-                        PluginData.r18Groups.add((this.subject as Group).id)
+                        PluginData.r18Groups.add((subject as Group).id)
                         sendMessage("设置成功")
                     } else {
-                        if (PluginData.r18Groups.remove((this.subject as Group).id))
+                        if (PluginData.r18Groups.remove((subject as Group).id))
                             sendMessage("设置成功")
                     }
                 }
             }
             "apikey" -> {
-                when (this.subject) {
+                when (subject) {
                     is User -> {
-                        val id = (this.subject as User).id
+                        val id = (subject as User).id
                         if (value.toLowerCase() == "default") PluginData.customAPIKeyUsers.remove(id)
                         else PluginData.customAPIKeyUsers[id] = value
                     }
                     is Group -> {
-                        val id = (this.subject as Group).id
+                        val id = (subject as Group).id
                         if (value.toLowerCase() == "default") PluginData.customAPIKeyGroups.remove(id)
                         else PluginData.customAPIKeyGroups[id] = value
                     }

@@ -20,7 +20,7 @@ object RequestHandler {
     /**
      * The lambda function for making GET request
      */
-    private val getResponse: (String) -> (ResponseResultOf<String>) = { url -> Fuel.get(url).responseString() }
+    private val getResponse: (String) -> ResponseResultOf<String> = { url -> Fuel.get(url).responseString() }
 
     /**
      * Makes a GET request to Lolicon API

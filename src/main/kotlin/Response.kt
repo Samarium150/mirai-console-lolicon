@@ -22,7 +22,7 @@ data class Response(
     val data: ArrayList<ImageData>
 ) {
     /**
-     * Returns the string representation of response body
+     * Return the string representation of response body
      *
      * @return [String] Request parameters
      */
@@ -36,7 +36,7 @@ data class Response(
     }
 
     /**
-     * Returns the readable information
+     * Return the readable information
      *
      * @return [String] Useful and readable information for logging
      */

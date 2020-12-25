@@ -22,7 +22,7 @@ data class Request(
     val size1200: Boolean = true
 ) {
     /**
-     * Returns the string representation of parameters
+     * Return the string representation of parameters
      * for GET request
      *
      * @return [String] Request parameters
@@ -38,7 +38,7 @@ data class Request(
     }
 
     /**
-     * Returns the readable information
+     * Return the readable information
      *
      * @return [String] Useful and readable information for logging
      */
