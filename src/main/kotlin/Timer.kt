@@ -44,7 +44,7 @@ object Timer {
      * Asynchronously cool down for users
      *
      * @param key [Long] User's id
-     * @return [Deferred]<[Unit]>
+     * @return [Deferred]
      */
     private suspend fun userCoolingDownAsync(key: Long) = GlobalScope.async(start = CoroutineStart.LAZY) {
         delay(60000L)
@@ -55,7 +55,7 @@ object Timer {
      * Asynchronously cool down for groups
      *
      * @param key [Long] Group's id
-     * @return [Deferred]<[Unit]>
+     * @return [Deferred]
      */
     private suspend fun groupCoolingDownAsync(key: Long) = GlobalScope.async(start = CoroutineStart.LAZY) {
         delay(60000L)

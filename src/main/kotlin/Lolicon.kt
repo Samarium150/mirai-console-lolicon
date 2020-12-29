@@ -1,14 +1,15 @@
 package com.github.samarium150.mirai.plugin
 
 import kotlinx.coroutines.*
+import kotlinx.io.errors.IOException
 import net.mamoe.mirai.Mirai
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
 import net.mamoe.mirai.contact.Contact
+import net.mamoe.mirai.contact.Contact.Companion.sendImage
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.User
 import net.mamoe.mirai.message.MessageReceipt
-import net.mamoe.mirai.utils.sendImage
 import java.net.URL
 
 /**
@@ -78,7 +79,8 @@ object Lolicon: CompositeCommand(
             val response: Response = RequestHandler.get(request)
             Main.logger.info(response.toReadable())
             for (imageData in response.data) {
-                val receipt = subject?.sendImage(RequestHandler.download(imageData.url))
+                val stream = RequestHandler.download(imageData.url)
+                val receipt = subject?.sendImage(stream)
                 sendMessage(imageData.toReadable())
                 if (receipt != null) {
                     Timer.setCoolDown(subject)
@@ -96,6 +98,8 @@ object Lolicon: CompositeCommand(
                         }
                     }
                 }
+                @Suppress("BlockingMethodInNonBlockingContext")
+                withContext(Dispatchers.IO) { try { stream.close() } catch (e: IOException) {} }
             }
         } catch (e: Exception) {
             Main.logger.error(e)

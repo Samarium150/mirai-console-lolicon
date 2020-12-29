@@ -7,7 +7,7 @@
 <br>
 在群内随机发送图片(30s自动撤回+60s冷却)，支持关键词检索
 <br>
-适配Mirai-console ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/mamoe/mirai-console)
+适配Mirai-console ![GitHub tag](https://img.shields.io/badge/version-2.0--M2-blue)
 <br>
 可以在 [Lolicon API](https://api.lolicon.app/#/setu) 申请apikey来增加调用额度
 ## Configuration and Plugin Data

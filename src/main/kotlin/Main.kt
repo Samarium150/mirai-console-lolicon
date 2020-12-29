@@ -17,6 +17,7 @@ import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.event.Listener
 import net.mamoe.mirai.event.events.MessageEvent
+import net.mamoe.mirai.event.globalEventChannel
 import net.mamoe.mirai.event.subscribeAlways
 import net.mamoe.mirai.utils.info
 
@@ -50,35 +51,35 @@ object Main: KotlinPlugin(
         /**
          * Subscribe events
          */
-        commandListener = subscribeAlways(
-            coroutineContext = CoroutineExceptionHandler { _, throwable ->
+        commandListener =
+            globalEventChannel().subscribeAlways(MessageEvent::class, CoroutineExceptionHandler { _, throwable ->
                 logger.error(throwable)
             },
-            concurrency = Listener.ConcurrencyKind.CONCURRENT,
-            priority = Listener.EventPriority.NORMAL
-        ) call@{
-            if (!enabled) return@call
-            val sender = this.toCommandSender()
-            when (val result = CommandManager.executeCommand(sender, message)) {
-                is CommandExecuteResult.IllegalArgument -> {
-                    result.exception.message?.let { sender.sendMessage(it) }
-                    // intercept()
-                }
-                is CommandExecuteResult.ExecutionFailed -> {
-                    val owner = result.command.owner
-                    val (logger, printOwner) = when (owner) {
-                        is JvmPlugin -> owner.logger to false
-                        else -> MiraiConsole.mainLogger to true
+                Listener.ConcurrencyKind.CONCURRENT,
+                Listener.EventPriority.NORMAL
+            ) call@ {
+                if (!enabled) return@call
+                val sender = this.toCommandSender()
+                when (val result = CommandManager.executeCommand(sender, message)) {
+                    is CommandExecuteResult.IllegalArgument -> {
+                        result.exception.message?.let { sender.sendMessage(it) }
+                        // intercept()
                     }
-                    logger.warning(
-                        "Exception in executing command `$message`" +
-                            if (printOwner) ", command owned by $owner" else "",
-                        result.exception
-                    )
-                    // intercept()
+                    is CommandExecuteResult.ExecutionFailed -> {
+                        val owner = result.command.owner
+                        val (logger, printOwner) = when (owner) {
+                            is JvmPlugin -> owner.logger to false
+                            else -> MiraiConsole.mainLogger to true
+                        }
+                        logger.warning(
+                            "Exception in executing command `$message`" +
+                                if (printOwner) ", command owned by $owner" else "",
+                            result.exception
+                        )
+                        // intercept()
+                    }
                 }
             }
-        }
 
         /**
          * Register commands
