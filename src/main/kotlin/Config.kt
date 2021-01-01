@@ -19,5 +19,5 @@ object Config: AutoSavePluginConfig("Config") {
      * Default apikey
      */
     @ValueDescription("默认的apikey")
-    var key: String by value("")
+    var apikey: String by value("")
 }
