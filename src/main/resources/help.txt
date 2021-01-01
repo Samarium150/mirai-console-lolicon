@@ -10,6 +10,6 @@ apikey可以在<https://api.lolicon.app/#/setu?id=apikey>申请
 /lolicon set <property> <value>
     # 设置属性
     # 可选属性:
-    # r18, 对应值: true/false, 效果: 将群设置为可以发送R18图片, 私聊模式该属性强制为false
+    # r18, 对应值: 0/1/2, 效果: 将群设置为non-R18/R18/mixed, 私聊模式该属性强制为0
     # apikey, 对应值: default/正确的apikey, 效果: 重置apikey或设置apikey的值，私聊模式也可以更改
         # apikey设置后, 调用get时将使用设置的值, 而不是bot的默认值
