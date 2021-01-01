@@ -126,6 +126,10 @@ object Lolicon: CompositeCommand(
                         sendMessage("非法属性")
                         return
                     }
+                    if (setting != 0 || setting != 1 || setting != 2) {
+                        sendMessage("非法属性")
+                        return
+                    }
                     PluginData.customR18Groups[(subject as Group).id] = setting
                     sendMessage("设置成功")
                 }
