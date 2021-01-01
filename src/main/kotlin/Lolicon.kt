@@ -64,15 +64,15 @@ object Lolicon: CompositeCommand(
             sendMessage("你怎么冲得到处都是")
             return
         }
-        val r18 = if (subject is User) false else PluginData.r18Groups.contains(subject?.id)
+        val r18: Int = if (subject is User) 0 else PluginData.customR18Groups[subject?.id] ?: 0
         val key: String
         val id = subject?.id
-        key = if (id == null) Config.key
+        key = if (id == null) Config.apikey
         else if (this.subject is User && PluginData.customAPIKeyUsers.contains(id))
             PluginData.customAPIKeyUsers.getValue(id)
         else if (this.subject is Group && PluginData.customAPIKeyGroups.contains(id))
             PluginData.customAPIKeyGroups.getValue(id)
-        else Config.key
+        else Config.apikey
         val request = Request(key, keyword, r18)
         Main.logger.info(request.toReadable())
         try {
@@ -119,13 +119,15 @@ object Lolicon: CompositeCommand(
         when(property) {
             "r18" -> {
                 if (subject is Group) {
-                    if (value.toBoolean()) {
-                        PluginData.r18Groups.add((subject as Group).id)
-                        sendMessage("设置成功")
-                    } else {
-                        if (PluginData.r18Groups.remove((subject as Group).id))
-                            sendMessage("设置成功")
+                    val setting: Int
+                    try {
+                        setting = value.toInt()
+                    } catch (e: NumberFormatException) {
+                        sendMessage("非法属性")
+                        return
                     }
+                    PluginData.customR18Groups[(subject as Group).id] = setting
+                    sendMessage("设置成功")
                 }
             }
             "apikey" -> {
@@ -140,7 +142,7 @@ object Lolicon: CompositeCommand(
                         if (value.toLowerCase() == "default") PluginData.customAPIKeyGroups.remove(id)
                         else PluginData.customAPIKeyGroups[id] = value
                     }
-                    else -> Config.key = value
+                    else -> Config.apikey = value
                 }
                 sendMessage("设置成功")
             }

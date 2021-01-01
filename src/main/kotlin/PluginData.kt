@@ -12,8 +12,8 @@ object PluginData: AutoSavePluginData("Data") {
     /**
      * Groups that enabled R18 option
      */
-    @ValueDescription("启用R18的群")
-    var r18Groups: MutableList<Long> by value(mutableListOf())
+    @ValueDescription("自定义了R18属性的群")
+    var customR18Groups: MutableMap<Long, Int> by value()
 
     /**
      * Users' id and their apikey mappings

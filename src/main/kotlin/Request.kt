@@ -7,7 +7,7 @@ import kotlin.reflect.full.memberProperties
  *
  * @property apikey [String] Legal apikey
  * @property keyword [String] Keyword for fuzzy searching
- * @property r18 [Boolean] R18 category
+ * @property r18 [Int] R18 category
  * @property num [Int] Number of results
  * @property proxy [String] Domain of [ImageData.url]
  * @property size1200 [Boolean] Enable master_1200 thumbnail
@@ -16,7 +16,7 @@ import kotlin.reflect.full.memberProperties
 data class Request(
     val apikey: String,
     val keyword: String,
-    val r18: Boolean = false,
+    val r18: Int = 0,
     val num: Int = 1,
     val proxy: String = "i.pixiv.cat",
     val size1200: Boolean = true

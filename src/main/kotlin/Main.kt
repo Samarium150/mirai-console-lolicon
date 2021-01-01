@@ -18,7 +18,6 @@ import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.event.Listener
 import net.mamoe.mirai.event.events.MessageEvent
 import net.mamoe.mirai.event.globalEventChannel
-import net.mamoe.mirai.event.subscribeAlways
 import net.mamoe.mirai.utils.info
 
 /**
@@ -27,7 +26,7 @@ import net.mamoe.mirai.utils.info
 object Main: KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.samarium150.mirai-console-lolicon",
-        version = "0.1.0",
+        version = "1.2",
         name = "mirai-console-lolicon"
     )
 ) {
