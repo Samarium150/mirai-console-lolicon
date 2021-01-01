@@ -16,12 +16,12 @@ Config.yml
 # 是否启用插件, 默认为true
 enabled: true
 # 默认的apikey, 默认为空字符串
-key: ''
+apikey: ''
 ```
 Data.yml
 ```yaml
-# 启用R18的群
-r18Groups: []
+# 自定义了R18属性的群
+customR18Groups: {}
 # 自定义了apikey的用户和对应的apikey
 customAPIKeyUsers: {}
 # 自定义了apikey的群和对应的apikey
@@ -34,7 +34,7 @@ customAPIKeyGroups: {}
 /lolicon set <property> <value>
     # 设置属性
     # 可选属性:
-    # r18, 对应值: true/false, 效果: 将群设置为可以发送R18图片, 私聊模式该属性强制为false
+    # r18, 对应值: 0/1/2, 效果: 将群设置为non-R18/R18/mixed, 私聊模式该属性强制为0
     # apikey, 对应值: default/正确的apikey, 效果: 重置apikey或设置apikey的值，私聊模式也可以更改
         # apikey设置后, 调用get时将使用设置的值, 而不是bot的默认值
 ```
