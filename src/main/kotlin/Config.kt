@@ -20,4 +20,10 @@ object Config: AutoSavePluginConfig("Config") {
      */
     @ValueDescription("默认的apikey")
     var apikey: String by value("")
+
+    /**
+     * Default cooldown time
+     */
+    @ValueDescription("默认的冷却时间(单位: s)")
+    var cooldown: Int by value(60)
 }
