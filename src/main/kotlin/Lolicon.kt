@@ -11,6 +11,7 @@ import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.User
 import net.mamoe.mirai.message.MessageReceipt
 import java.net.URL
+import javax.security.auth.Subject
 
 /**
  * Command instance
@@ -41,7 +42,9 @@ object Lolicon: CompositeCommand(
      * @param receipt [MessageReceipt]<[Contact]> Receipt of sending the image
      * @return [Deferred]<[Boolean]> The result of the recall
      */
-    private suspend fun recallAsync(receipt: MessageReceipt<Contact>) = GlobalScope.async(start = CoroutineStart.LAZY) {
+    private suspend fun recallAsync(receipt: MessageReceipt<Contact>) = GlobalScope.async(
+        start = CoroutineStart.LAZY
+    ) {
         delay(30000L)
         try {
             Mirai.recallMessage(receipt.target.bot, receipt.source)
@@ -52,28 +55,49 @@ object Lolicon: CompositeCommand(
     }
 
     /**
+     *
+     * @param subject [Subject]
+     * @return [Triple]<[String], [Int], [Int]>
+     */
+    private fun getConfigAndData(subject: Contact?): Triple<String, Int, Int> {
+        val apikey: String
+        val r18: Int
+        val cooldown: Int
+        when (subject) {
+            is User -> {
+                apikey = PluginData.customAPIKeyUsers[subject.id] ?: Config.apikey
+                r18 = 0
+                cooldown = PluginData.customCooldownUsers[subject.id] ?: Config.cooldown
+            }
+            is Group -> {
+                apikey = PluginData.customAPIKeyGroups[subject.id] ?: Config.apikey
+                r18 = PluginData.customR18Groups[subject.id] ?: 0
+                cooldown = PluginData.customCooldownGroups[subject.id] ?: Config.cooldown
+            }
+            else -> {
+                apikey = Config.apikey
+                r18 = 0
+                cooldown = Config.cooldown
+            }
+        }
+        return Triple(apikey, r18, cooldown)
+    }
+
+    /**
      * Subcommand get, get image according to [keyword]
      *
      * @receiver [CommandSender]
      * @param keyword [String]
      */
     @SubCommand("get")
-    @Description("(冷却时间60s)根据关键字发送涩图, 不提供关键字则随机发送一张")
+    @Description("(默认冷却时间60s)根据关键字发送涩图, 不提供关键字则随机发送一张")
     suspend fun CommandSender.get(keyword: String = "") {
-        if (!Timer.getCoolDown(subject)) {
+        if (!Timer.getCooldown(subject)) {
             sendMessage("你怎么冲得到处都是")
             return
         }
-        val r18: Int = if (subject is User) 0 else PluginData.customR18Groups[subject?.id] ?: 0
-        val key: String
-        val id = subject?.id
-        key = if (id == null) Config.apikey
-        else if (this.subject is User && PluginData.customAPIKeyUsers.contains(id))
-            PluginData.customAPIKeyUsers.getValue(id)
-        else if (this.subject is Group && PluginData.customAPIKeyGroups.contains(id))
-            PluginData.customAPIKeyGroups.getValue(id)
-        else Config.apikey
-        val request = Request(key, keyword, r18)
+        val (apikey, r18, cooldown) = getConfigAndData(subject)
+        val request = Request(apikey, keyword, r18)
         Main.logger.info(request.toReadable())
         try {
             val response: Response = RequestHandler.get(request)
@@ -83,16 +107,16 @@ object Lolicon: CompositeCommand(
                 val receipt = subject?.sendImage(stream)
                 sendMessage(imageData.toReadable())
                 if (receipt != null) {
-                    Timer.setCoolDown(subject)
-                    coroutineScope {
+                   Timer.setCooldown(subject)
+                    GlobalScope.launch {
                         val result = recallAsync(receipt).await()
                         withContext(Dispatchers.Default) {
                             if (!result) Main.logger.warning(receipt.target.toString()+"撤回失败")
                             else Main.logger.info(receipt.target.toString()+"图片已撤回")
                         }
                     }
-                    coroutineScope {
-                        Timer.coolingDown(subject)
+                    GlobalScope.launch {
+                        Timer.cooldown(subject, cooldown)
                         withContext(Dispatchers.Default) {
                             Main.logger.info(receipt.target.toString()+"命令已冷却")
                         }
@@ -147,6 +171,21 @@ object Lolicon: CompositeCommand(
                         else PluginData.customAPIKeyGroups[id] = value
                     }
                     else -> Config.apikey = value
+                }
+                sendMessage("设置成功")
+            }
+            "cooldown" -> {
+                val setting: Int
+                try {
+                    setting = value.toInt()
+                } catch (e: NumberFormatException) {
+                    sendMessage("非法属性")
+                    return
+                }
+                when (subject) {
+                    is User -> PluginData.customCooldownUsers[(subject as User).id] = setting
+                    is Group -> PluginData.customCooldownGroups[(subject as Group).id] = setting
+                    else -> Config.cooldown = setting
                 }
                 sendMessage("设置成功")
             }

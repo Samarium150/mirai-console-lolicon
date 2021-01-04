@@ -26,4 +26,16 @@ object PluginData: AutoSavePluginData("Data") {
      */
     @ValueDescription("自定义了apikey的群和对应的apikey")
     var customAPIKeyGroups: MutableMap<Long, String> by value()
+
+    /**
+     * Users' id and their cooldown mappings
+     */
+    @ValueDescription("自定义了冷却时间的用户和对应的值")
+    var customCooldownUsers: MutableMap<Long, Int> by value()
+
+    /**
+     * Groups' id and their cooldown mappings
+     */
+    @ValueDescription("自定义了冷却时间的群和对应的值")
+    var customCooldownGroups: MutableMap<Long, Int> by value()
 }

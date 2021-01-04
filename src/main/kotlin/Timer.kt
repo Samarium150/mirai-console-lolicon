@@ -6,97 +6,101 @@ import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.User
 
 /**
- * Object for handling cooling down feature
+ * Object for handling cooldown feature
  */
 object Timer {
 
     /**
-     * CoolDown map for users
+     * Cooldown map for users
      */
-    private val userCoolDown = mutableMapOf<Long, Boolean>()
+    private val userCooldown = mutableMapOf<Long, Boolean>()
 
     /**
-     * CoolDown map for groups
+     * Cooldown map for groups
      */
-    private val groupCoolDown = mutableMapOf<Long, Boolean>()
+    private val groupCooldown = mutableMapOf<Long, Boolean>()
 
     /**
-     * The lambda function for getting user's cool down status
+     * The lambda function for getting user's cooldown status
      */
-    private val getUserCoolDown: (Long) -> Boolean = { key -> userCoolDown.getOrDefault(key, true) }
+    private val getUserCooldown: (Long) -> Boolean = { key -> userCooldown.getOrDefault(key, true) }
 
     /**
-     * The lambda function for getting group's cool down status
+     * The lambda function for getting group's cooldown status
      */
-    private val getGroupCoolDown: (Long) -> Boolean = { key -> groupCoolDown.getOrDefault(key, true) }
+    private val getGroupCooldown: (Long) -> Boolean = { key -> groupCooldown.getOrDefault(key, true) }
 
     /**
-     * The lambda function for setting user's cool down status
+     * The lambda function for setting user's cooldown status
      */
-    private val setUserCoolDown: (Long, Boolean) -> Unit = { key, value -> userCoolDown[key] = value }
+    private val setUserCooldown: (Long, Boolean) -> Unit = { key, value -> userCooldown[key] = value }
 
     /**
-     * The lambda function for setting group's cool down status
+     * The lambda function for setting group's cooldown status
      */
-    private val setGroupCoolDown: (Long, Boolean) -> Unit = { key, value -> groupCoolDown[key] = value }
+    private val setGroupCooldown: (Long, Boolean) -> Unit = { key, value -> groupCooldown[key] = value }
 
     /**
-     * Asynchronously cool down for users
+     * Asynchronously cooldown for users
      *
      * @param key [Long] User's id
      * @return [Deferred]
      */
-    private suspend fun userCoolingDownAsync(key: Long) = GlobalScope.async(start = CoroutineStart.LAZY) {
-        delay(60000L)
-        setUserCoolDown(key, true)
+    private suspend fun userCooldownAsync(key: Long, cooldown: Int) = GlobalScope.async(
+        start = CoroutineStart.LAZY
+    ) {
+        delay((cooldown * 1000).toLong())
+        setUserCooldown(key, true)
     }
 
     /**
-     * Asynchronously cool down for groups
+     * Asynchronously cooldown for groups
      *
      * @param key [Long] Group's id
      * @return [Deferred]
      */
-    private suspend fun groupCoolingDownAsync(key: Long) = GlobalScope.async(start = CoroutineStart.LAZY) {
-        delay(60000L)
-        setGroupCoolDown(key, true)
+    private suspend fun groupCooldownAsync(key: Long, cooldown: Int) = GlobalScope.async(
+        start = CoroutineStart.LAZY
+    ) {
+        delay((cooldown * 1000).toLong())
+        setGroupCooldown(key, true)
     }
 
     /**
-     * Get [subject]'s cool down status
+     * Get [subject]'s cooldown status
      *
      * @param subject [Contact]?
      * @return [Boolean]
      */
-    fun getCoolDown(subject: Contact?): Boolean {
+    fun getCooldown(subject: Contact?): Boolean {
         return when (subject) {
-            is User -> getUserCoolDown(subject.id)
-            is Group -> getGroupCoolDown(subject.id)
+            is User -> getUserCooldown(subject.id)
+            is Group -> getGroupCooldown(subject.id)
             else -> true
         }
     }
 
     /**
-     * Set [subject]'s cool down status
+     * Set [subject]'s cooldown status
      *
      * @param subject [Contact]?
      */
-    fun setCoolDown(subject: Contact?) {
+    fun setCooldown(subject: Contact?) {
         when (subject) {
-            is User -> setUserCoolDown(subject.id, false)
-            is Group -> setGroupCoolDown(subject.id, false)
+            is User -> setUserCooldown(subject.id, false)
+            is Group -> setGroupCooldown(subject.id, false)
         }
     }
 
     /**
-     * Asynchronously cool down
+     * Asynchronously cooldown
      *
      * @param subject [Contact]?
      */
-    suspend fun coolingDown(subject: Contact?) {
+    suspend fun cooldown(subject: Contact?, cooldown: Int) {
         when (subject) {
-            is User -> userCoolingDownAsync(subject.id).await()
-            is Group -> groupCoolingDownAsync(subject.id).await()
+            is User -> userCooldownAsync(subject.id, cooldown).await()
+            is Group -> groupCooldownAsync(subject.id, cooldown).await()
         }
     }
 }
