@@ -11,7 +11,6 @@ import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.User
 import net.mamoe.mirai.message.MessageReceipt
 import java.net.URL
-import javax.security.auth.Subject
 
 /**
  * Command instance
@@ -55,9 +54,10 @@ object Lolicon: CompositeCommand(
     }
 
     /**
+     * Load necessary information
      *
-     * @param subject [Subject]
-     * @return [Triple]<[String], [Int], [Int]>
+     * @param subject [Contact] Who sent the command
+     * @return [Triple]<[String], [Int], [Int]> apikey, r18 property and cooldown time
      */
     private fun getConfigAndData(subject: Contact?): Triple<String, Int, Int> {
         val apikey: String
