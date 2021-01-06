@@ -34,7 +34,7 @@ object RequestHandler {
         val (_, response, result) = getResponse(url)
         if (result is Result.Failure) throw result.getException()
         val feedback: Response = gson.fromJson(String(response.data), Response::class.java)
-        if (feedback.code != 0) throw Exception(feedback.msg)
+        if (feedback.code != 0) throw APIError(feedback.code, feedback.msg)
         return feedback
     }
 
