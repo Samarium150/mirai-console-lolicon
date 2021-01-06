@@ -1,5 +1,6 @@
 package com.github.samarium150.mirai.plugin
 
+import com.github.kittinunf.fuel.core.FuelError
 import kotlinx.coroutines.*
 import kotlinx.io.errors.IOException
 import net.mamoe.mirai.Mirai
@@ -125,6 +126,12 @@ object Lolicon: CompositeCommand(
                 @Suppress("BlockingMethodInNonBlockingContext")
                 withContext(Dispatchers.IO) { try { stream.close() } catch (e: IOException) {} }
             }
+        } catch (fe: FuelError) {
+            Main.logger.warning(fe.toString())
+            sendMessage("网络连接失败或图片已被删除，之后再试试吧")
+        } catch (ae: APIError) {
+            Main.logger.warning(ae.toString())
+            sendMessage(ae.toReadable())
         } catch (e: Exception) {
             Main.logger.error(e)
         }
