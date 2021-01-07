@@ -31,6 +31,7 @@ class APIError internal constructor(
             -1, 401 -> message
             403 -> "调用不规范, 用户两行泪. 快去找开发者的麻烦."
             404 -> "没有找到相关图片, 换个关键词试试吧"
+            429 -> "调用达到上限, 是时候换个apikey了"
             else -> throw Exception(this.toString())
         }
     }
