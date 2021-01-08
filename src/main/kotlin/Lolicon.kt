@@ -154,11 +154,11 @@ object Lolicon: CompositeCommand(
                     try {
                         setting = value.toInt()
                     } catch (e: NumberFormatException) {
-                        sendMessage("非法属性")
+                        sendMessage("${value}不是有效的数字")
                         return
                     }
-                    if (setting != 0 || setting != 1 || setting != 2) {
-                        sendMessage("非法属性")
+                    if (setting != 0 && setting != 1 && setting != 2) {
+                        sendMessage("设置的数字无效")
                         return
                     }
                     PluginData.customR18Groups[(subject as Group).id] = setting
