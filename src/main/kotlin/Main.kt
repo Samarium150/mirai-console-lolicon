@@ -21,18 +21,12 @@ import net.mamoe.mirai.event.globalEventChannel
 import net.mamoe.mirai.utils.info
 
 /**
- * Plugin version
- * This will be read by build.gradle
- */
-const val version = "1.4.4"
-
-/**
  * Plugin instance
  */
 object Main: KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.samarium150.mirai-console-lolicon",
-        version = version,
+        version = "1.4.3",
         name = "mirai-console-lolicon"
     )
 ) {
