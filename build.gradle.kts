@@ -3,7 +3,7 @@ plugins {
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.0-M2"
+    id("net.mamoe.mirai-console") version "2.0-RC-dev-1"
 }
 
 group = "com.github.samarium150"
