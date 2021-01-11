@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.github.samarium150"
-version = "1.4.3"
+version = "$version" // Read from Main.kt
 
 repositories {
     mavenLocal()
