@@ -7,13 +7,6 @@ on:
     tags:
       - '*'
 
-  # Allows to run this workflow manually from the Actions tab
-  workflow_dispatch:
-    inputs:
-      version:
-        description: "tag version"
-        required: true
-
 jobs:
   build:
 
@@ -25,6 +18,11 @@ jobs:
       # Checkout repository
       - name: Checkout
         uses: actions/checkout@v2
+      
+      # Get tag version from ref
+      - name: Get tag version
+        id: vars
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
 
       # Setup JDK
       - name: Setup Java JDK
@@ -49,9 +47,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.event.inputs.version || github.ref }}
-          release_name: Version ${{ github.event.inputs.version || github.ref }}
-          draft: true
+          tag_name: ${{ steps.vars.outputs.tag }}
+          release_name: Version ${{ steps.vars.outputs.tag }}
+          draft: false
           prerelease: false
           commitish: master
 
@@ -63,6 +61,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/mirai/mirai-console-lolicon-${{ github.event.inputs.version || github.ref }}.mirai.jar
-          asset_name: mirai-console-lolicon-${{ github.event.inputs.version || github.ref }}.mirai.jar
+          asset_path: ./build/mirai/mirai-console-lolicon-${{ steps.vars.outputs.tag }}.mirai.jar
+          asset_name: mirai-console-lolicon-${{ steps.vars.outputs.tag }}.mirai.jar
           asset_content_type: application/jar
