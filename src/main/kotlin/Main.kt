@@ -26,7 +26,7 @@ import net.mamoe.mirai.utils.info
 object Main: KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.samarium150.mirai-console-lolicon",
-        version = "1.4.3",
+        version = "1.4.4",
         name = "mirai-console-lolicon"
     )
 ) {
