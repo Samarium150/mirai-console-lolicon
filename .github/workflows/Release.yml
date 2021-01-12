@@ -1,0 +1,62 @@
+name: Release
+
+# Controls when the action will run.
+on:
+  # Allows to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "tag version"
+        required: true
+
+jobs:
+  build:
+
+    name: Create Release
+
+    runs-on: ubuntu-20.04
+
+    steps:
+      # Checkout repository
+      - name: Checkout
+        uses: actions/actions/checkout@v2
+
+      # Setup JDK
+      - name: Setup Java JDK
+        uses: actions/setup-java@v1.4.3
+        with:
+          java-version: 11
+
+      # Validate Gradle Wrapper
+      - name: Gradle Wrapper Validation
+        uses: gradle/wrapper-validation-action@v1.0.3
+
+      # Build
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+      - name: Build with Gradle
+        run: ./gradlew buildPlugin
+
+      # Create Release
+      - name: Create a Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            tag_name: ${{ github.event.inputs.version }}
+            release_name: Version ${{ github.event.inputs.version }}
+            draft: true
+            prerelease: false
+
+      # Upload Jar
+      - name: Upload a Release Asset
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+            asset_path: ./build/mirai
+            asset_name: ${{ $GITHUB_REPOSITORY }}-${{ github.event.inputs.version }}.mirai.jar
+            asset_content_type: application/jar
