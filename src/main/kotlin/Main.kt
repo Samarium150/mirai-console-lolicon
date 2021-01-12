@@ -15,6 +15,8 @@ import net.mamoe.mirai.console.plugin.jvm.JvmPlugin
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
+import net.mamoe.mirai.event.ConcurrencyKind
+import net.mamoe.mirai.event.EventPriority
 import net.mamoe.mirai.event.Listener
 import net.mamoe.mirai.event.events.MessageEvent
 import net.mamoe.mirai.event.globalEventChannel
@@ -26,7 +28,7 @@ import net.mamoe.mirai.utils.info
 object Main: KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.samarium150.mirai-console-lolicon",
-        version = "1.4.4",
+        version = "1.5",
         name = "mirai-console-lolicon"
     )
 ) {
@@ -51,11 +53,11 @@ object Main: KotlinPlugin(
          * Subscribe events
          */
         commandListener =
-            globalEventChannel().subscribeAlways(MessageEvent::class, CoroutineExceptionHandler { _, throwable ->
-                logger.error(throwable)
-            },
-                Listener.ConcurrencyKind.CONCURRENT,
-                Listener.EventPriority.NORMAL
+            globalEventChannel().subscribeAlways(
+                MessageEvent::class,
+                CoroutineExceptionHandler { _, throwable -> logger.error(throwable) },
+                ConcurrencyKind.CONCURRENT,
+                EventPriority.NORMAL
             ) call@ {
                 if (!enabled) return@call
                 val sender = this.toCommandSender()
