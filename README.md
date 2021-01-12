@@ -1,7 +1,7 @@
 # mirai-console-lolicon
-![GitHub top language](https://img.shields.io/github/languages/top/Samarium150/mirai-console-lolicon?style=flat)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/Samarium150/mirai-console-lolicon/Gradle%20CI?style=flat)
-![GitHub](https://img.shields.io/github/license/Samarium150/mirai-console-lolicon?style=flat)
+[![GitHub top language](https://img.shields.io/github/languages/top/Samarium150/mirai-console-lolicon?style=flat)](https://kotlinlang.org/)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/Samarium150/mirai-console-lolicon/Gradle%20CI?style=flat)](https://github.com/Samarium150/mirai-console-lolicon/actions?query=workflow%3A%22Gradle+CI%22)
+[![GitHub](https://img.shields.io/github/license/Samarium150/mirai-console-lolicon?style=flat)](https://github.com/Samarium150/mirai-console-lolicon/blob/master/LICENSE)
 <br>
 受 [ACGPro](https://github.com/ShrBox/ACGPro) 启发而写
 <br>
