@@ -22,10 +22,8 @@ import kotlinx.io.errors.IOException
 import net.mamoe.mirai.Mirai
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
-import net.mamoe.mirai.contact.Contact
+import net.mamoe.mirai.contact.*
 import net.mamoe.mirai.contact.Contact.Companion.sendImage
-import net.mamoe.mirai.contact.Group
-import net.mamoe.mirai.contact.User
 import net.mamoe.mirai.message.MessageReceipt
 import java.net.URL
 
@@ -124,12 +122,12 @@ object Lolicon: CompositeCommand(
                 val receipt = subject?.sendImage(stream)
                 sendMessage(imageData.toReadable())
                 if (receipt != null) {
-                   Timer.setCooldown(subject)
+                    Timer.setCooldown(subject)
                     GlobalScope.launch {
                         val result = recallAsync(receipt).await()
                         withContext(Dispatchers.Default) {
-                            if (!result) Main.logger.warning(receipt.target.toString()+"撤回失败")
-                            else Main.logger.info(receipt.target.toString()+"图片已撤回")
+                            if (!result) Main.logger.warning(receipt.target.toString() + "撤回失败")
+                            else Main.logger.info(receipt.target.toString() + "图片已撤回")
                         }
                     }
                     GlobalScope.launch {
@@ -163,7 +161,11 @@ object Lolicon: CompositeCommand(
     @SubCommand("set")
     @Description("设置属性, 详见帮助信息")
     suspend fun CommandSender.set(property: String, value: String) {
-        when(property) {
+        if (subject is Group && (user as Member).permission == MemberPermission.MEMBER) {
+            sendMessage("set仅限群主和管理员操作")
+            return
+        }
+        when (property) {
             "r18" -> {
                 if (subject is Group) {
                     val setting: Int
