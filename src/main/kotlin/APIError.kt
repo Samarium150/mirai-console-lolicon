@@ -26,7 +26,7 @@ package com.github.samarium150.mirai.plugin
 class APIError internal constructor(
     private val code: Int,
     override val message: String
-): Exception(message) {
+) : Exception(message) {
 
     /**
      * Override toString() for logging
