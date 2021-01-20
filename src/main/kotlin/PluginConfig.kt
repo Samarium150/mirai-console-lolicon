@@ -23,7 +23,13 @@ import net.mamoe.mirai.console.data.value
 /**
  * Object for auto saving plugin configuration
  */
-object Config: AutoSavePluginConfig("Config") {
+object PluginConfig : AutoSavePluginConfig("Config") {
+
+    /**
+     * Bot owner's id
+     */
+    @ValueDescription("Bot所有者账号")
+    val master: Long by value()
 
     /**
      * Whether the plugin should be enabled
@@ -36,6 +42,12 @@ object Config: AutoSavePluginConfig("Config") {
      */
     @ValueDescription("默认的apikey")
     var apikey: String by value("")
+
+    /**
+     * Default recall time
+     */
+    @ValueDescription("默认的撤回时间(单位: s)")
+    var recall: Int by value(30)
 
     /**
      * Default cooldown time

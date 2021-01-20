@@ -16,7 +16,6 @@
  */
 package com.github.samarium150.mirai.plugin
 
-import com.github.samarium150.mirai.plugin.Config.enabled
 import kotlinx.coroutines.CoroutineExceptionHandler
 import net.mamoe.mirai.console.MiraiConsole
 import net.mamoe.mirai.console.command.CommandExecuteResult
@@ -44,7 +43,7 @@ import net.mamoe.mirai.utils.info
 object Main: KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.samarium150.mirai-console-lolicon",
-        version = "1.6",
+        version = "2.0",
         name = "mirai-console-lolicon"
     )
 ) {
@@ -62,8 +61,12 @@ object Main: KotlinPlugin(
         /**
          * Load configurations and data
          */
-        Config.reload()
+        PluginConfig.reload()
         PluginData.reload()
+        if (PluginConfig.master != 0L)
+            PluginData.trustedUsers.add(PluginConfig.master)
+        else
+            logger.warning("请先在配置文件设置Bot所有者id")
 
         /**
          * Subscribe events
@@ -75,7 +78,7 @@ object Main: KotlinPlugin(
                 ConcurrencyKind.CONCURRENT,
                 EventPriority.NORMAL
             ) call@ {
-                if (!enabled) return@call
+                if (!PluginConfig.enabled) return@call
                 val sender = this.toCommandSender()
                 when (val result = CommandManager.executeCommand(sender, message)) {
                     is CommandExecuteResult.IllegalArgument -> {

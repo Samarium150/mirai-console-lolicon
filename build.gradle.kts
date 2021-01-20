@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.github.samarium150"
-version = "1.6"
+version = "2.0"
 
 repositories {
     mavenLocal()

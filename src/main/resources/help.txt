@@ -8,9 +8,15 @@ apikey可以在<https://api.lolicon.app/#/setu?id=apikey>申请
 /lolicon help    # 获取帮助信息
 /lolicon get [keyword]    # (冷却时间60s)根据关键字发送涩图, 不提供关键字则随机发送一张
 /lolicon set <property> <value>
-    # 设置属性
+    # 设置属性, 群聊模式仅能由群主和管理员设置
     # 可选属性:
-    # r18, 对应值: 0/1/2, 效果: 将群设置为non-R18/R18/mixed, 私聊模式该属性强制为0
     # apikey, 对应值: default/正确的apikey, 效果: 重置apikey或设置apikey的值，私聊模式也可以更改
         # apikey设置后, 调用get时将使用设置的值, 而不是bot的默认值
-	# cooldown, 对应值: 以秒为单位的整数, 效果: 设置get命令的冷却时间, 该值默认为60s
+    # r18, 对应值: 0/1/2, 效果: 将模式设置为non-R18/R18/mixed
+        # 私聊模式仅限受信任清单中的用户设置
+	# recall, 对应值: 以秒为单位的小于120的非负整数, 效果: 设置自动撤回的时间, 默认为30s, 0则不撤回
+	    # 私聊模式仅限受信任清单中的用户设置
+	# cooldown, 对应值: 以秒为单位的整数, 效果: 设置get命令的冷却时间, 默认为60s, 0则无冷却
+	    # 私聊模式仅限受信任清单中的用户设置
+/lolicon trust <id>    # 将<id>对应的用户添加到受信任清单, 仅限Bot所有者使用
+/lolicon distrust <id>    # 将<id>对应的用户从受信任清单中移除, 仅限Bot所有者使用

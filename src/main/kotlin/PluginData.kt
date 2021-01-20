@@ -26,32 +26,56 @@ import net.mamoe.mirai.console.data.value
 object PluginData: AutoSavePluginData("Data") {
 
     /**
-     * Groups that enabled R18 option
+     * Trusted Users
      */
-    @ValueDescription("自定义了R18属性的群")
-    var customR18Groups: MutableMap<Long, Int> by value()
+    @ValueDescription("受信任的用户")
+    val trustedUsers: MutableSet<Long> by value()
 
     /**
      * Users' id and their apikey mappings
      */
     @ValueDescription("自定义了apikey的用户和对应的apikey")
-    var customAPIKeyUsers: MutableMap<Long, String> by value()
+    val customAPIKeyUsers: MutableMap<Long, String> by value()
 
     /**
      * Groups' id and their apikey mappings
      */
     @ValueDescription("自定义了apikey的群和对应的apikey")
-    var customAPIKeyGroups: MutableMap<Long, String> by value()
+    val customAPIKeyGroups: MutableMap<Long, String> by value()
+
+    /**
+     * Users that enabled R18 option
+     */
+    @ValueDescription("自定义了R18属性的用户")
+    val customR18Users: MutableMap<Long, Int> by value()
+
+    /**
+     * Groups that enabled R18 option
+     */
+    @ValueDescription("自定义了R18属性的群")
+    val customR18Groups: MutableMap<Long, Int> by value()
+
+    /**
+     * Users' id and their recall time mappings
+     */
+    @ValueDescription("自定义了撤回时间的用户和对应的值")
+    val customRecallUsers: MutableMap<Long, Int> by value()
+
+    /**
+     * Groups' id and their recall time mappings
+     */
+    @ValueDescription("自定义了撤回时间的用户和对应的值")
+    val customRecallGroups: MutableMap<Long, Int> by value()
 
     /**
      * Users' id and their cooldown mappings
      */
     @ValueDescription("自定义了冷却时间的用户和对应的值")
-    var customCooldownUsers: MutableMap<Long, Int> by value()
+    val customCooldownUsers: MutableMap<Long, Int> by value()
 
     /**
      * Groups' id and their cooldown mappings
      */
     @ValueDescription("自定义了冷却时间的群和对应的值")
-    var customCooldownGroups: MutableMap<Long, Int> by value()
+    val customCooldownGroups: MutableMap<Long, Int> by value()
 }

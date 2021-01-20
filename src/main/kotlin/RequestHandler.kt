@@ -17,9 +17,11 @@
 package com.github.samarium150.mirai.plugin
 
 import com.github.kittinunf.fuel.Fuel
+import com.github.kittinunf.fuel.core.FuelError
 import com.github.kittinunf.fuel.core.ResponseResultOf
 import com.github.kittinunf.result.Result
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 
@@ -44,7 +46,11 @@ object RequestHandler {
      *
      * @param request [Request]
      * @return [Response]
+     * @throws FuelError if GET request is failed
+     * @throws JsonSyntaxException if returned JSON is invalid
+     * @throws APIError if Lolicon API didn't return status 0
      */
+    @Throws(FuelError::class, JsonSyntaxException::class, APIError::class)
     fun get(request: Request): Response {
         val url = "https://api.lolicon.app/setu/?$request"
         val (_, response, result) = getResponse(url)
@@ -59,7 +65,9 @@ object RequestHandler {
      *
      * @param url [String] URL from [ImageData.url]
      * @return [InputStream] The image [ByteArrayInputStream]
+     * @throws FuelError if download failed
      */
+    @Throws(FuelError::class)
     fun download(url: String): InputStream {
         val (_, response, result) = getResponse(url)
         if (result is Result.Failure) throw result.getException()
