@@ -48,15 +48,15 @@ object RequestHandler {
      * @return [Response]
      * @throws FuelError if GET request is failed
      * @throws JsonSyntaxException if returned JSON is invalid
-     * @throws APIError if Lolicon API didn't return status 0
+     * @throws APIException if Lolicon API didn't return status 0
      */
-    @Throws(FuelError::class, JsonSyntaxException::class, APIError::class)
+    @Throws(FuelError::class, JsonSyntaxException::class, APIException::class)
     fun get(request: Request): Response {
         val url = "https://api.lolicon.app/setu/?$request"
         val (_, response, result) = getResponse(url)
         if (result is Result.Failure) throw result.getException()
         val feedback: Response = gson.fromJson(String(response.data), Response::class.java)
-        if (feedback.code != 0) throw APIError(feedback.code, feedback.msg)
+        if (feedback.code != 0) throw APIException(feedback.code, feedback.msg)
         return feedback
     }
 
