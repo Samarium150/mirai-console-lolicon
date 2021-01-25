@@ -15,4 +15,4 @@ Social preview的图片来自 [AliceSoft](https://www.alicesoft.com) 制作的�
 <br>
 可以在 [Lolicon API](https://api.lolicon.app/#/setu) 申请apikey来增加调用额度
 <br>
-文档已经移到了 [Wiki](https://github.com/Samarium150/mirai-console-lolicon/wiki) 页面
+使用文档已经移到了 [Wiki](https://github.com/Samarium150/mirai-console-lolicon/wiki) 页面
