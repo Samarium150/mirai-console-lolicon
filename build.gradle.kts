@@ -4,6 +4,7 @@ plugins {
     kotlin("plugin.serialization") version kotlinVersion
 
     id("net.mamoe.mirai-console") version "2.0.0"
+    id("org.jetbrains.dokka") version "1.4.0"
 }
 
 group = "com.github.samarium150"
@@ -21,7 +22,15 @@ dependencies {
     implementation("com.github.kittinunf.fuel:fuel:+")
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
     kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
     kotlinOptions.jvmTarget = "11"
+}
+
+tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
+    dokkaSourceSets {
+        named("main") {
+            includes.from("Module.md")
+        }
+    }
 }
