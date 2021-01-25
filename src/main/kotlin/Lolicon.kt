@@ -100,7 +100,7 @@ object Lolicon: CompositeCommand(
         } catch (fe: FuelError) {
             Main.logger.warning(fe.toString())
             sendMessage("网络连接失败或图片已被删除，之后再试试吧")
-        } catch (ae: APIError) {
+        } catch (ae: APIException) {
             Main.logger.warning(ae.toString())
             sendMessage(ae.toReadable())
         } catch (e: Exception) {

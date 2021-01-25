@@ -17,13 +17,13 @@
 package com.github.samarium150.mirai.plugin
 
 /**
- * Class representation for handling Lolicon API error
+ * Class representation for handling Lolicon API Exceptions
  *
- * @property code [Int] Error code
- * @property message [String] Error message
+ * @property code [Int] status code from HTTP response
+ * @property message [String] message from HTTP response
  * @constructor
  */
-class APIError internal constructor(
+class APIException internal constructor(
     private val code: Int,
     override val message: String
 ) : Exception(message) {
