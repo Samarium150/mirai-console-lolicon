@@ -36,23 +36,32 @@ object RequestHandler {
     private val gson = Gson()
 
     /**
-     * The lambda function for making GET request
+     * Use [Fuel] to make a GET request
+     *
+     * @param url [String]
+     * @return [ResponseResultOf]<[String]>
      */
-    private val getResponse: (String) -> ResponseResultOf<String> = { url -> Fuel.get(url).responseString() }
+    private fun getResponse(url: String): ResponseResultOf<String> {
+        return Fuel
+            .get(url)
+            .timeout(PluginConfig.timeout * 1000)
+            .timeoutRead(PluginConfig.timeoutRead * 1000)
+            .responseString()
+    }
 
     /**
      * Makes a GET request to Lolicon API
-     * with the given [request] parameters
+     * with the given [parameters]
      *
-     * @param request [Request]
+     * @param parameters [RequestParams]
      * @return [Response]
      * @throws FuelError if GET request is failed
      * @throws JsonSyntaxException if returned JSON is invalid
      * @throws APIException if Lolicon API didn't return status 0
      */
     @Throws(FuelError::class, JsonSyntaxException::class, APIException::class)
-    fun get(request: Request): Response {
-        val url = "https://api.lolicon.app/setu/?$request"
+    fun get(parameters: RequestParams): Response {
+        val url = "https://api.lolicon.app/setu/?$parameters"
         val (_, response, result) = getResponse(url)
         if (result is Result.Failure) throw result.getException()
         val feedback: Response = gson.fromJson(String(response.data), Response::class.java)
