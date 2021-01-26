@@ -32,16 +32,28 @@ object PluginConfig : AutoSavePluginConfig("Config") {
     val master: Long by value()
 
     /**
-     * Whether the plugin should be enabled
+     * Default HTTP request timeout
      */
-    @ValueDescription("是否启用插件")
-    var enabled: Boolean by value(true)
+    @ValueDescription("默认的HTTP请求超时时间(单位: s)")
+    val timeout: Int by value(30)
+
+    /**
+     * Default HTTP response read timeout
+     */
+    @ValueDescription("默认的HTTP响应读取超时时间(单位: s)")
+    val timeoutRead: Int by value(60)
 
     /**
      * Default apikey
      */
     @ValueDescription("默认的apikey")
     var apikey: String by value("")
+
+    /**
+     * Enable master_1200 compression
+     */
+    @ValueDescription("是否启用master_1200图片压缩")
+    val size1200: Boolean by value(true)
 
     /**
      * Default recall time

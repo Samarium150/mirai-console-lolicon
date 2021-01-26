@@ -65,12 +65,13 @@ object Lolicon: CompositeCommand(
             return
         }
         val (apikey, r18, recall, cooldown) = ExecutionConfig.create(subject)
-        val request = Request(apikey, keyword, r18)
-        Main.logger.info(request.toReadable())
+        val parameters = RequestParams(apikey, keyword, r18, size1200 = PluginConfig.size1200)
+        Main.logger.info(parameters.toReadable())
         try {
-            val response: Response = RequestHandler.get(request)
+            val response: Response = RequestHandler.get(parameters)
             Main.logger.info(response.toReadable())
             for (imageData in response.data) {
+                Main.logger.info("url: ${imageData.url}")
                 val stream = RequestHandler.download(imageData.url)
                 val receipt = subject?.sendImage(stream)
                 sendMessage(imageData.toReadable())
@@ -99,7 +100,7 @@ object Lolicon: CompositeCommand(
             }
         } catch (fe: FuelError) {
             Main.logger.warning(fe.toString())
-            sendMessage("网络连接失败或图片已被删除，之后再试试吧")
+            sendMessage("网络连接失败/超时或图片已被删除，之后再试试吧")
         } catch (ae: APIException) {
             Main.logger.warning(ae.toString())
             sendMessage(ae.toReadable())

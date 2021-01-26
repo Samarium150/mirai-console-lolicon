@@ -27,9 +27,9 @@ import kotlin.reflect.full.memberProperties
  * @property num [Int] Number of results
  * @property proxy [String] Domain of [ImageData.url]
  * @property size1200 [Boolean] Enable master_1200 thumbnail
- * @constructor Creates a Request instance
+ * @constructor
  */
-data class Request(
+data class RequestParams(
     val apikey: String,
     val keyword: String,
     val r18: Int = 0,
@@ -45,12 +45,12 @@ data class Request(
      */
     override fun toString(): String {
         var result = ""
-        for (props in Request::class.memberProperties) {
+        for (props in RequestParams::class.memberProperties) {
             val value = props.get(this)
             if (value == "") continue
             result += "${props.name}=${value}&"
         }
-        return result.dropLast(1)
+        return if (size1200) result.dropLast(6) else result.dropLast(16)
     }
 
     /**

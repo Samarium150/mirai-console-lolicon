@@ -66,11 +66,10 @@ data class ImageData (
      */
     fun toReadable(): String {
         return(
-            "pid: ${pid}\n" +
             "标题: ${title}\n" +
-            "作者: ${author}\n" +
+            "作者: $author (uid: ${uid})\n" +
             "标签: ${tags}\n" +
-            "链接: $url"
+            "链接: https://pixiv.net/artworks/${pid}"
         )
     }
 }

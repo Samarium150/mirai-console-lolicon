@@ -20,6 +20,7 @@ import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.permission.AbstractPermitteeId
+import net.mamoe.mirai.console.permission.PermissionService.Companion.cancel
 import net.mamoe.mirai.console.permission.PermissionService.Companion.permit
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
@@ -32,7 +33,7 @@ import net.mamoe.mirai.utils.info
 object Main: KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.samarium150.mirai-console-lolicon",
-        version = "2.1",
+        version = "2.2",
         name = "mirai-console-lolicon"
     )
 ) {
@@ -69,6 +70,7 @@ object Main: KotlinPlugin(
      * Will be invoked when the plugin is disabled
      */
     override fun onDisable() {
+        AbstractPermitteeId.AnyContact.cancel(Lolicon.permission, true)
         Lolicon.unregister()
         logger.info { "Plugin mirai-console-lolicon unloaded" }
     }
