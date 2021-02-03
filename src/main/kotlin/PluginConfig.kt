@@ -35,13 +35,13 @@ object PluginConfig : AutoSavePluginConfig("Config") {
      * Enable image saving
      */
     @ValueDescription("是否保存图片")
-    val save: Boolean by value(true)
+    val save: Boolean by value(false)
 
     /**
      * Enable flash image
      */
     @ValueDescription("是否启用闪照模式")
-    val flash: Boolean by value(true)
+    val flash: Boolean by value(false)
 
     /**
      * Default apikey
