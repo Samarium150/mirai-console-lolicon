@@ -261,7 +261,7 @@ object Lolicon: CompositeCommand(
         if (subject is Group && !Utils.checkMemberPerm(user)) {
             sendMessage("reload仅限群主和管理员操作")
             return
-        } else if (subject is User && !Utils.checkMaster(user)) {
+        } else if (!Utils.checkMaster(user)) {
             sendMessage("reload仅限Bot所有者使用")
             return
         }
