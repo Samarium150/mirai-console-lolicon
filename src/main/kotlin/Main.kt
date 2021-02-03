@@ -18,13 +18,11 @@ package com.github.samarium150.mirai.plugin
 
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
-import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.permission.AbstractPermitteeId
 import net.mamoe.mirai.console.permission.PermissionService.Companion.cancel
 import net.mamoe.mirai.console.permission.PermissionService.Companion.permit
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
-import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.utils.info
 
 /**
@@ -33,7 +31,7 @@ import net.mamoe.mirai.utils.info
 object Main: KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.samarium150.mirai-console-lolicon",
-        version = "2.2",
+        version = "3.0",
         name = "mirai-console-lolicon"
     )
 ) {
@@ -41,7 +39,6 @@ object Main: KotlinPlugin(
     /**
      * Will be invoked when the plugin is enabled
      */
-    @OptIn(ConsoleExperimentalApi::class, ExperimentalCommandDescriptors::class)
     override fun onEnable() {
         /**
          * Load configurations and data
@@ -70,8 +67,16 @@ object Main: KotlinPlugin(
      * Will be invoked when the plugin is disabled
      */
     override fun onDisable() {
+        /**
+         * Revoke permissions
+         */
         AbstractPermitteeId.AnyContact.cancel(Lolicon.permission, true)
+
+        /**
+         * Unregister commands
+         */
         Lolicon.unregister()
+
         logger.info { "Plugin mirai-console-lolicon unloaded" }
     }
 }

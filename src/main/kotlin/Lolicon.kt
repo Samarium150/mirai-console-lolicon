@@ -23,9 +23,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
-import net.mamoe.mirai.contact.Contact.Companion.sendImage
+import net.mamoe.mirai.console.plugin.jvm.reloadPluginConfig
+import net.mamoe.mirai.console.plugin.jvm.reloadPluginData
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.User
+import net.mamoe.mirai.message.data.FlashImage
+import net.mamoe.mirai.utils.ExternalResource.Companion.toExternalResource
 import java.net.URL
 
 /**
@@ -72,10 +75,11 @@ object Lolicon: CompositeCommand(
             Main.logger.info(response.toReadable())
             for (imageData in response.data) {
                 Main.logger.info("url: ${imageData.url}")
-                val stream = RequestHandler.download(imageData.url)
-                val receipt = subject?.sendImage(stream)
                 sendMessage(imageData.toReadable())
-                if (receipt != null) {
+                val stream = RequestHandler.download(imageData.url)
+                val img = subject?.uploadImage(stream.toExternalResource())
+                if (img != null) {
+                    val receipt = (if (PluginConfig.flash) sendMessage(FlashImage(img)) else sendMessage(img)) ?: return
                     if (recall > 0) {
                         GlobalScope.launch {
                             val result = receipt.recallIn((recall * 1000).toLong()).awaitIsSuccess()
@@ -247,7 +251,27 @@ object Lolicon: CompositeCommand(
     }
 
     /**
-     * SubCommand help, send back help information
+     * Subcommand reload, reload plugin configuration and data
+     *
+     * @receiver [CommandSender]
+     */
+    @SubCommand("reload")
+    @Description("重新载入插件配置和数据")
+    suspend fun CommandSender.reload() {
+        if (subject is Group && !Utils.checkMemberPerm(user)) {
+            sendMessage("reload仅限群主和管理员操作")
+            return
+        } else if (!Utils.checkMaster(user)) {
+            sendMessage("reload仅限Bot所有者使用")
+            return
+        }
+        Main.reloadPluginConfig(PluginConfig)
+        Main.reloadPluginData(PluginData)
+        sendMessage("配置已重载")
+    }
+
+    /**
+     * SubCommand help, send help information
      *
      * @receiver [CommandSender]
      */

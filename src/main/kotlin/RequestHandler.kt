@@ -18,12 +18,10 @@ package com.github.samarium150.mirai.plugin
 
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.FuelError
-import com.github.kittinunf.fuel.core.ResponseResultOf
 import com.github.kittinunf.result.Result
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
-import java.io.ByteArrayInputStream
-import java.io.InputStream
+import java.io.*
 
 /**
  * Object for handling GET request
@@ -34,20 +32,6 @@ object RequestHandler {
      * The Gson instance
      */
     private val gson = Gson()
-
-    /**
-     * Use [Fuel] to make a GET request
-     *
-     * @param url [String]
-     * @return [ResponseResultOf]<[String]>
-     */
-    private fun getResponse(url: String): ResponseResultOf<String> {
-        return Fuel
-            .get(url)
-            .timeout(PluginConfig.timeout * 1000)
-            .timeoutRead(PluginConfig.timeoutRead * 1000)
-            .responseString()
-    }
 
     /**
      * Makes a GET request to Lolicon API
@@ -62,7 +46,7 @@ object RequestHandler {
     @Throws(FuelError::class, JsonSyntaxException::class, APIException::class)
     fun get(parameters: RequestParams): Response {
         val url = "https://api.lolicon.app/setu/?$parameters"
-        val (_, response, result) = getResponse(url)
+        val (_, response, result) = Fuel.get(url).responseString()
         if (result is Result.Failure) throw result.getException()
         val feedback: Response = gson.fromJson(String(response.data), Response::class.java)
         if (feedback.code != 0) throw APIException(feedback.code, feedback.msg)
@@ -78,8 +62,30 @@ object RequestHandler {
      */
     @Throws(FuelError::class)
     fun download(url: String): InputStream {
-        val (_, response, result) = getResponse(url)
+        if (PluginConfig.save) {
+            var file: File? = null
+            val (_, _, result) = Fuel
+                .download(url)
+                .fileDestination { _, _ ->
+                    val urlPaths = url.split("/")
+                    val dir = File(System.getProperty("user.dir") + "/data/mirai-console-lolicon/download/")
+                    if (!dir.exists()) dir.mkdirs()
+                    file = File("${dir}/${urlPaths[urlPaths.lastIndex]}")
+                    file!!
+                }.responseString()
+            if (result is Result.Failure) throw result.getException()
+            return ByteArrayInputStream(file!!.readBytes())
+        }
+        var outputStream = OutputStream.nullOutputStream()
+        val (_, _, result) = Fuel
+            .download(url)
+            .streamDestination { response: com.github.kittinunf.fuel.core.Response, _ ->
+                outputStream = ByteArrayOutputStream(response.contentLength.toInt())
+                Pair(outputStream as ByteArrayOutputStream) {
+                    InputStream.nullInputStream()
+                }
+            }.responseString()
         if (result is Result.Failure) throw result.getException()
-        return ByteArrayInputStream(response.data)
+        return ByteArrayInputStream((outputStream as ByteArrayOutputStream).toByteArray())
     }
 }

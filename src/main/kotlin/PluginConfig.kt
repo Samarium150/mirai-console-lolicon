@@ -32,16 +32,16 @@ object PluginConfig : AutoSavePluginConfig("Config") {
     val master: Long by value()
 
     /**
-     * Default HTTP request timeout
+     * Enable image saving
      */
-    @ValueDescription("默认的HTTP请求超时时间(单位: s)")
-    val timeout: Int by value(30)
+    @ValueDescription("是否保存图片")
+    val save: Boolean by value(true)
 
     /**
-     * Default HTTP response read timeout
+     * Enable flash image
      */
-    @ValueDescription("默认的HTTP响应读取超时时间(单位: s)")
-    val timeoutRead: Int by value(60)
+    @ValueDescription("是否启用闪照模式")
+    val flash: Boolean by value(true)
 
     /**
      * Default apikey
