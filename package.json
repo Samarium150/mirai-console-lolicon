@@ -1,0 +1,21 @@
+{
+  "name": "mirai-console-lolicon",
+  "version": "3.0.0",
+  "description": "[![GitHub top language](https://img.shields.io/github/languages/top/Samarium150/mirai-console-lolicon?style=flat)](https://kotlinlang.org/)\r [![Gradle CI](https://github.com/Samarium150/mirai-console-lolicon/workflows/Gradle%20CI/badge.svg?branch=master)](https://github.com/Samarium150/mirai-console-lolicon/actions?query=workflow%3A%22Gradle+CI%22)\r [![GitHub](https://img.shields.io/github/license/Samarium150/mirai-console-lolicon?style=flat)](https://github.com/Samarium150/mirai-console-lolicon/blob/master/LICENSE)\r [![GitHub all releases](https://img.shields.io/github/downloads/Samarium150/mirai-console-lolicon/total)](https://github.com/Samarium150/mirai-console-lolicon/releases/latest)\r [![visitors](https://visitor-badge.glitch.me/badge?page_id=Samarium150.mirai%2Dconsole%2Dlolicon)]()\r <br>\r 受 [ACGPro](https://github.com/ShrBox/ACGPro) 启发而写\r <br>\r Social preview的图片来自 [AliceSoft](https://www.alicesoft.com) 制作的游戏 [ドーナドーナ いっしょにわるいことをしよう](https://www.alicesoft.com/dohnadohna)\r <br>\r 在群内随机发送图片(默认30s自动撤回+60s冷却)，支持关键词检索\r <br>\r 适配 [mirai-console](https://github.com/mamoe/mirai-console) \r [![Version](https://img.shields.io/badge/version-2.3.2-blue)](https://github.com/mamoe/mirai/releases/tag/2.3.2)\r <br>\r 可以在 [Lolicon API](https://api.lolicon.app/#/setu) 申请apikey来增加调用额度\r <br>\r 使用文档已经移到了 [Wiki](https://github.com/Samarium150/mirai-console-lolicon/wiki) 页面",
+  "scripts": {
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Samarium150/mirai-console-lolicon.git"
+  },
+  "author": "Samarium",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Samarium150/mirai-console-lolicon/issues"
+  },
+  "homepage": "https://github.com/Samarium150/mirai-console-lolicon#readme",
+  "devDependencies": {
+    "conventional-changelog-cli": "^2.1.1"
+  }
+}
