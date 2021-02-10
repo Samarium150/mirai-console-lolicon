@@ -18,10 +18,13 @@ package com.github.samarium150.mirai.plugin
 
 /**
  * Class representation for handling Lolicon API Exceptions
+ * <br>
+ * Lolicon API 异常
  *
- * @property code [Int] status code from HTTP response
- * @property message [String] message from HTTP response
- * @constructor
+ * @property code status code from HTTP response <br> HTTP请求返回状态码
+ * @property message message from HTTP response <br> HTTP请求返回的信息
+ * @constructor Create an Exception instance <br> 实例化异常
+ * @see Response
  */
 class APIException internal constructor(
     private val code: Int,
@@ -30,8 +33,10 @@ class APIException internal constructor(
 
     /**
      * Override toString() for logging
+     * <br>
+     * 复写 toString() 方法来输出日志
      *
-     * @return [String]
+     * @return log info <br> 日志信息
      */
     override fun toString(): String {
         return "[${code}: ${message}]"
@@ -39,8 +44,10 @@ class APIException internal constructor(
 
     /**
      * Return the readable information
+     * <br>
+     * 返回具有可读性的信息
      *
-     * @return [String]
+     * @return readable information <br> 具有可读性的信息
      */
     fun toReadable(): String {
         return when (code) {

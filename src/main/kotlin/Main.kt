@@ -27,21 +27,30 @@ import net.mamoe.mirai.utils.info
 
 /**
  * Plugin instance
+ * <br>
+ * 插件实例
+ *
+ * @constructor Create a KotlinPlugin instance <br> 实例化插件
+ * @see net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
  */
 object Main: KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.samarium150.mirai-console-lolicon",
-        version = "3.0",
+        version = "3.0.0",
         name = "mirai-console-lolicon"
     )
 ) {
 
     /**
      * Will be invoked when the plugin is enabled
+     * <br>
+     * 插件启用时将被调用
      */
     override fun onEnable() {
         /**
          * Load configurations and data
+         * <br>
+         * 加载配置及数据
          */
         PluginConfig.reload()
         PluginData.reload()
@@ -52,11 +61,15 @@ object Main: KotlinPlugin(
 
         /**
          * Register commands
+         * <br>
+         * 注册命令
          */
         Lolicon.register()
 
         /**
          * Grant permissions
+         * <br>
+         * 授予权限
          */
         AbstractPermitteeId.AnyContact.permit(Lolicon.permission)
 
@@ -65,15 +78,21 @@ object Main: KotlinPlugin(
 
     /**
      * Will be invoked when the plugin is disabled
+     * <br>
+     * 插件禁用时调用
      */
     override fun onDisable() {
         /**
          * Revoke permissions
+         * <br>
+         * 撤销权限
          */
         AbstractPermitteeId.AnyContact.cancel(Lolicon.permission, true)
 
         /**
          * Unregister commands
+         * <br>
+         * 注销命令
          */
         Lolicon.unregister()
 

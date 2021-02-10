@@ -20,14 +20,17 @@ import kotlin.reflect.full.memberProperties
 
 /**
  * The response body returned by Lolicon API
+ * <br>
+ * Lolicon API 返回的响应
  *
- * @property code [Int] Status code
- * @property msg [String] Error message
- * @property quota [Int] Quota remained
- * @property quota_min_ttl [Int] Minimal time for
- * @property count [Int] Number of results
- * @property data [ArrayList]<[ImageData]> Array of results
- * @constructor Creates a Response instance
+ * @property code Status code <br> 状态码
+ * @property msg Error message <br> 错误信息
+ * @property quota Quota remained <br> 剩余配额
+ * @property quota_min_ttl Minimal time for recovering all quota <br> 配额完全恢复需要的时间
+ * @property count Number of results <br> 结果数量
+ * @property data Array of results <br> 结果列表
+ * @constructor Creates a Response instance <br> 实例化响应
+ * @see ImageData
  */
 data class Response(
     val code: Int,
@@ -38,9 +41,11 @@ data class Response(
     val data: ArrayList<ImageData>
 ) {
     /**
-     * Return the string representation of response body
+     * Return the string representation
+     * <br>
+     * 字符串化该类
      *
-     * @return [String] Request parameters
+     * @return the string representation <br> 类的字符串表示
      */
     override fun toString(): String {
         var result = "Response({"
@@ -53,8 +58,10 @@ data class Response(
 
     /**
      * Return the readable information
+     * <br>
+     * 返回具有可读性的信息
      *
-     * @return [String] Useful and readable information for logging
+     * @return readable information <br> 具有可读性的信息
      */
     fun toReadable(): String {
         return "quota: ${quota}, quota_min_ttl: ${quota_min_ttl}, count: $count"

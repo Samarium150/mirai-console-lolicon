@@ -22,59 +22,82 @@ import net.mamoe.mirai.console.data.value
 
 /**
  * Object for auto saving plugin related data
+ * <br>
+ * 插件数据
+ *
+ * @constructor Create a plugin config instance <br> 实例化插件数据
+ * @see net.mamoe.mirai.console.data.AutoSavePluginData
  */
 object PluginData: AutoSavePluginData("Data") {
 
     /**
      * Trusted Users
+     * <br>
+     * 受信任的用户
      */
     @ValueDescription("受信任的用户")
     val trustedUsers: MutableSet<Long> by value()
 
     /**
      * Users' id and their apikey mappings
+     * <br>
+     * 自定义了 apikey 的用户和对应的 apikey
      */
     @ValueDescription("自定义了apikey的用户和对应的apikey")
     val customAPIKeyUsers: MutableMap<Long, String> by value()
 
     /**
      * Groups' id and their apikey mappings
+     * <br>
+     * 自定义了 apikey 的群和对应的 apikey
      */
     @ValueDescription("自定义了apikey的群和对应的apikey")
     val customAPIKeyGroups: MutableMap<Long, String> by value()
 
     /**
      * Users that enabled R18 option
+     * <br>
+     * 自定义了 R18 属性的用户
      */
     @ValueDescription("自定义了R18属性的用户")
     val customR18Users: MutableMap<Long, Int> by value()
 
     /**
      * Groups that enabled R18 option
+     * <br>
+     * 自定义了 R18 属性的群
      */
     @ValueDescription("自定义了R18属性的群")
     val customR18Groups: MutableMap<Long, Int> by value()
 
     /**
      * Users' id and their recall time mappings
+     * <br>
+     * 自定义了撤回时间的用户和对应的值
      */
     @ValueDescription("自定义了撤回时间的用户和对应的值")
     val customRecallUsers: MutableMap<Long, Int> by value()
 
     /**
      * Groups' id and their recall time mappings
+     * <br>
+     * 自定义了撤回时间的用户和对应的值
      */
     @ValueDescription("自定义了撤回时间的用户和对应的值")
     val customRecallGroups: MutableMap<Long, Int> by value()
 
     /**
      * Users' id and their cooldown mappings
+     * <br>
+     * 自定义了冷却时间的用户和对应的值
      */
     @ValueDescription("自定义了冷却时间的用户和对应的值")
     val customCooldownUsers: MutableMap<Long, Int> by value()
 
     /**
      * Groups' id and their cooldown mappings
+     * <br>
+     * 自定义了冷却时间的群和对应的值
      */
     @ValueDescription("自定义了冷却时间的群和对应的值")
     val customCooldownGroups: MutableMap<Long, Int> by value()

@@ -1,14 +1,16 @@
+import java.net.URL
+
 plugins {
     val kotlinVersion = "1.4.21"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
     id("net.mamoe.mirai-console") version "2.3.2"
-    id("org.jetbrains.dokka") version "1.4.0"
+    id("org.jetbrains.dokka") version "1.4.20"
 }
 
 group = "com.github.samarium150"
-version = "3.0"
+version = "3.0.0"
 
 repositories {
     mavenLocal()
@@ -29,8 +31,16 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
 
 tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
     dokkaSourceSets {
-        named("main") {
-            includes.from("Module.md")
+        configureEach {
+            includeNonPublic.set(true)
+            includes.from("README.md")
+            sourceLink {
+                localDirectory.set(file("src/main/kotlin"))
+                remoteUrl.set(
+                    URL("https://github.com/Samarium150/mirai-lolicon-api/blob/master/src/main/kotlin")
+                )
+                remoteLineSuffix.set("#L")
+            }
         }
     }
 }

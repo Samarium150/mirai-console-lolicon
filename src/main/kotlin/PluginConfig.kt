@@ -22,48 +22,67 @@ import net.mamoe.mirai.console.data.value
 
 /**
  * Object for auto saving plugin configuration
+ * <br>
+ * 插件配置
+ *
+ * @constructor Create a plugin config instance <br> 实例化插件配置
+ * @see net.mamoe.mirai.console.data.AutoSavePluginConfig
  */
 object PluginConfig : AutoSavePluginConfig("Config") {
 
     /**
      * Bot owner's id
+     * <br>
+     * Bot 所有者账号
      */
     @ValueDescription("Bot所有者账号")
     val master: Long by value()
 
     /**
      * Enable image saving
+     * <br>
+     * 是否保存图片
      */
     @ValueDescription("是否保存图片")
     val save: Boolean by value(false)
 
     /**
      * Enable flash image
+     * <br>
+     * 是否启用闪照模式
      */
     @ValueDescription("是否启用闪照模式")
     val flash: Boolean by value(false)
 
     /**
      * Default apikey
+     * <br>
+     * 默认的apikey
      */
     @ValueDescription("默认的apikey")
     var apikey: String by value("")
 
     /**
      * Enable master_1200 compression
+     * <br>
+     * 是否启用 master_1200 图片压缩
      */
     @ValueDescription("是否启用master_1200图片压缩")
     val size1200: Boolean by value(true)
 
     /**
      * Default recall time
+     * <br>
+     * 默认的撤回时间(单位: s)
      */
-    @ValueDescription("默认的撤回时间(单位: s)")
+    @ValueDescription("默认的撤回时间(单位：s)")
     var recall: Int by value(30)
 
     /**
      * Default cooldown time
+     * <br>
+     * 默认的冷却时间(单位: s)
      */
-    @ValueDescription("默认的冷却时间(单位: s)")
+    @ValueDescription("默认的冷却时间(单位：s)")
     var cooldown: Int by value(60)
 }

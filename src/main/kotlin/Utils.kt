@@ -19,50 +19,64 @@ package com.github.samarium150.mirai.plugin
 import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.contact.MemberPermission
 import net.mamoe.mirai.contact.User
+import org.jetbrains.annotations.Nullable
 
 /**
  * Object for utility functions
+ * <br>
+ * 实用函数
+ *
+ * @constructor Create a Utils instance <br> 实例化Utils
  */
 object Utils {
 
     /**
      * Check whether [user] is the bot owner
+     * <br>
+     * 检查用户是否是Bot所有者
      *
-     * @param user [User]?
-     * @return [Boolean]
+     * @param user target user <br> 目标用户
+     * @return checking result <br> 检查结果
      */
-    fun checkMaster(user: User?): Boolean {
+    fun checkMaster(@Nullable user: User?): Boolean {
         return user == null || user.id == PluginConfig.master
     }
 
     /**
      * Check whether [user] is trusted
+     * <br>
+     * 检查用户是否受信任
      *
-     * @param user [User]?
-     * @return [Boolean]
+     * @param user target user <br> 目标用户
+     * @return checking result <br> 检查结果
      */
-    fun checkUserPerm(user: User?): Boolean {
+    fun checkUserPerm(@Nullable user: User?): Boolean {
         return user == null || PluginData.trustedUsers.contains(user.id)
     }
 
     /**
      * Check whether [user] is a group owner or administrator
+     * <br>
+     * 检查用户在群里的权限
      *
-     * @param user [User]?
-     * @return [Boolean]
+     * @param user target user <br> 目标用户
+     * @return checking result <br> 检查结果
      */
-    fun checkMemberPerm(user: User?): Boolean {
+    fun checkMemberPerm(@Nullable user: User?): Boolean {
         return (user as Member).permission != MemberPermission.MEMBER
     }
 
     /**
      * Convert [value] into a valid number
      * for setting the corresponding property
+     * <br>
+     * 将字符串转为整数值
      *
-     * @param value [String]
-     * @param type [String]
-     * @return [Int]
-     * @throws NumberFormatException if [value] is invalid
+     * @param value input string value <br> 输入的字符串
+     * @param type input property <br> 需要转化的类别
+     * @return integer value <br> 转换后的值
+     * @throws NumberFormatException if [value] is invalid <br> 数值非法时抛出
+     * @see [Lolicon.set]
      */
     @Throws(NumberFormatException::class)
     fun convertValue(value: String, type: String): Int {

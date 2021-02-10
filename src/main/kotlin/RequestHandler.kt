@@ -25,23 +25,32 @@ import java.io.*
 
 /**
  * Object for handling GET request
+ *
+ * @constructor Create a handler instance <br> 实例化处理程序
  */
 object RequestHandler {
 
     /**
      * The Gson instance
+     * <br>
+     * Gson 实例
      */
     private val gson = Gson()
 
     /**
      * Makes a GET request to Lolicon API
      * with the given [parameters]
+     * <br>
+     * 根据参数发送HTTP请求
      *
      * @param parameters [RequestParams]
      * @return [Response]
-     * @throws FuelError if GET request is failed
-     * @throws JsonSyntaxException if returned JSON is invalid
-     * @throws APIException if Lolicon API didn't return status 0
+     * @throws FuelError if GET request is failed <br> GET请求失败时抛出
+     * @throws JsonSyntaxException if returned JSON is invalid <br> 返回的JSON无效时抛出
+     * @throws APIException if Lolicon API didn't return status 0 <br> API调用错误时抛出
+     * @see RequestParams
+     * @see Response
+     * @see APIException
      */
     @Throws(FuelError::class, JsonSyntaxException::class, APIException::class)
     fun get(parameters: RequestParams): Response {
@@ -55,10 +64,13 @@ object RequestHandler {
 
     /**
      * Downloads the image from [url]
+     * <br>
+     * 从 [url] 下载图片
      *
-     * @param url [String] URL from [ImageData.url]
-     * @return [InputStream] The image [ByteArrayInputStream]
-     * @throws FuelError if download failed
+     * @param url URL from [ImageData.url] <br> 来自 [ImageData.url] 的 URL
+     * @return The image [ByteArrayInputStream] <br> 图片字节输入流
+     * @throws FuelError if download failed <br> 下载失败时抛出
+     * @see ImageData
      */
     @Throws(FuelError::class)
     fun download(url: String): InputStream {

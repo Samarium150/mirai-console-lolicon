@@ -20,46 +20,71 @@ import kotlinx.coroutines.*
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.User
+import org.jetbrains.annotations.Nullable
 
 /**
  * Object for handling cooldown feature
+ * <br>
+ * 计时器
+ *
+ * @constructor Create a Timer instance <br> 实例化计时器
  */
 object Timer {
 
     /**
      * Cooldown map for users
+     * <br>
+     * 用户及其冷却状态
+     *
      */
     private val userCooldown = mutableMapOf<Long, Boolean>()
 
     /**
      * Cooldown map for groups
+     * <br>
+     * 群组及其冷却状态
+     *
      */
     private val groupCooldown = mutableMapOf<Long, Boolean>()
 
     /**
      * The lambda function for getting user's cooldown status
+     * <br>
+     * 获取用户冷却状态的lambda函数
+     *
      */
     private val getUserCooldown: (Long) -> Boolean = { key -> userCooldown.getOrDefault(key, true) }
 
     /**
      * The lambda function for getting group's cooldown status
+     * <br>
+     * 获取群组冷却状态的lambda函数
+     *
      */
     private val getGroupCooldown: (Long) -> Boolean = { key -> groupCooldown.getOrDefault(key, true) }
 
     /**
      * The lambda function for setting user's cooldown status
+     * <br>
+     * 设置用户冷却状态的lambda函数
+     *
      */
     private val setUserCooldown: (Long, Boolean) -> Unit = { key, value -> userCooldown[key] = value }
 
     /**
      * The lambda function for setting group's cooldown status
+     * <br>
+     * 设置群组冷却状态的lambda函数
+     *
      */
     private val setGroupCooldown: (Long, Boolean) -> Unit = { key, value -> groupCooldown[key] = value }
 
     /**
      * Asynchronously cooldown for users
+     * <br>
+     * 异步冷却用户
      *
-     * @param key [Long] User's id
+     * @param key User's id <br> 用户QQ号
      * @return [Deferred]
      */
     private suspend fun userCooldownAsync(key: Long, cooldown: Int) = GlobalScope.async(
@@ -71,8 +96,10 @@ object Timer {
 
     /**
      * Asynchronously cooldown for groups
+     * <br>
+     * 异步冷却群组
      *
-     * @param key [Long] Group's id
+     * @param key Group's id <br> 群号
      * @return [Deferred]
      */
     private suspend fun groupCooldownAsync(key: Long, cooldown: Int) = GlobalScope.async(
@@ -84,11 +111,13 @@ object Timer {
 
     /**
      * Get [subject]'s cooldown status
+     * <br>
+     * 获取联系对象的冷却状态
      *
-     * @param subject [Contact]?
-     * @return [Boolean]
+     * @param subject [net.mamoe.mirai.console.command.CommandSender.subject]
+     * @return cooldown status <br> 是否已经冷却
      */
-    fun getCooldown(subject: Contact?): Boolean {
+    fun getCooldown(@Nullable subject: Contact?): Boolean {
         return when (subject) {
             is User -> getUserCooldown(subject.id)
             is Group -> getGroupCooldown(subject.id)
@@ -98,10 +127,12 @@ object Timer {
 
     /**
      * Set [subject]'s cooldown status
+     * <br>
+     * 设置联系对象的冷却状态
      *
-     * @param subject [Contact]?
+     * @param subject [net.mamoe.mirai.console.command.CommandSender.subject]
      */
-    fun setCooldown(subject: Contact?) {
+    fun setCooldown(@Nullable subject: Contact?) {
         when (subject) {
             is User -> setUserCooldown(subject.id, false)
             is Group -> setGroupCooldown(subject.id, false)
@@ -110,10 +141,13 @@ object Timer {
 
     /**
      * Asynchronously cooldown
+     * <br>
+     * 异步冷却
      *
-     * @param subject [Contact]?
+     * @param subject [net.mamoe.mirai.console.command.CommandSender.subject]
+     * @param cooldown time to cooldown <br> 冷却所需时间
      */
-    suspend fun cooldown(subject: Contact?, cooldown: Int) {
+    suspend fun cooldown(@Nullable subject: Contact?, cooldown: Int) {
         when (subject) {
             is User -> userCooldownAsync(subject.id, cooldown).await()
             is Group -> groupCooldownAsync(subject.id, cooldown).await()

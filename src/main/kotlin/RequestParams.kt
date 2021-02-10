@@ -20,14 +20,16 @@ import kotlin.reflect.full.memberProperties
 
 /**
  * The information for making a GET request
+ * <br>
+ * 进行GET请求所需的信息
  *
- * @property apikey [String] Legal apikey
- * @property keyword [String] Keyword for fuzzy searching
- * @property r18 [Int] R18 category
- * @property num [Int] Number of results
- * @property proxy [String] Domain of [ImageData.url]
- * @property size1200 [Boolean] Enable master_1200 thumbnail
- * @constructor
+ * @property apikey Legal apikey <br> 合法的apikey
+ * @property keyword Keyword for fuzzy searching <br> 模糊搜索的关键词
+ * @property r18 R18 category <br> R18 类别
+ * @property num Number of results <br> 结果数量
+ * @property proxy Domain of [ImageData.url] <br> 代理链接
+ * @property size1200 Enable master_1200 thumbnail <br> 启用 master_1200 压缩
+ * @constructor Create a Request parameters instance <br> 实例化请求参数
  */
 data class RequestParams(
     val apikey: String,
@@ -40,8 +42,10 @@ data class RequestParams(
     /**
      * Return the string representation of parameters
      * for GET request
+     * <br>
+     * 返回用字符串表示的GET请求参数
      *
-     * @return [String] Request parameters
+     * @return Request parameters <br> GET请求参数
      */
     override fun toString(): String {
         var result = ""
@@ -55,8 +59,10 @@ data class RequestParams(
 
     /**
      * Return the readable information
+     * <br>
+     * 返回具有可读性的信息
      *
-     * @return [String] Useful and readable information for logging
+     * @return readable information <br> 具有可读性的信息
      */
     fun toReadable(): String {
         return (

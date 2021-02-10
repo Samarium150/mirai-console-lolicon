@@ -20,18 +20,21 @@ import kotlin.reflect.full.memberProperties
 
 /**
  * The image information returned by Lolicon API
+ * <br>
+ *  Lolicon API 返回的图片信息
  *
- * @property pid [Int] Image PID
- * @property p [Int] the page of the image
- * @property uid [Int] Author UID
- * @property title [String] Image title
- * @property author [String] Author's name
- * @property url [String] Link to the image
- * @property r18 [Boolean] R18 category
- * @property width [Int] Width of the image
- * @property height [Int] Height of the image
- * @property tags [ArrayList]<[String]> Image tags
- * @constructor Creates an ImageData instance
+ * @property pid Image PID <br> 图片PID
+ * @property p the page of the image <br> 图片所在页数
+ * @property uid Author UID <br> 作者UID
+ * @property title Image title <br> 图片标题
+ * @property author Author's name <br> 作者名字
+ * @property url Link to the image <br> 图片链接
+ * @property r18 R18 category <br> 是否为R18
+ * @property width Width of the image <br> 宽度
+ * @property height Height of the image <br> 高度
+ * @property tags Image tags <br> 标签
+ * @constructor Create an Image data instance <br> 实例化图片数据
+ * @see Response
  */
 data class ImageData (
     val pid: Int,
@@ -45,10 +48,13 @@ data class ImageData (
     val height: Int,
     val tags: ArrayList<String>
 ) {
+
     /**
      * Return the string representation
+     * <br>
+     * 字符串化该类
      *
-     * @return [String] Representation of the data class
+     * @return the string representation <br> 类的字符串表示
      */
     override fun toString(): String {
         var result = "ImageData({"
@@ -61,8 +67,10 @@ data class ImageData (
 
     /**
      * Return the readable information
+     * <br>
+     * 返回具有可读性的信息
      *
-     * @return [String] Useful and readable information for users
+     * @return [String] readable information <br> 具有可读性的信息
      */
     fun toReadable(): String {
         return(

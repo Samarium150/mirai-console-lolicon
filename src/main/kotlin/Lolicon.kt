@@ -25,14 +25,19 @@ import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
 import net.mamoe.mirai.console.plugin.jvm.reloadPluginConfig
 import net.mamoe.mirai.console.plugin.jvm.reloadPluginData
+import net.mamoe.mirai.contact.Contact.Companion.uploadImage
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.User
 import net.mamoe.mirai.message.data.FlashImage
-import net.mamoe.mirai.utils.ExternalResource.Companion.toExternalResource
 import java.net.URL
 
 /**
  * Command instance
+ * <br>
+ * 命令实例
+ *
+ * @constructor Create a CompositeCommand instance <br> 实例化命令
+ * @see net.mamoe.mirai.console.command.CompositeCommand
  */
 object Lolicon: CompositeCommand(
     Main, primaryName = "lolicon",
@@ -40,11 +45,15 @@ object Lolicon: CompositeCommand(
 ) {
     /**
      * Help information
+     * <br>
+     * 帮助信息
      */
     private val help: String
 
     /**
      * Read help info from text when initializing
+     * <br>
+     * 初始化时从文本文件读取帮助信息文件
      */
     init {
         val helpFileName = "help.txt"
@@ -56,9 +65,11 @@ object Lolicon: CompositeCommand(
 
     /**
      * Subcommand get, get the image according to [keyword]
+     * <br>
+     * 子命令get，根据 [keyword] 从API获取图片
      *
-     * @receiver [CommandSender]
-     * @param keyword [String]
+     * @receiver [CommandSender] Command sender <br> 指令发送者
+     * @param keyword keyword for searching <br> 关键词
      */
     @SubCommand("get")
     @Description("(默认冷却时间60s)根据关键字发送涩图, 不提供关键字则随机发送一张")
@@ -77,7 +88,7 @@ object Lolicon: CompositeCommand(
                 Main.logger.info("url: ${imageData.url}")
                 sendMessage(imageData.toReadable())
                 val stream = RequestHandler.download(imageData.url)
-                val img = subject?.uploadImage(stream.toExternalResource())
+                val img = subject?.uploadImage(stream)
                 if (img != null) {
                     val receipt = (if (PluginConfig.flash) sendMessage(FlashImage(img)) else sendMessage(img)) ?: return
                     if (recall > 0) {
@@ -115,10 +126,14 @@ object Lolicon: CompositeCommand(
 
     /**
      * Subcommand set, set [property] and its [value]
+     * <br>
+     * 子命令set，设置属性和对应的值
      *
-     * @receiver [CommandSender]
-     * @param property [String]
-     * @param value [String]
+     * @receiver [CommandSender] Command sender <br> 指令发送者
+     * @param property target property <br> 目标属性
+     * @param value corresponding value <br> 对应值
+     * @see PluginConfig
+     * @see PluginData
      */
     @SubCommand("set")
     @Description("设置属性, 详见帮助信息")
@@ -208,9 +223,11 @@ object Lolicon: CompositeCommand(
 
     /**
      * Subcommand trust, add user to trusted set
+     * <br>
+     * 子命令trust，将用户添加到受信任名单
      *
-     * @receiver [CommandSender]
-     * @param id [Long]
+     * @receiver [CommandSender] Command sender <br> 指令发送者
+     * @param id id of the target user <br> 目标QQ号
      */
     @SubCommand("trust")
     @Description("将用户添加到受信任名单")
@@ -228,9 +245,11 @@ object Lolicon: CompositeCommand(
 
     /**
      * Subcommand distrust, remove user from trusted set
+     * <br>
+     * 子命令distrust，将用户从受信任名单中移除
      *
-     * @receiver [CommandSender]
-     * @param id [Long]
+     * @receiver [CommandSender] Command sender <br> 指令发送者
+     * @param id id of the target user <br> 目标QQ号
      */
     @SubCommand("distrust")
     @Description("将用户从受信任名单中移除")
@@ -252,8 +271,10 @@ object Lolicon: CompositeCommand(
 
     /**
      * Subcommand reload, reload plugin configuration and data
+     * <br>
+     * 子命令reload，重新载入插件配置和数据
      *
-     * @receiver [CommandSender]
+     * @receiver [CommandSender] Command sender <br> 指令发送者
      */
     @SubCommand("reload")
     @Description("重新载入插件配置和数据")
@@ -272,8 +293,10 @@ object Lolicon: CompositeCommand(
 
     /**
      * SubCommand help, send help information
+     * <br>
+     * 子命令help，获取帮助信息
      *
-     * @receiver [CommandSender]
+     * @receiver [CommandSender] Command sender <br> 指令发送者
      */
     @SubCommand("help")
     @Description("获取帮助信息")
