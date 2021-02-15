@@ -1,3 +1,16 @@
+# [3.1.0](https://github.com/Samarium150/mirai-console-lolicon/compare/3.0.1...3.1.0) (2021-02-15)
+
+
+### build
+
+* bump mirai-console version to 2.4.0, reduce dokka to 1.4.0 ([26045af](https://github.com/Samarium150/mirai-console-lolicon/commit/26045af7462e3b1c7b2ff760d47eb78c2d07cfe7))
+
+### feat
+
+* enable custom reply messages, add experimental custom command name. ([7325fac](https://github.com/Samarium150/mirai-console-lolicon/commit/7325face271fbef411a38eb1a7e2fa3db1fd197a))
+
+
+
 ## [3.0.1](https://github.com/Samarium150/mirai-console-lolicon/compare/3.0.0...3.0.1) (2021-02-11)
 
 
