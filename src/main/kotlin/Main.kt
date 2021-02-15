@@ -23,7 +23,7 @@ import net.mamoe.mirai.console.permission.PermissionService.Companion.cancel
 import net.mamoe.mirai.console.permission.PermissionService.Companion.permit
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
-import net.mamoe.mirai.utils.info
+import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 
 /**
  * Plugin instance
@@ -33,10 +33,11 @@ import net.mamoe.mirai.utils.info
  * @constructor Create a KotlinPlugin instance <br> 实例化插件
  * @see net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
  */
+@ConsoleExperimentalApi
 object Main: KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.samarium150.mirai-console-lolicon",
-        version = "3.0.1",
+        version = "3.1.0",
         name = "mirai-console-lolicon"
     )
 ) {
@@ -53,11 +54,14 @@ object Main: KotlinPlugin(
          * 加载配置及数据
          */
         PluginConfig.reload()
+        CommandConfig.reload()
+        ReplyConfig.reload()
         PluginData.reload()
-        if (PluginConfig.master != 0L)
+
+        if (PluginConfig.master != 0L) {
             PluginData.trustedUsers.add(PluginConfig.master)
-        else
-            logger.warning("请先在配置文件设置Bot所有者id")
+            PluginData.reload()
+        } else logger.warning("请先在配置文件设置Bot所有者id")
 
         /**
          * Register commands
@@ -73,7 +77,7 @@ object Main: KotlinPlugin(
          */
         AbstractPermitteeId.AnyContact.permit(Lolicon.permission)
 
-        logger.info { "Plugin mirai-console-lolicon loaded" }
+        logger.info("Plugin mirai-console-lolicon loaded")
     }
 
     /**
@@ -96,6 +100,6 @@ object Main: KotlinPlugin(
          */
         Lolicon.unregister()
 
-        logger.info { "Plugin mirai-console-lolicon unloaded" }
+        logger.info("Plugin mirai-console-lolicon unloaded")
     }
 }

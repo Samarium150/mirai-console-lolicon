@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.github.samarium150"
-version = "3.0.2"
+version = "3.1.0"
 
 repositories {
     mavenLocal()
@@ -33,7 +33,7 @@ tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
     dokkaSourceSets {
         configureEach {
             includeNonPublic.set(true)
-            includes.from("README.md")
+            includes.from("Module.md")
             sourceLink {
                 localDirectory.set(file("src/main/kotlin"))
                 remoteUrl.set(

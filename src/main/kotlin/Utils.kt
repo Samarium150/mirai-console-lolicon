@@ -16,6 +16,7 @@
  */
 package com.github.samarium150.mirai.plugin
 
+import com.github.samarium150.mirai.plugin.Lolicon.set
 import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.contact.MemberPermission
 import net.mamoe.mirai.contact.User
@@ -76,7 +77,7 @@ object Utils {
      * @param type input property <br> 需要转化的类别
      * @return integer value <br> 转换后的值
      * @throws NumberFormatException if [value] is invalid <br> 数值非法时抛出
-     * @see [Lolicon.set]
+     * @see Lolicon.set
      */
     @Throws(NumberFormatException::class)
     fun convertValue(value: String, type: String): Int {

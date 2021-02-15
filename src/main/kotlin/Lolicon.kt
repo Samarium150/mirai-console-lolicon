@@ -23,8 +23,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
+import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.plugin.jvm.reloadPluginConfig
 import net.mamoe.mirai.console.plugin.jvm.reloadPluginData
+import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.contact.Contact.Companion.uploadImage
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.User
@@ -39,9 +41,10 @@ import java.net.URL
  * @constructor Create a CompositeCommand instance <br> 实例化命令
  * @see net.mamoe.mirai.console.command.CompositeCommand
  */
+@ConsoleExperimentalApi
 object Lolicon: CompositeCommand(
     Main, primaryName = "lolicon",
-    secondaryNames = arrayOf("llc")
+    secondaryNames = CommandConfig.lolicon
 ) {
     /**
      * Help information
@@ -49,6 +52,15 @@ object Lolicon: CompositeCommand(
      * 帮助信息
      */
     private val help: String
+
+    /**
+     * set prefix to be optional
+     * <br>
+     * 忽略前缀
+     */
+    @ExperimentalCommandDescriptors
+    @ConsoleExperimentalApi
+    override val prefixOptional: Boolean = true
 
     /**
      * Read help info from text when initializing
@@ -60,7 +72,7 @@ object Lolicon: CompositeCommand(
         val helpFile: URL? = javaClass.classLoader.getResource(helpFileName)
         if (helpFile != null) {
             help = helpFile.readText()
-        } else throw Exception("$helpFileName does not found")
+        } else throw Exception("没有找到 $helpFileName 文件")
     }
 
     /**
@@ -71,11 +83,11 @@ object Lolicon: CompositeCommand(
      * @receiver [CommandSender] Command sender <br> 指令发送者
      * @param keyword keyword for searching <br> 关键词
      */
-    @SubCommand("get")
+    @SubCommand("get", "来一张")
     @Description("(默认冷却时间60s)根据关键字发送涩图, 不提供关键字则随机发送一张")
     suspend fun CommandSender.get(keyword: String = "") {
         if (!Timer.getCooldown(subject)) {
-            sendMessage("你怎么冲得到处都是")
+            sendMessage(ReplyConfig.inCooldown)
             return
         }
         val (apikey, r18, recall, cooldown) = ExecutionConfig.create(subject)
@@ -115,7 +127,7 @@ object Lolicon: CompositeCommand(
             }
         } catch (fe: FuelError) {
             Main.logger.warning(fe.toString())
-            sendMessage("网络连接失败/超时或图片已被删除，之后再试试吧")
+            sendMessage(ReplyConfig.fuelError)
         } catch (ae: APIException) {
             Main.logger.warning(ae.toString())
             sendMessage(ae.toReadable())
@@ -135,11 +147,11 @@ object Lolicon: CompositeCommand(
      * @see PluginConfig
      * @see PluginData
      */
-    @SubCommand("set")
+    @SubCommand("set", "设置")
     @Description("设置属性, 详见帮助信息")
     suspend fun CommandSender.set(property: String, value: String) {
         if (subject is Group && !Utils.checkMemberPerm(user)) {
-            sendMessage("set仅限群主和管理员操作")
+            sendMessage(ReplyConfig.nonAdminPermissionDenied)
             return
         }
         when (property) {
@@ -157,36 +169,36 @@ object Lolicon: CompositeCommand(
                     }
                     else -> PluginConfig.apikey = value
                 }
-                sendMessage("设置成功")
+                sendMessage(ReplyConfig.setSucceeded)
             }
             "r18" -> {
                 if (subject is User && !Utils.checkUserPerm(user)) {
-                    sendMessage("非受信任的用户不能设置该属性, 让Bot所有者添加到受信任用户名单后才能使用")
+                    sendMessage(ReplyConfig.untrusted)
                     return
                 }
                 val setting: Int
                 try {
                     setting = Utils.convertValue(value, "r18")
                 } catch (e: NumberFormatException) {
-                    sendMessage("${value}不是有效的数字")
+                    sendMessage(value + ReplyConfig.illegalValue)
                     return
                 }
                 when (subject) {
                     is User -> PluginData.customR18Users[(subject as User).id] = setting
                     is Group -> PluginData.customR18Groups[(subject as Group).id] = setting
                 }
-                sendMessage("设置成功")
+                sendMessage(ReplyConfig.setSucceeded)
             }
             "recall" -> {
                 if (subject is User && !Utils.checkUserPerm(user)) {
-                    sendMessage("非受信任的用户不能设置该属性, 让Bot所有者添加到受信任用户名单后才能使用")
+                    sendMessage(ReplyConfig.untrusted)
                     return
                 }
                 val setting: Int
                 try {
                     setting = Utils.convertValue(value, "recall")
                 } catch (e: NumberFormatException) {
-                    sendMessage("${value}不是有效的数字")
+                    sendMessage(value + ReplyConfig.illegalValue)
                     return
                 }
                 when (subject) {
@@ -194,18 +206,18 @@ object Lolicon: CompositeCommand(
                     is Group -> PluginData.customRecallGroups[(subject as Group).id] = setting
                     else -> PluginConfig.recall = setting
                 }
-                sendMessage("设置成功")
+                sendMessage(ReplyConfig.setSucceeded)
             }
             "cooldown" -> {
                 if (subject is User && !Utils.checkUserPerm(user)) {
-                    sendMessage("非受信任的用户不能设置该属性, 让Bot所有者添加到受信任用户名单后才能使用")
+                    sendMessage(ReplyConfig.untrusted)
                     return
                 }
                 val setting: Int
                 try {
                     setting = Utils.convertValue(value, "cooldown")
                 } catch (e: NumberFormatException) {
-                    sendMessage("${value}不是有效的数字")
+                    sendMessage(value + ReplyConfig.illegalValue)
                     return
                 }
                 when (subject) {
@@ -213,10 +225,10 @@ object Lolicon: CompositeCommand(
                     is Group -> PluginData.customCooldownGroups[(subject as Group).id] = setting
                     else -> PluginConfig.cooldown = setting
                 }
-                sendMessage("设置成功")
+                sendMessage(ReplyConfig.setSucceeded)
             }
             else -> {
-                sendMessage("非法属性")
+                sendMessage(property + ReplyConfig.illegalProperty)
             }
         }
     }
@@ -229,18 +241,18 @@ object Lolicon: CompositeCommand(
      * @receiver [CommandSender] Command sender <br> 指令发送者
      * @param id id of the target user <br> 目标QQ号
      */
-    @SubCommand("trust")
+    @SubCommand("trust", "信任")
     @Description("将用户添加到受信任名单")
     suspend fun CommandSender.trust(id: Long) {
         if (!Utils.checkMaster(user)) {
-            sendMessage("该命令仅能由Bot所有者使用")
-            if (PluginConfig.master == 0L) sendMessage("请先在配置文件设置Bot所有者id")
+            sendMessage(ReplyConfig.nonMasterPermissionDenied)
+            if (PluginConfig.master == 0L) sendMessage(ReplyConfig.noMasterID)
             return
         }
         if (PluginData.trustedUsers.add(id))
-            sendMessage("添加成功")
+            sendMessage(ReplyConfig.trustSucceeded)
         else
-            sendMessage("该用户已经在名单中")
+            sendMessage(ReplyConfig.alreadyExists)
     }
 
     /**
@@ -251,12 +263,12 @@ object Lolicon: CompositeCommand(
      * @receiver [CommandSender] Command sender <br> 指令发送者
      * @param id id of the target user <br> 目标QQ号
      */
-    @SubCommand("distrust")
+    @SubCommand("distrust", "不信任")
     @Description("将用户从受信任名单中移除")
     suspend fun CommandSender.distrust(id: Long) {
         if (!Utils.checkMaster(user)) {
-            sendMessage("该命令仅能由Bot所有者使用")
-            if (PluginConfig.master == 0L) sendMessage("请先在配置文件设置Bot所有者id")
+            sendMessage(ReplyConfig.nonMasterPermissionDenied)
+            if (PluginConfig.master == 0L) sendMessage(ReplyConfig.noMasterID)
             return
         }
         if (id == PluginConfig.master) {
@@ -264,9 +276,9 @@ object Lolicon: CompositeCommand(
             return
         }
         if (PluginData.trustedUsers.remove(id))
-            sendMessage("移除成功")
+            sendMessage(ReplyConfig.distrustSucceeded)
         else
-            sendMessage("该用户不在名单中")
+            sendMessage(ReplyConfig.doesNotExists)
     }
 
     /**
@@ -276,19 +288,19 @@ object Lolicon: CompositeCommand(
      *
      * @receiver [CommandSender] Command sender <br> 指令发送者
      */
-    @SubCommand("reload")
+    @SubCommand("reload", "重载")
     @Description("重新载入插件配置和数据")
     suspend fun CommandSender.reload() {
-        if (subject is Group && !Utils.checkMemberPerm(user)) {
-            sendMessage("reload仅限群主和管理员操作")
+        if (subject is Group && !Utils.checkMemberPerm(user) && !Utils.checkMaster(user)) {
+            sendMessage(ReplyConfig.nonAdminPermissionDenied)
             return
-        } else if (!Utils.checkMaster(user)) {
-            sendMessage("reload仅限Bot所有者使用")
+        } else if (subject is User && !Utils.checkMaster(user)) {
+            sendMessage(ReplyConfig.nonMasterPermissionDenied)
             return
         }
         Main.reloadPluginConfig(PluginConfig)
         Main.reloadPluginData(PluginData)
-        sendMessage("配置已重载")
+        sendMessage(ReplyConfig.reloaded)
     }
 
     /**
@@ -298,7 +310,7 @@ object Lolicon: CompositeCommand(
      *
      * @receiver [CommandSender] Command sender <br> 指令发送者
      */
-    @SubCommand("help")
+    @SubCommand("help", "帮助")
     @Description("获取帮助信息")
     suspend fun CommandSender.help() {
         sendMessage(help)

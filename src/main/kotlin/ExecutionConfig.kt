@@ -16,6 +16,7 @@
  */
 package com.github.samarium150.mirai.plugin
 
+import com.github.samarium150.mirai.plugin.Lolicon.get
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.User
