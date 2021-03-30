@@ -1,3 +1,12 @@
+# [3.2.0](https://github.com/Samarium150/mirai-console-lolicon/compare/3.1.0...3.2.0) (2021-03-30)
+
+
+### feat
+
+* add custom caching and proxy options ([de09441](https://github.com/Samarium150/mirai-console-lolicon/commit/de09441ba3b8633c2b155ee166ef592806f97085))
+
+
+
 # [3.1.0](https://github.com/Samarium150/mirai-console-lolicon/compare/3.0.1...3.1.0) (2021-02-15)
 
 
