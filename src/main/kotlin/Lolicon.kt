@@ -31,6 +31,8 @@ import net.mamoe.mirai.contact.Contact.Companion.uploadImage
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.User
 import net.mamoe.mirai.message.data.FlashImage
+import java.io.File
+import java.io.InputStream
 import java.net.URL
 
 /**
@@ -91,7 +93,7 @@ object Lolicon: CompositeCommand(
             return
         }
         val (apikey, r18, recall, cooldown) = ExecutionConfig.create(subject)
-        val parameters = RequestParams(apikey, keyword, r18, size1200 = PluginConfig.size1200)
+        val parameters = RequestParams(apikey, keyword, r18, 1, PluginConfig.proxy, PluginConfig.size1200)
         Main.logger.info(parameters.toReadable())
         try {
             val response: Response = RequestHandler.get(parameters)
@@ -99,7 +101,16 @@ object Lolicon: CompositeCommand(
             for (imageData in response.data) {
                 Main.logger.info("url: ${imageData.url}")
                 sendMessage(imageData.toReadable())
-                val stream = RequestHandler.download(imageData.url)
+                val stream: InputStream = if (PluginConfig.save && PluginConfig.cache) {
+                    try {
+                        val paths = imageData.url.split("/")
+                        val path = "/data/mirai-console-lolicon/download/${paths[paths.lastIndex]}"
+                        val cache = File(System.getProperty("user.dir") + path)
+                        if (cache.exists()) cache.inputStream() else RequestHandler.download(imageData.url)
+                    } catch (e: Exception) {
+                        RequestHandler.download(imageData.url)
+                    }
+                } else RequestHandler.download(imageData.url)
                 val img = subject?.uploadImage(stream)
                 if (img != null) {
                     val receipt = (if (PluginConfig.flash) sendMessage(FlashImage(img)) else sendMessage(img)) ?: return

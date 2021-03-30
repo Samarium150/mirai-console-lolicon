@@ -47,6 +47,14 @@ object PluginConfig : AutoSavePluginConfig("Config") {
     val save: Boolean by value(false)
 
     /**
+     * Enable caching
+     * <br>
+     * 是否使用已保存的图片作为缓存
+     */
+    @ValueDescription("是否使用已保存的图片作为缓存")
+    val cache: Boolean by value(false)
+
+    /**
      * Enable flash image
      * <br>
      * 是否启用闪照模式
@@ -69,6 +77,14 @@ object PluginConfig : AutoSavePluginConfig("Config") {
      */
     @ValueDescription("是否启用master_1200图片压缩")
     val size1200: Boolean by value(true)
+
+    /**
+     * Custom proxy
+     * <br>
+     * 自定义代理
+     */
+    @ValueDescription("获取Pixiv图片的代理")
+    val proxy: String by value("i.pixiv.cat")
 
     /**
      * Default recall time

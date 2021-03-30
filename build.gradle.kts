@@ -1,16 +1,16 @@
 import java.net.URL
 
 plugins {
-    val kotlinVersion = "1.4.21"
+    val kotlinVersion = "1.4.30"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.4.0"
+    id("net.mamoe.mirai-console") version "2.5.1"
     id("org.jetbrains.dokka") version "1.4.0"
 }
 
 group = "com.github.samarium150"
-version = "3.1.0"
+version = "3.2.0"
 
 repositories {
     mavenLocal()
