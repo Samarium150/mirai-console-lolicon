@@ -1,6 +1,6 @@
 {
   "name": "mirai-console-lolicon",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "基于mirai-console的涩图机器人",
   "scripts": {
     "changelog": "conventional-changelog -p eslint -i CHANGELOG.md -s"

@@ -37,7 +37,7 @@ import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 object Main: KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.samarium150.mirai-console-lolicon",
-        version = "3.2.0",
+        version = "3.2.1",
         name = "mirai-console-lolicon"
     )
 ) {

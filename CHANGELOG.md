@@ -1,3 +1,16 @@
+## [3.2.1](https://github.com/Samarium150/mirai-console-lolicon/compare/3.2.0...3.2.1) (2021-04-17)
+
+
+### build
+
+* bump mirai-console version to 2.6.1 ([43457d3](https://github.com/Samarium150/mirai-console-lolicon/commit/43457d386d943d9add87a3bad8e15fbd663940e9))
+
+### docs
+
+* update README.md ([700cabe](https://github.com/Samarium150/mirai-console-lolicon/commit/700cabe7207c940568d31d3666f875d9c31cc28b))
+
+
+
 # [3.2.0](https://github.com/Samarium150/mirai-console-lolicon/compare/3.1.0...3.2.0) (2021-03-30)
 
 
