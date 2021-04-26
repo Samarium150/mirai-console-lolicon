@@ -21,6 +21,7 @@ import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.contact.MemberPermission
 import net.mamoe.mirai.contact.User
 import org.jetbrains.annotations.Nullable
+import java.net.Proxy
 
 /**
  * Object for utility functions
@@ -88,5 +89,25 @@ object Utils {
             "cooldown" -> if (setting < 0) throw NumberFormatException(value)
         }
         return setting
+    }
+
+    /**
+     * Get proxy type from the given string
+     * <br>
+     * 根据输入值返回代理类型
+     *
+     * @param value input string value <br> 输入的字符串
+     * @return [Proxy.Type] <br> 代理的类型
+     * @throws IllegalArgumentException if [value] is not [Proxy.Type] <br> 数值非法时抛出
+     * @see Proxy
+     */
+    @Throws(IllegalArgumentException::class)
+    fun getProxyType(value: String): Proxy.Type {
+        return when (value) {
+            "DIRECT" -> Proxy.Type.DIRECT
+            "HTTP" -> Proxy.Type.HTTP
+            "SOCKS" -> Proxy.Type.SOCKS
+            else -> throw IllegalArgumentException(value)
+        }
     }
 }

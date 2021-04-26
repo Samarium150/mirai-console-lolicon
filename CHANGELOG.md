@@ -1,3 +1,12 @@
+# [3.3.0](https://github.com/Samarium150/mirai-console-lolicon/compare/3.2.1...3.3.0) (2021-04-26)
+
+
+### feat
+
+* add custom proxy settings; fix #37 ([a7a6ee5](https://github.com/Samarium150/mirai-console-lolicon/commit/a7a6ee5484f1d01bcbb12d4ecd0fb0bb4ccf3ea5)), closes [#37](https://github.com/Samarium150/mirai-console-lolicon/issues/37)
+
+
+
 ## [3.2.1](https://github.com/Samarium150/mirai-console-lolicon/compare/3.2.0...3.2.1) (2021-04-17)
 
 
