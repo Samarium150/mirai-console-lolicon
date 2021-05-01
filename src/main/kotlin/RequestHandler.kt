@@ -16,15 +16,12 @@
  */
 package com.github.samarium150.mirai.plugin
 
+import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.FuelError
-import com.github.kittinunf.fuel.core.FuelManager
 import com.github.kittinunf.result.Result
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import java.io.*
-import java.lang.IllegalArgumentException
-import java.net.InetSocketAddress
-import java.net.Proxy
 
 /**
  * Object for handling GET request
@@ -58,17 +55,7 @@ object RequestHandler {
     @Throws(FuelError::class, JsonSyntaxException::class, APIException::class)
     fun get(parameters: RequestParams): Response {
         val url = "https://api.lolicon.app/setu/?$parameters"
-        val (_, response, result) = FuelManager()
-            .also {
-                try {
-                    it.proxy = Proxy(
-                        Utils.getProxyType(ProxyConfig.type),
-                        InetSocketAddress(ProxyConfig.hostname, ProxyConfig.port)
-                    )
-                } catch (iae: IllegalArgumentException) { }
-            }
-            .get(url)
-            .responseString()
+        val (_, response, result) = Fuel.get(url).responseString()
         if (result is Result.Failure) throw result.getException()
         val feedback: Response = gson.fromJson(String(response.data), Response::class.java)
         if (feedback.code != 0) throw APIException(feedback.code, feedback.msg)
@@ -89,15 +76,7 @@ object RequestHandler {
     fun download(url: String): InputStream {
         if (PluginConfig.save) {
             var file: File? = null
-            val (_, _, result) = FuelManager()
-                .also {
-                    try {
-                        it.proxy = Proxy(
-                            Utils.getProxyType(ProxyConfig.type),
-                            InetSocketAddress(ProxyConfig.hostname, ProxyConfig.port)
-                        )
-                    } catch (iae: IllegalArgumentException) { }
-                }
+            val (_, _, result) = Fuel
                 .download(url)
                 .fileDestination { _, _ ->
                     val urlPaths = url.split("/")
@@ -110,15 +89,7 @@ object RequestHandler {
             return ByteArrayInputStream(file!!.readBytes())
         }
         var outputStream = OutputStream.nullOutputStream()
-        val (_, _, result) = FuelManager()
-            .also {
-                try {
-                    it.proxy = Proxy(
-                        Utils.getProxyType(ProxyConfig.type),
-                        InetSocketAddress(ProxyConfig.hostname, ProxyConfig.port)
-                    )
-                } catch (iae: IllegalArgumentException) { }
-            }
+        val (_, _, result) = Fuel
             .download(url)
             .streamDestination { response: com.github.kittinunf.fuel.core.Response, _ ->
                 outputStream = ByteArrayOutputStream(response.contentLength.toInt())

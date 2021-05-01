@@ -16,6 +16,7 @@
  */
 package com.github.samarium150.mirai.plugin
 
+import com.github.kittinunf.fuel.core.FuelManager
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
 import net.mamoe.mirai.console.permission.AbstractPermitteeId
@@ -24,6 +25,8 @@ import net.mamoe.mirai.console.permission.PermissionService.Companion.permit
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
+import java.net.InetSocketAddress
+import java.net.Proxy
 
 /**
  * Plugin instance
@@ -37,7 +40,7 @@ import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 object Main: KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.samarium150.mirai-console-lolicon",
-        version = "3.3.0",
+        version = "3.3.1",
         name = "mirai-console-lolicon"
     )
 ) {
@@ -58,6 +61,11 @@ object Main: KotlinPlugin(
         ReplyConfig.reload()
         ProxyConfig.reload()
         PluginData.reload()
+
+        FuelManager.instance.proxy = if (ProxyConfig.type != "DIRECT") Proxy(
+            Utils.getProxyType(ProxyConfig.type),
+            InetSocketAddress(ProxyConfig.hostname, ProxyConfig.port)
+        ) else Proxy.NO_PROXY
 
         if (PluginConfig.master != 0L) {
             PluginData.trustedUsers.add(PluginConfig.master)

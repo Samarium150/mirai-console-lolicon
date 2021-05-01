@@ -17,6 +17,7 @@
 package com.github.samarium150.mirai.plugin
 
 import com.github.kittinunf.fuel.core.FuelError
+import com.github.kittinunf.fuel.core.FuelManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -96,6 +97,7 @@ object Lolicon: CompositeCommand(
         val parameters = RequestParams(apikey, keyword, r18, 1, PluginConfig.proxy, PluginConfig.size1200)
         Main.logger.info(parameters.toReadable())
         try {
+            Main.logger.info("proxy: ${FuelManager.instance.proxy}")
             val response: Response = RequestHandler.get(parameters)
             Main.logger.info(response.toReadable())
             for (imageData in response.data) {

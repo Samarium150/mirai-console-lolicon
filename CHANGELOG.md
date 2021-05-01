@@ -1,3 +1,12 @@
+## [3.3.1](https://github.com/Samarium150/mirai-console-lolicon/compare/3.3.0...3.3.1) (2021-05-01)
+
+
+### fix
+
+* re-implement proxy ([a113fdb](https://github.com/Samarium150/mirai-console-lolicon/commit/a113fdb1cc52f81b8ebe46f63c4f28bb6cec5088))
+
+
+
 # [3.3.0](https://github.com/Samarium150/mirai-console-lolicon/compare/3.2.1...3.3.0) (2021-04-26)
 
 
