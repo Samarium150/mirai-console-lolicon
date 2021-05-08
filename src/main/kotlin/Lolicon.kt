@@ -96,54 +96,80 @@ object Lolicon: CompositeCommand(
         val (apikey, r18, recall, cooldown) = ExecutionConfig.create(subject)
         val parameters = RequestParams(apikey, keyword, r18, 1, PluginConfig.proxy, PluginConfig.size1200)
         Main.logger.info(parameters.toReadable())
+        Main.logger.info("proxy: ${FuelManager.instance.proxy}")
+        val response: Response?
         try {
-            Main.logger.info("proxy: ${FuelManager.instance.proxy}")
-            val response: Response = RequestHandler.get(parameters)
-            Main.logger.info(response.toReadable())
+            response = RequestHandler.get(parameters)
+        } catch (fe: FuelError) {
+            Main.logger.warning(fe.toString())
+            sendMessage(ReplyConfig.fuelError)
+            return
+        } catch (ae: APIException) {
+            Main.logger.warning(ae.toString())
+            sendMessage(ae.toReadable())
+            return
+        } catch (e: Exception) {
+            Main.logger.error(e)
+            return
+        }
+        Main.logger.info(response.toReadable())
+        try {
             for (imageData in response.data) {
                 Main.logger.info("url: ${imageData.url}")
-                sendMessage(imageData.toReadable())
-                val stream: InputStream = if (PluginConfig.save && PluginConfig.cache) {
-                    try {
-                        val paths = imageData.url.split("/")
-                        val path = "/data/mirai-console-lolicon/download/${paths[paths.lastIndex]}"
-                        val cache = File(System.getProperty("user.dir") + path)
-                        if (cache.exists()) cache.inputStream() else RequestHandler.download(imageData.url)
-                    } catch (e: Exception) {
-                        RequestHandler.download(imageData.url)
-                    }
-                } else RequestHandler.download(imageData.url)
-                val img = subject?.uploadImage(stream)
-                if (img != null) {
-                    val receipt = (if (PluginConfig.flash) sendMessage(FlashImage(img)) else sendMessage(img)) ?: return
-                    if (recall > 0) {
-                        GlobalScope.launch {
-                            val result = receipt.recallIn((recall * 1000).toLong()).awaitIsSuccess()
-                            withContext(Dispatchers.Default) {
-                                if (!result) Main.logger.warning(receipt.target.toString() + "撤回失败")
-                                else Main.logger.info(receipt.target.toString() + "图片已撤回")
+                val imgInfoReceipt = sendMessage(imageData.toReadable()) ?: continue
+                var stream: InputStream? = null
+                try {
+                    stream = if (PluginConfig.save && PluginConfig.cache) {
+                        try {
+                            val paths = imageData.url.split("/")
+                            val path = "/data/mirai-console-lolicon/download/${paths[paths.lastIndex]}"
+                            val cache = File(System.getProperty("user.dir") + path)
+                            if (cache.exists()) cache.inputStream() else RequestHandler.download(imageData.url)
+                        } catch (e: Exception) {
+                            RequestHandler.download(imageData.url)
+                        }
+                    } else RequestHandler.download(imageData.url)
+                    val img = subject?.uploadImage(stream)
+                    if (img != null) {
+                        val imgReceipt = (if (PluginConfig.flash) sendMessage(FlashImage(img)) else sendMessage(img)) ?: return
+                        if (recall > 0 && PluginConfig.recallImg) {
+                            GlobalScope.launch {
+                                val result = imgReceipt.recallIn((recall * 1000).toLong()).awaitIsSuccess()
+                                withContext(Dispatchers.Default) {
+                                    if (!result) Main.logger.warning(imgReceipt.target.toString() + "图片撤回失败")
+                                    else Main.logger.info(imgReceipt.target.toString() + "图片已撤回")
+                                }
+                            }
+                        }
+                        if (cooldown > 0) {
+                            Timer.setCooldown(subject)
+                            GlobalScope.launch {
+                                Timer.cooldown(subject, cooldown)
+                                withContext(Dispatchers.Default) {
+                                    Main.logger.info(imgReceipt.target.toString()+"命令已冷却")
+                                }
                             }
                         }
                     }
-                    if (cooldown > 0) {
-                        Timer.setCooldown(subject)
+                } catch (fe: FuelError) {
+                    Main.logger.warning(fe.toString())
+                    sendMessage(ReplyConfig.fuelError)
+                } catch (e: Exception) {
+                    Main.logger.error(e)
+                } finally {
+                    @Suppress("BlockingMethodInNonBlockingContext")
+                    stream?.close()
+                    if (recall > 0 && PluginConfig.recallImgInfo) {
                         GlobalScope.launch {
-                            Timer.cooldown(subject, cooldown)
+                            val result = imgInfoReceipt.recallIn((recall * 1000).toLong()).awaitIsSuccess()
                             withContext(Dispatchers.Default) {
-                                Main.logger.info(receipt.target.toString()+"命令已冷却")
+                                if (!result) Main.logger.warning(imgInfoReceipt.target.toString() + "图片信息撤回失败")
+                                else Main.logger.info(imgInfoReceipt.target.toString() + "图片信息已撤回")
                             }
                         }
                     }
                 }
-                @Suppress("BlockingMethodInNonBlockingContext")
-                stream.close()
             }
-        } catch (fe: FuelError) {
-            Main.logger.warning(fe.toString())
-            sendMessage(ReplyConfig.fuelError)
-        } catch (ae: APIException) {
-            Main.logger.warning(ae.toString())
-            sendMessage(ae.toReadable())
         } catch (e: Exception) {
             Main.logger.error(e)
         }

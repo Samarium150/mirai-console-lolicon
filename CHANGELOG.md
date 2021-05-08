@@ -1,3 +1,12 @@
+# [3.4.0](https://github.com/Samarium150/mirai-console-lolicon/compare/3.3.1...3.4.0) (2021-05-08)
+
+
+### feat
+
+* add recalling img info option ([a6f802c](https://github.com/Samarium150/mirai-console-lolicon/commit/a6f802cb7549833940e179e7ac7e97694dec84e4))
+
+
+
 ## [3.3.1](https://github.com/Samarium150/mirai-console-lolicon/compare/3.3.0...3.3.1) (2021-05-01)
 
 
