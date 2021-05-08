@@ -40,7 +40,7 @@ import java.net.Proxy
 object Main: KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.samarium150.mirai-console-lolicon",
-        version = "3.3.1",
+        version = "3.4.0",
         name = "mirai-console-lolicon"
     )
 ) {

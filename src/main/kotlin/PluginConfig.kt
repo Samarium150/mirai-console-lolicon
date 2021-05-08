@@ -95,6 +95,22 @@ object PluginConfig : AutoSavePluginConfig("Config") {
     var recall: Int by value(30)
 
     /**
+     * Enable recalling image information
+     * <br>
+     * 是否撤回图片信息
+     */
+    @ValueDescription("是否撤回图片信息")
+    var recallImgInfo: Boolean by value(false)
+
+    /**
+     * Enable recalling image
+     * <br>
+     * 是否撤回图片
+     */
+    @ValueDescription("是否撤回图片")
+    var recallImg: Boolean by value(true)
+
+    /**
      * Default cooldown time
      * <br>
      * 默认的冷却时间(单位: s)
