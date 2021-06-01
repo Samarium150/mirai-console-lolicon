@@ -35,6 +35,7 @@ import net.mamoe.mirai.message.data.FlashImage
 import java.io.File
 import java.io.InputStream
 import java.net.URL
+import java.util.*
 
 /**
  * Command instance
@@ -198,12 +199,12 @@ object Lolicon: CompositeCommand(
                 when (subject) {
                     is User -> {
                         val id = (subject as User).id
-                        if (value.toLowerCase() == "default") PluginData.customAPIKeyUsers.remove(id)
+                        if (value.lowercase(Locale.getDefault()) == "default") PluginData.customAPIKeyUsers.remove(id)
                         else PluginData.customAPIKeyUsers[id] = value
                     }
                     is Group -> {
                         val id = (subject as Group).id
-                        if (value.toLowerCase() == "default") PluginData.customAPIKeyGroups.remove(id)
+                        if (value.lowercase(Locale.getDefault()) == "default") PluginData.customAPIKeyGroups.remove(id)
                         else PluginData.customAPIKeyGroups[id] = value
                     }
                     else -> PluginConfig.apikey = value
