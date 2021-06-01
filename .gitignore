@@ -5,5 +5,3 @@
 /test/
 /out/
 /run/
-/node_modules/
-package-lock.json

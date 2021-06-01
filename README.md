@@ -12,7 +12,7 @@ Social preview的图片来自 [AliceSoft](https://www.alicesoft.com) 制作的�
 在群内随机发送图片(默认30s自动撤回+60s冷却)，支持关键词检索
 <br>
 适配 [mirai-console](https://github.com/mamoe/mirai-console) 
-[![Version](https://img.shields.io/badge/version-2.6.4-blue)](https://github.com/mamoe/mirai/releases/tag/v2.6.4)
+[![Version](https://img.shields.io/badge/version-2.6.5-blue)](https://github.com/mamoe/mirai/releases/tag/v2.6.5)
 <br>
 可以在 [Lolicon API](https://api.lolicon.app/#/setu) 申请apikey来增加调用额度
 <br>
