@@ -1,12 +1,13 @@
 import java.net.URL
 
 plugins {
-    val kotlinVersion = "1.4.30"
+    val kotlinVersion = "1.5.10"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.6.4"
+    id("net.mamoe.mirai-console") version "2.6.5"
     id("org.jetbrains.dokka") version "1.4.32"
+    id("com.geoffgranum.gradle-conventional-changelog") version "0.3.1"
 }
 
 group = "com.github.samarium150"
@@ -37,10 +38,18 @@ tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
             sourceLink {
                 localDirectory.set(file("src/main/kotlin"))
                 remoteUrl.set(
-                    URL("https://github.com/Samarium150/mirai-lolicon-api/blob/master/src/main/kotlin")
+                    URL("https://github.com/Samarium150/mirai-console-lolicon/tree/master/src/main/kotlin")
                 )
                 remoteLineSuffix.set("#L")
             }
+            jdkVersion.set(11)
         }
     }
+}
+
+changelog {
+    appName = project.name
+    versionNum = "$version"
+    repoUrl = "https://github.com/Samarium150/mirai-console-lolicon"
+    trackerUrl = "https://github.com/Samarium150/mirai-console-lolicon"
 }
