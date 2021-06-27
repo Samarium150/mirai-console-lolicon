@@ -5,7 +5,7 @@ plugins {
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.6.5"
+    id("net.mamoe.mirai-console") version "2.7-M1"
     id("org.jetbrains.dokka") version "1.4.32"
     id("com.geoffgranum.gradle-conventional-changelog") version "0.3.1"
 }
@@ -16,8 +16,6 @@ version = "3.4.1"
 repositories {
     mavenLocal()
     mavenCentral()
-    jcenter()
-    maven("https://dl.bintray.com/kotlin/kotlin-eap")
 }
 
 dependencies {

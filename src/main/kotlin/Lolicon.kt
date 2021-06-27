@@ -18,10 +18,7 @@ package com.github.samarium150.mirai.plugin
 
 import com.github.kittinunf.fuel.core.FuelError
 import com.github.kittinunf.fuel.core.FuelManager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
@@ -87,6 +84,7 @@ object Lolicon: CompositeCommand(
      * @receiver [CommandSender] Command sender <br> 指令发送者
      * @param keyword keyword for searching <br> 关键词
      */
+    @OptIn(DelicateCoroutinesApi::class)
     @SubCommand("get", "来一张")
     @Description("(默认冷却时间60s)根据关键字发送涩图, 不提供关键字则随机发送一张")
     suspend fun CommandSender.get(keyword: String = "") {
