@@ -6,7 +6,7 @@ plugins {
     kotlin("plugin.serialization") version kotlinVersion
 
     id("net.mamoe.mirai-console") version "2.6.5"
-    id("org.jetbrains.dokka") version "1.4.32"
+    id("org.jetbrains.dokka") version "1.5.0"
     id("com.geoffgranum.gradle-conventional-changelog") version "0.3.1"
 }
 
