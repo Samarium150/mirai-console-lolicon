@@ -15,44 +15,20 @@ import net.mamoe.mirai.console.data.value
 object ReplyConfig: AutoSavePluginConfig("ReplyConfig") {
 
     /**
-     * APIException internal error
+     * API returns errors
      * <br>
-     * API 内部错误
+     * API 返回了错误
      */
-    @ValueDescription("API内部错误, 返回状态码：-1")
-    val exceptionInternal: String by value("API内部错误")
+    @ValueDescription("API返回了错误")
+    val invokeException: String by value("API调用错误，请检查日志")
 
     /**
-     * APIException status: 401
+     * API returns empty list
      * <br>
-     * API 返回状态码401
+     * API 返回了空列表
      */
-    @ValueDescription("API 返回状态码401")
-    val exception401: String by value("apikey不存在")
-
-    /**
-     * APIException status: 403
-     * <br>
-     * API 返回状态码403
-     */
-    @ValueDescription("API 返回状态码403")
-    val exception403: String by value("调用不规范, 用户两行泪. 快去找开发者的麻烦.")
-
-    /**
-     * APIException status: 404
-     * <br>
-     * API 返回状态码404
-     */
-    @ValueDescription("API 返回状态码404")
-    val exception404: String by value("没有找到相关图片, 换个关键词试试吧")
-
-    /**
-     * APIException status: 429
-     * <br>
-     * API 返回状态码429
-     */
-    @ValueDescription("API 返回状态码429")
-    val exception429: String by value("调用达到上限, 是时候换个apikey了")
+    @ValueDescription("没有找到相关图片")
+    val emptyImageData: String by value("没有找到相关图片, 换个关键词试试吧")
 
     /**
      * In cooldown
@@ -68,7 +44,7 @@ object ReplyConfig: AutoSavePluginConfig("ReplyConfig") {
      * 获取图片失败
      */
     @ValueDescription("获取图片失败")
-    val fuelError: String by value("网络连接失败/超时或图片已被删除，之后再试试吧")
+    val networkError: String by value("网络连接失败/超时或图片已被删除，之后再试试吧")
 
     /**
      * Non admin permission denied

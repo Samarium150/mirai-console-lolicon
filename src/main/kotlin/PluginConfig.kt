@@ -67,6 +67,7 @@ object PluginConfig : AutoSavePluginConfig("Config") {
      * <br>
      * 默认的apikey
      */
+    @Deprecated("自4.+弃用")
     @ValueDescription("默认的apikey")
     var apikey: String by value("")
 
@@ -77,6 +78,9 @@ object PluginConfig : AutoSavePluginConfig("Config") {
      */
     @ValueDescription("是否启用master_1200图片压缩")
     val size1200: Boolean by value(true)
+
+    @ValueDescription("original/regular/small/thumb/mini")
+    val size: String by value("regular")
 
     /**
      * Custom proxy

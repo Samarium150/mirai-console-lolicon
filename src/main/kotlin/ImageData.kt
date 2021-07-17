@@ -16,7 +16,9 @@
  */
 package com.github.samarium150.mirai.plugin
 
-import kotlin.reflect.full.memberProperties
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 /**
  * The image information returned by Lolicon API
@@ -28,41 +30,32 @@ import kotlin.reflect.full.memberProperties
  * @property uid Author UID <br> 作者UID
  * @property title Image title <br> 图片标题
  * @property author Author's name <br> 作者名字
- * @property url Link to the image <br> 图片链接
  * @property r18 R18 category <br> 是否为R18
  * @property width Width of the image <br> 宽度
  * @property height Height of the image <br> 高度
  * @property tags Image tags <br> 标签
+ * @property urls Image urls <br> 链接
  * @constructor Create an Image data instance <br> 实例化图片数据
- * @see Response
+ * @see ResponseBody
  */
-data class ImageData (
+@Serializable
+data class ImageData(
     val pid: Int,
     val p: Int,
     val uid: Int,
     val title: String,
     val author: String,
-    val url: String,
     val r18: Boolean,
     val width: Int,
     val height: Int,
-    val tags: ArrayList<String>
+    val tags: List<String>,
+    val ext: String,
+    val uploadDate: Long,
+    val urls: Map<String, String>
 ) {
 
-    /**
-     * Return the string representation
-     * <br>
-     * 字符串化该类
-     *
-     * @return the string representation <br> 类的字符串表示
-     */
     override fun toString(): String {
-        var result = "ImageData({"
-        for (props in ImageData::class.memberProperties) {
-            result += "${props.name}: ${props.get(this)}, "
-        }
-        result = result.dropLast(2) + "})"
-        return result
+        return "ImageData" + Json.encodeToString(this)
     }
 
     /**
@@ -73,7 +66,7 @@ data class ImageData (
      * @return [String] readable information <br> 具有可读性的信息
      */
     fun toReadable(): String {
-        return(
+        return (
             "标题: ${title}\n" +
             "作者: $author (uid: ${uid})\n" +
             "标签: ${tags}\n" +

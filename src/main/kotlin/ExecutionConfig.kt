@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable
  * <br>
  * 执行get命令时的配置
  *
- * @property apikey [PluginConfig.apikey]
+// * @property apikey [PluginConfig.apikey]
  * @property r18 [PluginData.customR18Users] and [PluginData.customR18Groups]
  * @property recall [PluginConfig.recall]
  * @property cooldown [PluginConfig.cooldown]
@@ -36,21 +36,21 @@ import org.jetbrains.annotations.Nullable
  * @see PluginData
  */
 data class ExecutionConfig(
-    var apikey: String = PluginConfig.apikey,
+//    var apikey: String = PluginConfig.apikey,
     var r18: Int = 0,
     var recall: Int = PluginConfig.recall,
     var cooldown: Int = PluginConfig.cooldown
 ) {
-    /**
-     * Set [apikey] to [value]
-     * <br>
-     * 将 [apikey] 的值设置为 [value]
-     *
-     * @param value Input value <br> 输入的值
-     */
-    private fun setAPIKey(@Nullable value: String?) {
-        if (value != null) apikey = value
-    }
+//    /**
+//     * Set [apikey] to [value]
+//     * <br>
+//     * 将 [apikey] 的值设置为 [value]
+//     *
+//     * @param value Input value <br> 输入的值
+//     */
+//    private fun setAPIKey(@Nullable value: String?) {
+//        if (value != null) apikey = value
+//    }
 
     /**
      * Set [r18] to [value]
@@ -100,13 +100,13 @@ data class ExecutionConfig(
             val config = ExecutionConfig()
             when (subject) {
                 is User -> {
-                    config.setAPIKey(PluginData.customAPIKeyUsers[subject.id])
+//                    config.setAPIKey(PluginData.customAPIKeyUsers[subject.id])
                     config.setR18(PluginData.customR18Users[subject.id])
                     config.setRecall(PluginData.customRecallUsers[subject.id])
                     config.setCooldown(PluginData.customCooldownUsers[subject.id])
                 }
                 is Group -> {
-                    config.setAPIKey(PluginData.customAPIKeyGroups[subject.id])
+//                    config.setAPIKey(PluginData.customAPIKeyGroups[subject.id])
                     config.setR18(PluginData.customR18Groups[subject.id])
                     config.setRecall(PluginData.customRecallGroups[subject.id])
                     config.setCooldown(PluginData.customCooldownGroups[subject.id])

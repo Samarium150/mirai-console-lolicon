@@ -5,22 +5,22 @@ plugins {
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.7-M1"
-    id("org.jetbrains.dokka") version "1.4.32"
+    id("net.mamoe.mirai-console") version "2.7-M2"
+    id("org.jetbrains.dokka") version "1.5.0"
     id("com.geoffgranum.gradle-conventional-changelog") version "0.3.1"
 }
 
 group = "com.github.samarium150"
-version = "3.4.1"
+version = "4.0.0-beta.1"
 
 repositories {
     mavenLocal()
+    maven(url="https://maven.aliyun.com/repository/public")
     mavenCentral()
 }
 
 dependencies {
-    implementation("com.google.code.gson:gson:+")
-    implementation("com.github.kittinunf.fuel:fuel:+")
+    implementation("io.ktor:ktor-client-serialization:1.5.4")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {

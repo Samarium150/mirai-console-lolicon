@@ -16,12 +16,13 @@
  */
 package com.github.samarium150.mirai.plugin
 
-import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.fuel.core.FuelError
-import com.github.kittinunf.result.Result
-import com.google.gson.Gson
-import com.google.gson.JsonSyntaxException
-import java.io.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import java.io.ByteArrayInputStream
+import java.io.File
+import java.io.InputStream
 
 /**
  * Object for handling GET request
@@ -30,36 +31,11 @@ import java.io.*
  */
 object RequestHandler {
 
-    /**
-     * The Gson instance
-     * <br>
-     * Gson 实例
-     */
-    private val gson = Gson()
-
-    /**
-     * Makes a GET request to Lolicon API
-     * with the given [parameters]
-     * <br>
-     * 根据参数发送HTTP请求
-     *
-     * @param parameters [RequestParams]
-     * @return [Response]
-     * @throws FuelError if GET request is failed <br> GET请求失败时抛出
-     * @throws JsonSyntaxException if returned JSON is invalid <br> 返回的JSON无效时抛出
-     * @throws APIException if Lolicon API didn't return status 0 <br> API调用错误时抛出
-     * @see RequestParams
-     * @see Response
-     * @see APIException
-     */
-    @Throws(FuelError::class, JsonSyntaxException::class, APIException::class)
-    fun get(parameters: RequestParams): Response {
-        val url = "https://api.lolicon.app/setu/?$parameters"
-        val (_, response, result) = Fuel.get(url).responseString()
-        if (result is Result.Failure) throw result.getException()
-        val feedback: Response = gson.fromJson(String(response.data), Response::class.java)
-        if (feedback.code != 0) throw APIException(feedback.code, feedback.msg)
-        return feedback
+    suspend fun get(body: RequestBody): ResponseBody {
+        return Main.client.post("https://api.lolicon.app/setu/v2") {
+            contentType(ContentType.Application.Json)
+            this.body = body
+        }
     }
 
     /**
@@ -67,37 +43,20 @@ object RequestHandler {
      * <br>
      * 从 [url] 下载图片
      *
-     * @param url URL from [ImageData.url] <br> 来自 [ImageData.url] 的 URL
+     * @param url URL from [ImageData.urls] <br> 来自 [ImageData.urls] 的 URL
      * @return The image [ByteArrayInputStream] <br> 图片字节输入流
-     * @throws FuelError if download failed <br> 下载失败时抛出
      * @see ImageData
      */
-    @Throws(FuelError::class)
-    fun download(url: String): InputStream {
+    suspend fun download(url: String): InputStream {
+        val response: HttpResponse = Main.client.get(url)
+        val result: ByteArray = response.receive()
         if (PluginConfig.save) {
-            var file: File? = null
-            val (_, _, result) = Fuel
-                .download(url)
-                .fileDestination { _, _ ->
-                    val urlPaths = url.split("/")
-                    val dir = File(System.getProperty("user.dir") + "/data/mirai-console-lolicon/download/")
-                    if (!dir.exists()) dir.mkdirs()
-                    file = File("${dir}/${urlPaths[urlPaths.lastIndex]}")
-                    file!!
-                }.responseString()
-            if (result is Result.Failure) throw result.getException()
-            return ByteArrayInputStream(file!!.readBytes())
+            val dir = File(System.getProperty("user.dir") + "/data/mirai-console-lolicon/download/")
+            if (!dir.exists()) dir.mkdirs()
+            val urlPaths = url.split("/")
+            val file = File("${dir}/${urlPaths[urlPaths.lastIndex]}")
+            file.writeBytes(result)
         }
-        var outputStream = OutputStream.nullOutputStream()
-        val (_, _, result) = Fuel
-            .download(url)
-            .streamDestination { response: com.github.kittinunf.fuel.core.Response, _ ->
-                outputStream = ByteArrayOutputStream(response.contentLength.toInt())
-                Pair(outputStream as ByteArrayOutputStream) {
-                    InputStream.nullInputStream()
-                }
-            }.responseString()
-        if (result is Result.Failure) throw result.getException()
-        return ByteArrayInputStream((outputStream as ByteArrayOutputStream).toByteArray())
+        return ByteArrayInputStream(result)
     }
 }

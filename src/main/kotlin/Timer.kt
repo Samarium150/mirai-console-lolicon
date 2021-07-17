@@ -87,6 +87,7 @@ object Timer {
      * @param key User's id <br> 用户QQ号
      * @return [Deferred]
      */
+    @OptIn(DelicateCoroutinesApi::class)
     private suspend fun userCooldownAsync(key: Long, cooldown: Int) = GlobalScope.async(
         start = CoroutineStart.LAZY
     ) {
@@ -102,6 +103,7 @@ object Timer {
      * @param key Group's id <br> 群号
      * @return [Deferred]
      */
+    @OptIn(DelicateCoroutinesApi::class)
     private suspend fun groupCooldownAsync(key: Long, cooldown: Int) = GlobalScope.async(
         start = CoroutineStart.LAZY
     ) {

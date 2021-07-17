@@ -110,4 +110,17 @@ object Utils {
             else -> throw IllegalArgumentException(value)
         }
     }
+
+    /**
+     * Process tags
+     *
+     * @param str
+     * @return
+     */
+    fun processTags(str: String): List<List<String>> {
+        val result: MutableList<List<String>> = listOf<List<String>>().toMutableList()
+        val and = str.split("&")
+        for (s in and) result.add(s.split("|"))
+        return result.toList()
+    }
 }

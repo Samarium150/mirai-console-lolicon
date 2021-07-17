@@ -16,9 +16,9 @@
  */
 package com.github.samarium150.mirai.plugin
 
-import com.github.kittinunf.fuel.core.FuelError
-import com.github.kittinunf.fuel.core.FuelManager
 import kotlinx.coroutines.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
@@ -32,7 +32,6 @@ import net.mamoe.mirai.message.data.FlashImage
 import java.io.File
 import java.io.InputStream
 import java.net.URL
-import java.util.*
 
 /**
  * Command instance
@@ -42,7 +41,6 @@ import java.util.*
  * @constructor Create a CompositeCommand instance <br> 实例化命令
  * @see net.mamoe.mirai.console.command.CompositeCommand
  */
-@ConsoleExperimentalApi
 object Lolicon: CompositeCommand(
     Main, primaryName = "lolicon",
     secondaryNames = CommandConfig.lolicon
@@ -77,101 +75,114 @@ object Lolicon: CompositeCommand(
     }
 
     /**
-     * Subcommand get, get the image according to [keyword]
+     * Subcommand get, get the image according to [tags]
      * <br>
-     * 子命令get，根据 [keyword] 从API获取图片
+     * 子命令get，根据 [tags] 从API获取图片
      *
      * @receiver [CommandSender] Command sender <br> 指令发送者
-     * @param keyword keyword for searching <br> 关键词
+     * @param tags keyword for searching <br> 关键词
      */
     @OptIn(DelicateCoroutinesApi::class)
     @SubCommand("get", "来一张")
     @Description("(默认冷却时间60s)根据关键字发送涩图, 不提供关键字则随机发送一张")
-    suspend fun CommandSender.get(keyword: String = "") {
+    suspend fun CommandSender.get(tags: String = "") {
         if (!Timer.getCooldown(subject)) {
             sendMessage(ReplyConfig.inCooldown)
             return
         }
-        val (apikey, r18, recall, cooldown) = ExecutionConfig.create(subject)
-        val parameters = RequestParams(apikey, keyword, r18, 1, PluginConfig.proxy, PluginConfig.size1200)
-        Main.logger.info(parameters.toReadable())
-        Main.logger.info("proxy: ${FuelManager.instance.proxy}")
-        val response: Response?
+        val (r18, recall, cooldown) = ExecutionConfig.create(subject)
+        val body = if (tags.isNotEmpty())
+            RequestBody(r18, 1, listOf(), "", Utils.processTags(tags), listOf(PluginConfig.size), PluginConfig.proxy)
+        else RequestBody(r18, 1, listOf(), tags, listOf(), listOf(PluginConfig.size), PluginConfig.proxy)
+        Main.logger.info(body.toString())
+        val response: ResponseBody?
         try {
-            response = RequestHandler.get(parameters)
-        } catch (fe: FuelError) {
-            Main.logger.warning(fe.toString())
-            sendMessage(ReplyConfig.fuelError)
-            return
-        } catch (ae: APIException) {
-            Main.logger.warning(ae.toString())
-            sendMessage(ae.toReadable())
-            return
+            response = RequestHandler.get(body)
         } catch (e: Exception) {
             Main.logger.error(e)
             return
         }
-        Main.logger.info(response.toReadable())
+        Main.logger.info(response.toString())
+        if (response.error.isNotEmpty()) {
+            sendMessage(ReplyConfig.invokeException)
+            Main.logger.warning(response.error)
+            return
+        }
+        if (response.data.isEmpty()) {
+            sendMessage(ReplyConfig.emptyImageData)
+            return
+        }
         try {
-            for (imageData in response.data) {
-                Main.logger.info("url: ${imageData.url}")
-                val imgInfoReceipt = sendMessage(imageData.toReadable()) ?: continue
-                var stream: InputStream? = null
-                try {
-                    stream = if (PluginConfig.save && PluginConfig.cache) {
-                        try {
-                            val paths = imageData.url.split("/")
-                            val path = "/data/mirai-console-lolicon/download/${paths[paths.lastIndex]}"
-                            val cache = File(System.getProperty("user.dir") + path)
-                            if (cache.exists()) cache.inputStream() else RequestHandler.download(imageData.url)
-                        } catch (e: Exception) {
-                            RequestHandler.download(imageData.url)
-                        }
-                    } else RequestHandler.download(imageData.url)
-                    val img = subject?.uploadImage(stream)
-                    if (img != null) {
-                        val imgReceipt = (if (PluginConfig.flash) sendMessage(FlashImage(img)) else sendMessage(img)) ?: return
-                        if (recall > 0 && PluginConfig.recallImg) {
-                            GlobalScope.launch {
-                                val result = imgReceipt.recallIn((recall * 1000).toLong()).awaitIsSuccess()
-                                withContext(Dispatchers.Default) {
-                                    if (!result) Main.logger.warning(imgReceipt.target.toString() + "图片撤回失败")
-                                    else Main.logger.info(imgReceipt.target.toString() + "图片已撤回")
-                                }
-                            }
-                        }
-                        if (cooldown > 0) {
-                            Timer.setCooldown(subject)
-                            GlobalScope.launch {
-                                Timer.cooldown(subject, cooldown)
-                                withContext(Dispatchers.Default) {
-                                    Main.logger.info(imgReceipt.target.toString()+"命令已冷却")
-                                }
-                            }
-                        }
+            val imageData = response.data[0]
+            val url = imageData.urls[PluginConfig.size] ?: return
+            Main.logger.info("url: $url")
+            val imgInfoReceipt = sendMessage(imageData.toReadable()) ?: return
+            var stream: InputStream? = null
+            try {
+                stream = if (PluginConfig.save && PluginConfig.cache) {
+                    try {
+                        val paths = url.split("/")
+                        val path = "/data/mirai-console-lolicon/download/${paths[paths.lastIndex]}"
+                        val cache = File(System.getProperty("user.dir") + path)
+                        if (cache.exists()) cache.inputStream() else RequestHandler.download(url)
+                    } catch (e: Exception) {
+                        RequestHandler.download(url)
                     }
-                } catch (fe: FuelError) {
-                    Main.logger.warning(fe.toString())
-                    sendMessage(ReplyConfig.fuelError)
-                } catch (e: Exception) {
-                    Main.logger.error(e)
-                } finally {
-                    @Suppress("BlockingMethodInNonBlockingContext")
-                    stream?.close()
-                    if (recall > 0 && PluginConfig.recallImgInfo) {
+                } else RequestHandler.download(url)
+                val img = subject?.uploadImage(stream)
+                if (img != null) {
+                    val imgReceipt = (if (PluginConfig.flash) sendMessage(FlashImage(img)) else sendMessage(img)) ?: return
+                    if (recall > 0 && PluginConfig.recallImg)
                         GlobalScope.launch {
-                            val result = imgInfoReceipt.recallIn((recall * 1000).toLong()).awaitIsSuccess()
+                            val result = imgReceipt.recallIn((recall * 1000).toLong()).awaitIsSuccess()
                             withContext(Dispatchers.Default) {
-                                if (!result) Main.logger.warning(imgInfoReceipt.target.toString() + "图片信息撤回失败")
-                                else Main.logger.info(imgInfoReceipt.target.toString() + "图片信息已撤回")
+                                if (!result) Main.logger.warning(imgReceipt.target.toString() + "图片撤回失败")
+                                else Main.logger.info(imgReceipt.target.toString() + "图片已撤回")
+                            }
+                        }
+                    if (cooldown > 0) {
+                        Timer.setCooldown(subject)
+                        GlobalScope.launch {
+                            Timer.cooldown(subject, cooldown)
+                            withContext(Dispatchers.Default) {
+                                Main.logger.info(imgReceipt.target.toString()+"命令已冷却")
                             }
                         }
                     }
                 }
+            } catch (e: Exception) {
+                Main.logger.error(e)
+            } finally {
+                @Suppress("BlockingMethodInNonBlockingContext")
+                stream?.close()
+                if (recall > 0 && PluginConfig.recallImgInfo)
+                    GlobalScope.launch {
+                        val result = imgInfoReceipt.recallIn((recall * 1000).toLong()).awaitIsSuccess()
+                        withContext(Dispatchers.Default) {
+                            if (!result) Main.logger.warning(imgInfoReceipt.target.toString() + "图片信息撤回失败")
+                            else Main.logger.info(imgInfoReceipt.target.toString() + "图片信息已撤回")
+                        }
+                    }
             }
         } catch (e: Exception) {
             Main.logger.error(e)
         }
+    }
+
+    @Suppress("unused")
+    @SubCommand("adv", "高级")
+    @Description("")
+    suspend fun CommandSender.advanced(json: String) {
+        Main.logger.info(json)
+        val (r18, recall, cooldown) = ExecutionConfig.create(subject)
+        val body: RequestBody?
+        try {
+            body = Json.decodeFromString<RequestBody>(json)
+        } catch (e: Exception) {
+            Main.logger.error(e)
+            return
+        }
+        val response = RequestHandler.get(body)
     }
 
     /**
@@ -193,22 +204,6 @@ object Lolicon: CompositeCommand(
             return
         }
         when (property) {
-            "apikey" -> {
-                when (subject) {
-                    is User -> {
-                        val id = (subject as User).id
-                        if (value.lowercase(Locale.getDefault()) == "default") PluginData.customAPIKeyUsers.remove(id)
-                        else PluginData.customAPIKeyUsers[id] = value
-                    }
-                    is Group -> {
-                        val id = (subject as Group).id
-                        if (value.lowercase(Locale.getDefault()) == "default") PluginData.customAPIKeyGroups.remove(id)
-                        else PluginData.customAPIKeyGroups[id] = value
-                    }
-                    else -> PluginConfig.apikey = value
-                }
-                sendMessage(ReplyConfig.setSucceeded)
-            }
             "r18" -> {
                 if (subject is User && !Utils.checkUserPerm(user)) {
                     sendMessage(ReplyConfig.untrusted)
@@ -279,6 +274,7 @@ object Lolicon: CompositeCommand(
      * @receiver [CommandSender] Command sender <br> 指令发送者
      * @param id id of the target user <br> 目标QQ号
      */
+    @Suppress("unused")
     @SubCommand("trust", "信任")
     @Description("将用户添加到受信任名单")
     suspend fun CommandSender.trust(id: Long) {
@@ -301,6 +297,7 @@ object Lolicon: CompositeCommand(
      * @receiver [CommandSender] Command sender <br> 指令发送者
      * @param id id of the target user <br> 目标QQ号
      */
+    @Suppress("unused")
     @SubCommand("distrust", "不信任")
     @Description("将用户从受信任名单中移除")
     suspend fun CommandSender.distrust(id: Long) {
@@ -326,6 +323,7 @@ object Lolicon: CompositeCommand(
      *
      * @receiver [CommandSender] Command sender <br> 指令发送者
      */
+    @Suppress("unused")
     @SubCommand("reload", "重载")
     @Description("重新载入插件配置和数据")
     suspend fun CommandSender.reload() {
@@ -348,6 +346,7 @@ object Lolicon: CompositeCommand(
      *
      * @receiver [CommandSender] Command sender <br> 指令发送者
      */
+    @Suppress("unused")
     @SubCommand("help", "帮助")
     @Description("获取帮助信息")
     suspend fun CommandSender.help() {

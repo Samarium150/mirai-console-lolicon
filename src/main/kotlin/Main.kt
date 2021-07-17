@@ -16,7 +16,10 @@
  */
 package com.github.samarium150.mirai.plugin
 
-import com.github.kittinunf.fuel.core.FuelManager
+import io.ktor.client.*
+import io.ktor.client.features.json.*
+import io.ktor.client.features.json.serializer.*
+import io.ktor.util.*
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
 import net.mamoe.mirai.console.permission.AbstractPermitteeId
@@ -24,7 +27,6 @@ import net.mamoe.mirai.console.permission.PermissionService.Companion.cancel
 import net.mamoe.mirai.console.permission.PermissionService.Companion.permit
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
-import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import java.net.InetSocketAddress
 import java.net.Proxy
 
@@ -36,20 +38,22 @@ import java.net.Proxy
  * @constructor Create a KotlinPlugin instance <br> 实例化插件
  * @see net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
  */
-@ConsoleExperimentalApi
 object Main: KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.samarium150.mirai-console-lolicon",
-        version = "3.4.1",
+        version = "4.0.0-beta.1",
         name = "mirai-console-lolicon"
     )
 ) {
+
+    lateinit var client: HttpClient
 
     /**
      * Will be invoked when the plugin is enabled
      * <br>
      * 插件启用时将被调用
      */
+    @OptIn(KtorExperimentalAPI::class)
     override fun onEnable() {
         /**
          * Load configurations and data
@@ -62,15 +66,20 @@ object Main: KotlinPlugin(
         ProxyConfig.reload()
         PluginData.reload()
 
-        FuelManager.instance.proxy = if (ProxyConfig.type != "DIRECT") Proxy(
-            Utils.getProxyType(ProxyConfig.type),
-            InetSocketAddress(ProxyConfig.hostname, ProxyConfig.port)
-        ) else Proxy.NO_PROXY
-
-        if (PluginConfig.master != 0L) {
-            PluginData.trustedUsers.add(PluginConfig.master)
-            PluginData.reload()
-        } else logger.warning("请先在配置文件设置Bot所有者id")
+        client = HttpClient {
+            engine {
+                proxy = if (ProxyConfig.type != "DIRECT") Proxy(
+                    Utils.getProxyType(ProxyConfig.type),
+                    InetSocketAddress(ProxyConfig.hostname, ProxyConfig.port)
+                ) else Proxy.NO_PROXY
+            }
+            install(JsonFeature) {
+                serializer = KotlinxSerializer(kotlinx.serialization.json.Json {
+                    prettyPrint = true
+                    isLenient = true
+                })
+            }
+        }
 
         /**
          * Register commands
@@ -108,6 +117,8 @@ object Main: KotlinPlugin(
          * 注销命令
          */
         Lolicon.unregister()
+
+        client.close()
 
         logger.info("Plugin mirai-console-lolicon unloaded")
     }
