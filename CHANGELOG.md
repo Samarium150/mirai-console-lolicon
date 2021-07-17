@@ -1,3 +1,16 @@
+<a name="4.0.0-beta.1"></a>
+# 4.0.0-beta.1 (2021/07/18)
+
+
+## Features
+
+* adapt to Lolicon API v2 ([31b99a82](https://github.com/Samarium150/mirai-console-lolicon/commits/31b99a82))
+
+## Breaking Changes
+
+* due to [31b99a82](https://github.com/Samarium150/mirai-console-lolicon/commits/31b99a82eb8ff90f91c44f1a75a29102468ec3a2),
+  Simple getting is now adapted to Lolicon API v2. Upgrade mirai-console to 2.7-M2
+
 <a name="3.4.1"></a>
 # 3.4.1 (2021/06/01)
 
