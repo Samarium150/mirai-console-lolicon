@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-client-serialization:1.5.4")
+    implementation("io.ktor:ktor-client-serialization:1.6.1")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
