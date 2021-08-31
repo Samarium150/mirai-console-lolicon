@@ -1,5 +1,12 @@
+<a name="4.0.0"></a>
+# 4.0.0 (2021/08/31)
+
+
+## Features
+
+* implement advanced get ([e8b03171](https://github.com/Samarium150/mirai-console-lolicon/commits/e8b03171))
 <a name="4.0.0-beta.1"></a>
-# 4.0.0-beta.1 (2021/07/18)
+## 4.0.0-beta.1 (2021/07/18)
 
 
 ## Features
