@@ -63,22 +63,10 @@ object PluginConfig : AutoSavePluginConfig("Config") {
     val flash: Boolean by value(false)
 
     /**
-     * Default apikey
+     * Size of the picture
      * <br>
-     * 默认的apikey
+     * 图片大小
      */
-    @Deprecated("自4.+弃用")
-    @ValueDescription("默认的apikey")
-    var apikey: String by value("")
-
-    /**
-     * Enable master_1200 compression
-     * <br>
-     * 是否启用 master_1200 图片压缩
-     */
-    @ValueDescription("是否启用master_1200图片压缩")
-    val size1200: Boolean by value(true)
-
     @ValueDescription("original/regular/small/thumb/mini")
     val size: String by value("regular")
 

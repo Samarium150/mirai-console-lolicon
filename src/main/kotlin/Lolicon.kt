@@ -29,6 +29,7 @@ import net.mamoe.mirai.contact.Contact.Companion.uploadImage
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.User
 import net.mamoe.mirai.message.data.FlashImage
+import net.mamoe.mirai.message.data.MessageChainBuilder
 import java.io.File
 import java.io.InputStream
 import java.net.URL
@@ -92,7 +93,8 @@ object Lolicon: CompositeCommand(
         }
         val (r18, recall, cooldown) = ExecutionConfig.create(subject)
         val body = if (tags.isNotEmpty())
-            RequestBody(r18, 1, listOf(), "", Utils.processTags(tags), listOf(PluginConfig.size), PluginConfig.proxy)
+            RequestBody(r18, 1, listOf(), "", Utils.processTags(tags),
+                listOf(PluginConfig.size), PluginConfig.proxy)
         else RequestBody(r18, 1, listOf(), tags, listOf(), listOf(PluginConfig.size), PluginConfig.proxy)
         Main.logger.info(body.toString())
         val response: ResponseBody?
@@ -131,7 +133,9 @@ object Lolicon: CompositeCommand(
                 } else RequestHandler.download(url)
                 val img = subject?.uploadImage(stream)
                 if (img != null) {
-                    val imgReceipt = (if (PluginConfig.flash) sendMessage(FlashImage(img)) else sendMessage(img)) ?: return
+                    val imgReceipt = (
+                        if (PluginConfig.flash) sendMessage(FlashImage(img)) else sendMessage(img)
+                        ) ?: return
                     if (recall > 0 && PluginConfig.recallImg)
                         GlobalScope.launch {
                             val result = imgReceipt.recallIn((recall * 1000).toLong()).awaitIsSuccess()
@@ -170,6 +174,7 @@ object Lolicon: CompositeCommand(
     }
 
     @Suppress("unused")
+    @OptIn(DelicateCoroutinesApi::class, kotlinx.serialization.ExperimentalSerializationApi::class)
     @SubCommand("adv", "高级")
     @Description("")
     suspend fun CommandSender.advanced(json: String) {
@@ -179,10 +184,102 @@ object Lolicon: CompositeCommand(
         try {
             body = Json.decodeFromString<RequestBody>(json)
         } catch (e: Exception) {
+            sendMessage(ReplyConfig.invalidJson)
+            Main.logger.warning(e)
+            return
+        }
+        if (body.r18 != r18) {
+            if (subject is Group && !Utils.checkMemberPerm(user)) {
+                sendMessage(ReplyConfig.nonAdminPermissionDenied)
+                return
+            }
+            if (subject is User && !Utils.checkUserPerm(user)) {
+                sendMessage(ReplyConfig.untrusted)
+                return
+            }
+        }
+        val response: ResponseBody?
+        try {
+            response = RequestHandler.get(body)
+        } catch (e: Exception) {
             Main.logger.error(e)
             return
         }
-        val response = RequestHandler.get(body)
+        Main.logger.info(response.toString())
+        if (response.error.isNotEmpty()) {
+            sendMessage(ReplyConfig.invokeException)
+            Main.logger.warning(response.error)
+            return
+        }
+        if (response.data.isEmpty()) {
+            sendMessage(ReplyConfig.emptyImageData)
+            return
+        }
+        try {
+            val imageInfoMsgBuilder = MessageChainBuilder()
+            val imageMsgBuilder = MessageChainBuilder()
+            for (imageData in response.data) {
+                if (imageData.urls.isEmpty()) continue
+                val url = Utils.getUrl(imageData.urls) ?: continue
+                var stream: InputStream? = null
+                try {
+                    stream = if (PluginConfig.save && PluginConfig.cache) {
+                        try {
+                            val paths = url.split("/")
+                            val path = "/data/mirai-console-lolicon/download/${paths[paths.lastIndex]}"
+                            val cache = File(System.getProperty("user.dir") + path)
+                            if (cache.exists()) cache.inputStream() else RequestHandler.download(url)
+                        } catch (e: Exception) {
+                            RequestHandler.download(url)
+                        }
+                    } else RequestHandler.download(url)
+                    val img = subject?.uploadImage(stream)
+                    if (img != null)
+                        if (PluginConfig.flash)
+                            imageMsgBuilder.add(FlashImage(img))
+                        else
+                            imageMsgBuilder.add(img)
+                    imageInfoMsgBuilder.add(imageData.toReadable())
+                    imageInfoMsgBuilder.add("\n")
+                } catch (e: Exception) {
+                    Main.logger.error(e)
+                } finally {
+                    @Suppress("BlockingMethodInNonBlockingContext")
+                    stream?.close()
+                }
+            }
+            val imgInfoReceipt = sendMessage(imageInfoMsgBuilder.asMessageChain()) ?: return
+            val imgReceipt = sendMessage(imageMsgBuilder.asMessageChain())
+            if (imgReceipt != null) {
+                if (recall > 0 && PluginConfig.recallImg)
+                    GlobalScope.launch {
+                        val result = imgReceipt.recallIn((recall * 1000).toLong()).awaitIsSuccess()
+                        withContext(Dispatchers.Default) {
+                            if (!result) Main.logger.warning(imgReceipt.target.toString() + "图片撤回失败")
+                            else Main.logger.info(imgReceipt.target.toString() + "图片已撤回")
+                        }
+                    }
+                if (cooldown > 0) {
+                    Timer.setCooldown(subject)
+                    GlobalScope.launch {
+                        Timer.cooldown(subject, cooldown)
+                        withContext(Dispatchers.Default) {
+                            Main.logger.info(imgReceipt.target.toString()+"命令已冷却")
+                        }
+                    }
+                }
+            }
+            if (recall > 0 && PluginConfig.recallImgInfo)
+                GlobalScope.launch {
+                    val result = imgInfoReceipt.recallIn((recall * 1000).toLong()).awaitIsSuccess()
+                    withContext(Dispatchers.Default) {
+                        if (!result) Main.logger.warning(imgInfoReceipt.target.toString() + "图片信息撤回失败")
+                        else Main.logger.info(imgInfoReceipt.target.toString() + "图片信息已撤回")
+                    }
+                }
+        } catch (e: Exception) {
+            Main.logger.error(e)
+        }
     }
 
     /**

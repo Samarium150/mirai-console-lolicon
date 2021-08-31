@@ -16,6 +16,7 @@
  */
 package com.github.samarium150.mirai.plugin
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -50,6 +51,7 @@ data class RequestBody(
     val dataBefore: Long? = null,
     val dsc: Boolean? = null
 ) {
+    @OptIn(ExperimentalSerializationApi::class)
     override fun toString(): String {
         val format = Json { encodeDefaults = true }
         return format.encodeToString(value = this)

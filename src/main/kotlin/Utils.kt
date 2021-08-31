@@ -28,7 +28,7 @@ import java.net.Proxy
  * <br>
  * 实用函数
  *
- * @constructor Create a Utils instance <br> 实例化Utils
+ * @constructor Create a Utility instance <br> 实例化Utils
  */
 object Utils {
 
@@ -122,5 +122,17 @@ object Utils {
         val and = str.split("&")
         for (s in and) result.add(s.split("|"))
         return result.toList()
+    }
+
+    private val sizeMap: Map<String, Int> = mapOf(
+        "original" to 0,
+        "regular" to 1,
+        "small" to 2,
+        "thumb" to 3,
+        "mini" to 4
+    )
+
+    fun getUrl(urls: Map<String, String>): String? {
+        return urls[urls.keys.sortedBy { sizeMap[it] } [0]]
     }
 }

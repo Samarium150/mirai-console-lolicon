@@ -39,12 +39,20 @@ object ReplyConfig: AutoSavePluginConfig("ReplyConfig") {
     val inCooldown: String by value("你怎么冲得到处都是")
 
     /**
-     * Fuel error
+     * Network error
      * <br>
      * 获取图片失败
      */
     @ValueDescription("获取图片失败")
     val networkError: String by value("网络连接失败/超时或图片已被删除，之后再试试吧")
+
+    /**
+     * Invalid json
+     * <br>
+     * JSON格式错误
+     */
+    @ValueDescription("JSON格式错误")
+    val invalidJson: String by value("JSON格式错误")
 
     /**
      * Non admin permission denied

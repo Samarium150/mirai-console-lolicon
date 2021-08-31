@@ -5,17 +5,17 @@ plugins {
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.7-M2"
+    id("net.mamoe.mirai-console") version "2.7.0"
     id("org.jetbrains.dokka") version "1.5.0"
     id("com.geoffgranum.gradle-conventional-changelog") version "0.3.1"
 }
 
 group = "com.github.samarium150"
-version = "4.0.0-beta.1"
+version = "4.0.0"
 
 repositories {
     mavenLocal()
-    maven(url="https://maven.aliyun.com/repository/public")
+//    maven(url="https://maven.aliyun.com/repository/public")
     mavenCentral()
 }
 
@@ -31,6 +31,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
 tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
     dokkaSourceSets {
         configureEach {
+            outputDirectory.set(file("docs"))
             includeNonPublic.set(true)
             includes.from("Module.md")
             sourceLink {

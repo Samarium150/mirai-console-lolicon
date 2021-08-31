@@ -16,6 +16,7 @@
  */
 package com.github.samarium150.mirai.plugin
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -54,6 +55,7 @@ data class ImageData(
     val urls: Map<String, String>
 ) {
 
+    @OptIn(ExperimentalSerializationApi::class)
     override fun toString(): String {
         return "ImageData" + Json.encodeToString(this)
     }
@@ -63,7 +65,7 @@ data class ImageData(
      * <br>
      * 返回具有可读性的信息
      *
-     * @return [String] readable information <br> 具有可读性的信息
+     * @return readable information <br> 具有可读性的信息
      */
     fun toReadable(): String {
         return (
