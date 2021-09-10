@@ -1,3 +1,10 @@
+<a name="4.1.0"></a>
+## 4.1.0 (2021/09/10)
+
+
+## Features
+
+* add white/blacklist and verbose mode ([3567f16c](https://github.com/Samarium150/mirai-console-lolicon/commits/3567f16c), closes [#50](https://github.com/Samarium150/mirai-console-lolicon/issues/50), [#47](https://github.com/Samarium150/mirai-console-lolicon/issues/47))
 <a name="4.0.0"></a>
 # 4.0.0 (2021/08/31)
 
