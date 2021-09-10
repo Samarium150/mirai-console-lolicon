@@ -31,28 +31,28 @@ import net.mamoe.mirai.console.data.value
 object PluginData: AutoSavePluginData("Data") {
 
     /**
+     * User set
+     * <br>
+     * 用户列表
+     */
+    @ValueDescription("用户列表")
+    val userSet: MutableSet<Long> by value()
+
+    /**
+     * Group set
+     * <br>
+     * 群组列表
+     */
+    @ValueDescription("群组列表")
+    val groupSet: MutableSet<Long> by value()
+
+    /**
      * Trusted Users
      * <br>
      * 受信任的用户
      */
     @ValueDescription("受信任的用户")
     val trustedUsers: MutableSet<Long> by value()
-
-    /**
-     * Users' id and their apikey mappings
-     * <br>
-     * 自定义了 apikey 的用户和对应的 apikey
-     */
-    @ValueDescription("自定义了apikey的用户和对应的apikey")
-    val customAPIKeyUsers: MutableMap<Long, String> by value()
-
-    /**
-     * Groups' id and their apikey mappings
-     * <br>
-     * 自定义了 apikey 的群和对应的 apikey
-     */
-    @ValueDescription("自定义了apikey的群和对应的apikey")
-    val customAPIKeyGroups: MutableMap<Long, String> by value()
 
     /**
      * Users that enabled R18 option

@@ -17,9 +17,7 @@
 package com.github.samarium150.mirai.plugin
 
 import com.github.samarium150.mirai.plugin.Lolicon.set
-import net.mamoe.mirai.contact.Member
-import net.mamoe.mirai.contact.MemberPermission
-import net.mamoe.mirai.contact.User
+import net.mamoe.mirai.contact.*
 import org.jetbrains.annotations.Nullable
 import java.net.Proxy
 
@@ -134,5 +132,35 @@ object Utils {
 
     fun getUrl(urls: Map<String, String>): String? {
         return urls[urls.keys.sortedBy { sizeMap[it] } [0]]
+    }
+
+    /**
+     * Is the subject permitted to use the bot
+     * <br>
+     * 是否能执行命令
+     *
+     * @param subject
+     * @return
+     */
+    fun isPermitted(subject: Contact?): Boolean {
+        return when (PluginConfig.mode) {
+            "whitelist" -> {
+                when {
+                    subject == null -> true
+                    subject is User && PluginData.userSet.contains(subject.id) -> true
+                    subject is Group && PluginData.groupSet.contains(subject.id) -> true
+                    else -> false
+                }
+            }
+            "blacklist" -> {
+                when {
+                    subject == null -> true
+                    subject is User && !PluginData.userSet.contains(subject.id) -> true
+                    subject is Group && !PluginData.groupSet.contains(subject.id) -> true
+                    else -> true
+                }
+            }
+            else -> true
+        }
     }
 }

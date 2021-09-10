@@ -39,6 +39,14 @@ object PluginConfig : AutoSavePluginConfig("Config") {
     val master: Long by value()
 
     /**
+     * mode for Get and adv command
+     * <br>
+     * Get命令和Adv命令的模式
+     */
+    @ValueDescription("Get命令和Adv命令的模式：none/whitelist/blacklist")
+    val mode: String by value("none")
+
+    /**
      * Enable image saving
      * <br>
      * 是否保存图片
@@ -53,6 +61,14 @@ object PluginConfig : AutoSavePluginConfig("Config") {
      */
     @ValueDescription("是否使用已保存的图片作为缓存")
     val cache: Boolean by value(false)
+
+    /**
+     * Sending image info
+     * <br>
+     * 是否发送图片信息
+     */
+    @ValueDescription("是否发送图片信息")
+    val verbose: Boolean by value(true)
 
     /**
      * Enable flash image

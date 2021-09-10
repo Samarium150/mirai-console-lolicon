@@ -85,8 +85,13 @@ object Lolicon: CompositeCommand(
      */
     @OptIn(DelicateCoroutinesApi::class)
     @SubCommand("get", "来一张")
-    @Description("(默认冷却时间60s)根据关键字发送涩图, 不提供关键字则随机发送一张")
+    @Description("根据标签发送涩图, 不提供则随机发送一张")
     suspend fun CommandSender.get(tags: String = "") {
+        if (!Utils.isPermitted(subject)) {
+            val where = if (subject is Group) "@${(subject as Group).id}" else ""
+            Main.logger.info("当前模式为'${PluginConfig.mode}'，${user?.id}${where}的命令已被无视")
+            return
+        }
         if (!Timer.getCooldown(subject)) {
             sendMessage(ReplyConfig.inCooldown)
             return
@@ -117,8 +122,9 @@ object Lolicon: CompositeCommand(
         try {
             val imageData = response.data[0]
             val url = imageData.urls[PluginConfig.size] ?: return
-            Main.logger.info("url: $url")
-            val imgInfoReceipt = sendMessage(imageData.toReadable()) ?: return
+            val imgInfoReceipt =
+                if (PluginConfig.verbose || subject == null) sendMessage(imageData.toReadable())
+                else null
             var stream: InputStream? = null
             try {
                 stream = if (PluginConfig.save && PluginConfig.cache) {
@@ -159,7 +165,7 @@ object Lolicon: CompositeCommand(
             } finally {
                 @Suppress("BlockingMethodInNonBlockingContext")
                 stream?.close()
-                if (recall > 0 && PluginConfig.recallImgInfo)
+                if (PluginConfig.verbose && imgInfoReceipt != null && recall > 0 && PluginConfig.recallImgInfo)
                     GlobalScope.launch {
                         val result = imgInfoReceipt.recallIn((recall * 1000).toLong()).awaitIsSuccess()
                         withContext(Dispatchers.Default) {
@@ -173,12 +179,23 @@ object Lolicon: CompositeCommand(
         }
     }
 
+    /**
+     * Advanced get
+     * <br>
+     * 子命令adv，根据[json]获取图片
+     *
+     * @param json JSON字符串
+     */
     @Suppress("unused")
     @OptIn(DelicateCoroutinesApi::class, kotlinx.serialization.ExperimentalSerializationApi::class)
     @SubCommand("adv", "高级")
-    @Description("")
+    @Description("根据JSON字符串发送涩图")
     suspend fun CommandSender.advanced(json: String) {
-        Main.logger.info(json)
+        if (!Utils.isPermitted(subject)) {
+            val where = if (subject is Group) "@${(subject as Group).id}" else ""
+            Main.logger.info("当前模式为'${PluginConfig.mode}'，${user?.id}${where}的命令已被无视")
+            return
+        }
         val (r18, recall, cooldown) = ExecutionConfig.create(subject)
         val body: RequestBody?
         try {
@@ -248,7 +265,9 @@ object Lolicon: CompositeCommand(
                     stream?.close()
                 }
             }
-            val imgInfoReceipt = sendMessage(imageInfoMsgBuilder.asMessageChain()) ?: return
+            val imgInfoReceipt =
+                if (PluginConfig.verbose || subject == null) sendMessage(imageInfoMsgBuilder.asMessageChain())
+                else null
             val imgReceipt = sendMessage(imageMsgBuilder.asMessageChain())
             if (imgReceipt != null) {
                 if (recall > 0 && PluginConfig.recallImg)
@@ -269,7 +288,7 @@ object Lolicon: CompositeCommand(
                     }
                 }
             }
-            if (recall > 0 && PluginConfig.recallImgInfo)
+            if (PluginConfig.verbose && imgInfoReceipt != null && recall > 0 && PluginConfig.recallImgInfo)
                 GlobalScope.launch {
                     val result = imgInfoReceipt.recallIn((recall * 1000).toLong()).awaitIsSuccess()
                     withContext(Dispatchers.Default) {
@@ -361,6 +380,39 @@ object Lolicon: CompositeCommand(
                 sendMessage(property + ReplyConfig.illegalProperty)
             }
         }
+    }
+
+    /**
+     * Add user id or group id to corresponding set
+     * <br>
+     * 添加用户id或群组id到对应的集合，用于黑白名单
+     *
+     * @param type
+     * @param id
+     */
+    @Suppress("unused")
+    @SubCommand("add", "添加")
+    suspend fun CommandSender.add(type: String, id: Long) {
+        if (!Utils.checkMaster(user)) {
+            sendMessage(ReplyConfig.nonMasterPermissionDenied)
+            if (PluginConfig.master == 0L) sendMessage(ReplyConfig.noMasterID)
+            return
+        }
+        val success: Boolean = when (type) {
+            "user" -> {
+                PluginData.userSet.add(id)
+                true
+            }
+            "group" -> {
+                PluginData.groupSet.add(id)
+                true
+            }
+            else -> {
+                sendMessage("类型错误")
+                false
+            }
+        }
+        if (success) sendMessage("添加成功")
     }
 
     /**
