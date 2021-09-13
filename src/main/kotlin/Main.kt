@@ -41,7 +41,7 @@ import java.net.Proxy
 object Main: KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.samarium150.mirai-console-lolicon",
-        version = "4.1.0",
+        version = "4.1.1",
         name = "mirai-console-lolicon"
     )
 ) {
@@ -68,8 +68,10 @@ object Main: KotlinPlugin(
 
         if (PluginConfig.master != 0L) {
             PluginData.trustedUsers.add(PluginConfig.master)
-            PluginData.userSet.add(PluginConfig.master)
-            PluginData.reload()
+            if (PluginConfig.mode == "whitelist")
+                PluginData.userSet.add(PluginConfig.master)
+            if (PluginConfig.mode == "blacklist")
+                PluginData.userSet.remove(PluginConfig.master)
         } else logger.warning("请先在配置文件设置Bot所有者id")
 
         client = HttpClient {

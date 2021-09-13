@@ -182,7 +182,7 @@ object Lolicon: CompositeCommand(
     /**
      * Advanced get
      * <br>
-     * 子命令adv，根据[json]获取图片
+     * 子命令adv，根据 [json] 获取图片
      *
      * @param json JSON字符串
      */
