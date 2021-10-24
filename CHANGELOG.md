@@ -1,3 +1,17 @@
+<a name="4.1.2"></a>
+# 4.1.2 (2021/10/24)
+
+
+## Bug Fixes
+
+* correct blacklist logic ([5c4082c6](https://github.com/Samarium150/mirai-console-lolicon/commits/5c4082c6), closes [#56](https://github.com/Samarium150/mirai-console-lolicon/issues/56))
+<a name="4.1.1"></a>
+# 4.1.1 (2021/09/13)
+
+
+## Bug Fixes
+
+* correctly add bot master to userSet in whitelist mode ([95ff6a8e](https://github.com/Samarium150/mirai-console-lolicon/commits/95ff6a8e), closes [#53](https://github.com/Samarium150/mirai-console-lolicon/issues/53))
 <a name="4.1.0"></a>
 ## 4.1.0 (2021/09/10)
 
