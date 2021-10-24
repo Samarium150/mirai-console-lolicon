@@ -157,7 +157,7 @@ object Utils {
                     subject == null -> true
                     subject is User && !PluginData.userSet.contains(subject.id) -> true
                     subject is Group && !PluginData.groupSet.contains(subject.id) -> true
-                    else -> true
+                    else -> false
                 }
             }
             else -> true
