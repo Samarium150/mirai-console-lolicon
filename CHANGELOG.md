@@ -1,3 +1,10 @@
+<a name="4.1.3"></a>
+# 4.1.3 (2021/11/24)
+
+
+## Bug Fixes
+
+* resolve permission-granting conflict with LuckPerms ([75a83f20](https://github.com/Samarium150/mirai-console-lolicon/commits/75a83f20))
 <a name="4.1.2"></a>
 # 4.1.2 (2021/10/24)
 
