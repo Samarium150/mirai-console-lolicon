@@ -41,7 +41,7 @@ import java.net.Proxy
 object Main: KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.samarium150.mirai-console-lolicon",
-        version = "4.1.2",
+        version = "4.1.3",
         name = "mirai-console-lolicon"
     )
 ) {
@@ -101,7 +101,12 @@ object Main: KotlinPlugin(
          * <br>
          * 授予权限
          */
-        AbstractPermitteeId.AnyContact.permit(Lolicon.permission)
+        try {
+            AbstractPermitteeId.AnyContact.permit(Lolicon.permission)
+        } catch (e: Exception) {
+            logger.warning(e)
+            logger.warning("无法自动授予权限，请自行使用权限管理来授予权限")
+        }
 
         logger.info("Plugin mirai-console-lolicon loaded")
     }
@@ -117,7 +122,12 @@ object Main: KotlinPlugin(
          * <br>
          * 撤销权限
          */
-        AbstractPermitteeId.AnyContact.cancel(Lolicon.permission, true)
+        try {
+            AbstractPermitteeId.AnyContact.cancel(Lolicon.permission, true)
+        } catch (e: Exception) {
+            logger.warning(e)
+            logger.warning("无法自动撤销权限，请自行使用权限管理来撤销权限")
+        }
 
         /**
          * Unregister commands

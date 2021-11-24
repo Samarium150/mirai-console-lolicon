@@ -5,13 +5,13 @@ plugins {
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.7.1"
+    id("net.mamoe.mirai-console") version "2.8.2"
     id("org.jetbrains.dokka") version "1.5.0"
     id("com.geoffgranum.gradle-conventional-changelog") version "0.3.1"
 }
 
 group = "com.github.samarium150"
-version = "4.1.2"
+version = "4.1.3"
 
 repositories {
     mavenLocal()
