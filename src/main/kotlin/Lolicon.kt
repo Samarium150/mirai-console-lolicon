@@ -20,6 +20,7 @@ import kotlinx.coroutines.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import net.mamoe.mirai.console.command.CommandSender
+import net.mamoe.mirai.console.command.CommandSenderOnMessage
 import net.mamoe.mirai.console.command.CompositeCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.plugin.jvm.reloadPluginConfig
@@ -86,8 +87,8 @@ object Lolicon: CompositeCommand(
     @OptIn(DelicateCoroutinesApi::class)
     @SubCommand("get", "来一张")
     @Description("根据标签发送涩图, 不提供则随机发送一张")
-    suspend fun CommandSender.get(tags: String = "") {
-        if (!Utils.isPermitted(subject)) {
+    suspend fun CommandSenderOnMessage<*>.get(tags: String = "") {
+        if (!Utils.isPermitted(subject, user)) {
             val where = if (subject is Group) "@${(subject as Group).id}" else ""
             Main.logger.info("当前模式为'${PluginConfig.mode}'，${user?.id}${where}的命令已被无视")
             return
@@ -191,7 +192,7 @@ object Lolicon: CompositeCommand(
     @SubCommand("adv", "高级")
     @Description("根据JSON字符串发送涩图")
     suspend fun CommandSender.advanced(json: String) {
-        if (!Utils.isPermitted(subject)) {
+        if (!Utils.isPermitted(subject, user)) {
             val where = if (subject is Group) "@${(subject as Group).id}" else ""
             Main.logger.info("当前模式为'${PluginConfig.mode}'，${user?.id}${where}的命令已被无视")
             return

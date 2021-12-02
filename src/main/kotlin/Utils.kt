@@ -135,20 +135,22 @@ object Utils {
     }
 
     /**
-     * Is the subject permitted to use the bot
+     * Is the subject/user permitted to use the bot
      * <br>
      * 是否能执行命令
      *
      * @param subject
+     * @param user
      * @return
      */
-    fun isPermitted(subject: Contact?): Boolean {
+    fun isPermitted(subject: Contact?, user: User?): Boolean {
         return when (PluginConfig.mode) {
             "whitelist" -> {
                 when {
                     subject == null -> true
                     subject is User && PluginData.userSet.contains(subject.id) -> true
-                    subject is Group && PluginData.groupSet.contains(subject.id) -> true
+                    subject is Group &&
+                        PluginData.groupSet.contains(subject.id) && PluginData.userSet.contains(user?.id) -> true
                     else -> false
                 }
             }
@@ -156,7 +158,8 @@ object Utils {
                 when {
                     subject == null -> true
                     subject is User && !PluginData.userSet.contains(subject.id) -> true
-                    subject is Group && !PluginData.groupSet.contains(subject.id) -> true
+                    subject is Group &&
+                        !PluginData.groupSet.contains(subject.id) && !PluginData.userSet.contains(user?.id) -> true
                     else -> false
                 }
             }
