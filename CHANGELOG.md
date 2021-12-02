@@ -1,3 +1,10 @@
+<a name="4.1.4"></a>
+# 4.1.4 (2021/12/02)
+
+
+## Bug Fixes
+
+* blacklisted users can use commands in normal groups ([d2fbdc7a](https://github.com/Samarium150/mirai-console-lolicon/commits/d2fbdc7a), closes [#59](https://github.com/Samarium150/mirai-console-lolicon/issues/59))
 <a name="4.1.3"></a>
 # 4.1.3 (2021/11/24)
 
