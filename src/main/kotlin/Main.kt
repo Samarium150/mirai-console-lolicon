@@ -38,7 +38,7 @@ import java.net.Proxy
  * @constructor Create a KotlinPlugin instance <br> 实例化插件
  * @see net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
  */
-object Main: KotlinPlugin(
+object Main : KotlinPlugin(
     JvmPluginDescription(
         id = "com.github.samarium150.mirai-console-lolicon",
         version = "4.2.0",

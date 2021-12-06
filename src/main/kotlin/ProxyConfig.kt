@@ -12,7 +12,7 @@ import net.mamoe.mirai.console.data.value
  * @constructor Create empty Proxy config
  * @see net.mamoe.mirai.console.data.AutoSavePluginConfig
  */
-object ProxyConfig: AutoSavePluginConfig("ProxyConfig") {
+object ProxyConfig : AutoSavePluginConfig("ProxyConfig") {
 
     /**
      * Type

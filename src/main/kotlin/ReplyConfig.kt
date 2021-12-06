@@ -12,7 +12,8 @@ import net.mamoe.mirai.console.data.value
  * @constructor Create a Reply config instance <br> 实例化回复配置
  * @see net.mamoe.mirai.console.data.AutoSavePluginConfig
  */
-object ReplyConfig: AutoSavePluginConfig("ReplyConfig") {
+object ReplyConfig : AutoSavePluginConfig("ReplyConfig") {
+
 
     /**
      * API returns errors
@@ -37,6 +38,13 @@ object ReplyConfig: AutoSavePluginConfig("ReplyConfig") {
      */
     @ValueDescription("指令未冷却")
     val inCooldown: String by value("你怎么冲得到处都是")
+
+    /**
+     * Tag is filtered out
+     * <br>
+     * 标签被过滤
+     */
+    val filteredTag: String by value("该图片标签已被过滤，请换个标签再试")
 
     /**
      * Network error

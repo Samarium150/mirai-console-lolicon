@@ -42,7 +42,7 @@ import java.net.URL
  * @constructor Create a CompositeCommand instance <br> 实例化命令
  * @see net.mamoe.mirai.console.command.CompositeCommand
  */
-object Lolicon: CompositeCommand(
+object Lolicon : CompositeCommand(
     Main, primaryName = "lolicon",
     secondaryNames = CommandConfig.lolicon
 ) {
@@ -99,8 +99,10 @@ object Lolicon: CompositeCommand(
         val (r18, recall, cooldown) = ExecutionConfig.create(subject)
         val tags = tagArgs.joinToString(" ")
         val body = if (tags.isNotEmpty())
-            RequestBody(r18, 1, listOf(), "", Utils.processTags(tags),
-                listOf(PluginConfig.size), PluginConfig.proxy)
+            RequestBody(
+                r18, 1, listOf(), "", Utils.processTags(tags),
+                listOf(PluginConfig.size), PluginConfig.proxy
+            )
         else RequestBody(r18, 1, listOf(), tags, listOf(), listOf(PluginConfig.size), PluginConfig.proxy)
         Main.logger.info(body.toString())
         val response: ResponseBody?
@@ -122,6 +124,10 @@ object Lolicon: CompositeCommand(
         }
         try {
             val imageData = response.data[0]
+            if (!Utils.areTagsAllowed(imageData.tags)) {
+                sendMessage(ReplyConfig.filteredTag)
+                return
+            }
             val url = imageData.urls[PluginConfig.size] ?: return
             val imgInfoReceipt =
                 if (PluginConfig.verbose || subject == null) sendMessage(imageData.toReadable())
@@ -156,13 +162,14 @@ object Lolicon: CompositeCommand(
                         GlobalScope.launch {
                             Timer.cooldown(subject, cooldown)
                             withContext(Dispatchers.Default) {
-                                Main.logger.info(imgReceipt.target.toString()+"命令已冷却")
+                                Main.logger.info(imgReceipt.target.toString() + "命令已冷却")
                             }
                         }
                     }
                 }
             } catch (e: Exception) {
                 Main.logger.error(e)
+                sendMessage(ReplyConfig.networkError)
             } finally {
                 @Suppress("BlockingMethodInNonBlockingContext")
                 stream?.close()
@@ -263,6 +270,7 @@ object Lolicon: CompositeCommand(
                     imageInfoMsgBuilder.add("\n")
                 } catch (e: Exception) {
                     Main.logger.error(e)
+                    sendMessage(ReplyConfig.networkError)
                 } finally {
                     @Suppress("BlockingMethodInNonBlockingContext")
                     stream?.close()
@@ -286,7 +294,7 @@ object Lolicon: CompositeCommand(
                     GlobalScope.launch {
                         Timer.cooldown(subject, cooldown)
                         withContext(Dispatchers.Default) {
-                            Main.logger.info(imgReceipt.target.toString()+"命令已冷却")
+                            Main.logger.info(imgReceipt.target.toString() + "命令已冷却")
                         }
                     }
                 }

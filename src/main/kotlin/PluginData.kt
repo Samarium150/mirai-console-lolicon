@@ -28,7 +28,7 @@ import net.mamoe.mirai.console.data.value
  * @constructor Create a plugin config instance <br> 实例化插件数据
  * @see net.mamoe.mirai.console.data.AutoSavePluginData
  */
-object PluginData: AutoSavePluginData("Data") {
+object PluginData : AutoSavePluginData("Data") {
 
     /**
      * User set

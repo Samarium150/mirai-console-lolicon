@@ -125,4 +125,20 @@ object PluginConfig : AutoSavePluginConfig("Config") {
      */
     @ValueDescription("默认的冷却时间(单位：s)")
     var cooldown: Int by value(60)
+
+    /**
+     * Tag filter mode
+     * <br>
+     * 标签过滤模式
+     */
+    @ValueDescription("标签过滤模式: none/whitelist/blacklist")
+    val tagFilterMode: String by value("none")
+
+    /**
+     * Tag filter
+     * <br>
+     * 标签过滤器
+     */
+    @ValueDescription("标签过滤器，白名单模式只发送包含指定标签的图片，黑名单模式只发送不包含指定标签的图片。(仅Get命令，Adv命令中不生效)")
+    val tagFilter: MutableSet<String> by value()
 }

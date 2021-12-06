@@ -122,6 +122,64 @@ object Utils {
         return result.toList()
     }
 
+    /**
+     * Is the given [tag] allowed
+     *
+     * @param tag
+     * @return
+     */
+    private fun isTagAllowed(tag: String): Boolean {
+        return when (PluginConfig.tagFilterMode) {
+            "none" -> true
+            "whitelist" -> {
+                for (filter in PluginConfig.tagFilter) {
+                    if (filter.toRegex(setOf(RegexOption.IGNORE_CASE)).matches(tag)) return true
+                }
+                false
+            }
+            "blacklist" -> {
+                for (filter in PluginConfig.tagFilter) {
+                    if (filter.toRegex(setOf(RegexOption.IGNORE_CASE)).matches(tag)) return false
+                }
+                true
+            }
+            else -> true
+        }
+    }
+
+    /**
+     * Are these given [tags] allowed
+     *
+     * @param tags
+     * @return
+     */
+    fun areTagsAllowed(tags: List<String>): Boolean {
+        return when (PluginConfig.tagFilterMode) {
+            "none" -> true
+            "whitelist" -> {
+                var flag = false
+                for (tag in tags) {
+                    if (isTagAllowed(tag)) {
+                        flag = true
+                        break
+                    }
+                }
+                flag
+            }
+            "blacklist" -> {
+                var flag = true
+                for (tag in tags) {
+                    if (!isTagAllowed(tag)) {
+                        flag = false
+                        break
+                    }
+                }
+                flag
+            }
+            else -> true
+        }
+    }
+
     private val sizeMap: Map<String, Int> = mapOf(
         "original" to 0,
         "regular" to 1,
@@ -131,7 +189,7 @@ object Utils {
     )
 
     fun getUrl(urls: Map<String, String>): String? {
-        return urls[urls.keys.sortedBy { sizeMap[it] } [0]]
+        return urls[urls.keys.sortedBy { sizeMap[it] }[0]]
     }
 
     /**

@@ -12,7 +12,7 @@ import net.mamoe.mirai.console.data.value
  * @constructor Create a Command config instance <br> 实例化命令配置
  * @see net.mamoe.mirai.console.data.AutoSavePluginConfig
  */
-object CommandConfig: AutoSavePluginConfig("CommandConfig") {
+object CommandConfig : AutoSavePluginConfig("CommandConfig") {
 
     /**
      * Composite command secondary names
