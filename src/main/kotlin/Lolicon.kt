@@ -20,7 +20,6 @@ import kotlinx.coroutines.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import net.mamoe.mirai.console.command.CommandSender
-import net.mamoe.mirai.console.command.CommandSenderOnMessage
 import net.mamoe.mirai.console.command.CompositeCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.plugin.jvm.reloadPluginConfig
@@ -77,17 +76,17 @@ object Lolicon: CompositeCommand(
     }
 
     /**
-     * Subcommand get, get the image according to [tags]
+     * Subcommand get, get the image according to [tagArgs]
      * <br>
-     * 子命令get，根据 [tags] 从API获取图片
+     * 子命令get，根据 [tagArgs] 从API获取图片
      *
      * @receiver [CommandSender] Command sender <br> 指令发送者
-     * @param tags keyword for searching <br> 关键词
+     * @param tagArgs keyword for searching <br> 关键词
      */
     @OptIn(DelicateCoroutinesApi::class)
     @SubCommand("get", "来一张")
     @Description("根据标签发送涩图, 不提供则随机发送一张")
-    suspend fun CommandSenderOnMessage<*>.get(tags: String = "") {
+    suspend fun CommandSender.get(vararg tagArgs: String) {
         if (!Utils.isPermitted(subject, user)) {
             val where = if (subject is Group) "@${(subject as Group).id}" else ""
             Main.logger.info("当前模式为'${PluginConfig.mode}'，${user?.id}${where}的命令已被无视")
@@ -98,6 +97,7 @@ object Lolicon: CompositeCommand(
             return
         }
         val (r18, recall, cooldown) = ExecutionConfig.create(subject)
+        val tags = tagArgs.joinToString(" ")
         val body = if (tags.isNotEmpty())
             RequestBody(r18, 1, listOf(), "", Utils.processTags(tags),
                 listOf(PluginConfig.size), PluginConfig.proxy)
@@ -183,20 +183,21 @@ object Lolicon: CompositeCommand(
     /**
      * Advanced get
      * <br>
-     * 子命令adv，根据 [json] 获取图片
+     * 子命令adv，根据 [jsonArgs] 获取图片
      *
-     * @param json JSON字符串
+     * @param jsonArgs JSON字符串
      */
     @Suppress("unused")
     @OptIn(DelicateCoroutinesApi::class, kotlinx.serialization.ExperimentalSerializationApi::class)
     @SubCommand("adv", "高级")
     @Description("根据JSON字符串发送涩图")
-    suspend fun CommandSender.advanced(json: String) {
+    suspend fun CommandSender.advanced(vararg jsonArgs: String) {
         if (!Utils.isPermitted(subject, user)) {
             val where = if (subject is Group) "@${(subject as Group).id}" else ""
             Main.logger.info("当前模式为'${PluginConfig.mode}'，${user?.id}${where}的命令已被无视")
             return
         }
+        val json = jsonArgs.joinToString(" ")
         val (r18, recall, cooldown) = ExecutionConfig.create(subject)
         val body: RequestBody?
         try {
@@ -206,6 +207,7 @@ object Lolicon: CompositeCommand(
             Main.logger.warning(e)
             return
         }
+        Main.logger.info(body.toString())
         if (body.r18 != r18) {
             if (subject is Group && !Utils.checkMemberPerm(user)) {
                 sendMessage(ReplyConfig.nonAdminPermissionDenied)
