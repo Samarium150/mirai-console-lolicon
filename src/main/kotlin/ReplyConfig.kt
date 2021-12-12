@@ -44,6 +44,7 @@ object ReplyConfig : AutoSavePluginConfig("ReplyConfig") {
      * <br>
      * 标签被过滤
      */
+    @ValueDescription("标签被过滤")
     val filteredTag: String by value("该图片标签已被过滤，请换个标签再试")
 
     /**

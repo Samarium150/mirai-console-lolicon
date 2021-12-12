@@ -46,7 +46,7 @@ data class RequestBody(
     val keyword: String? = "",
     val tag: List<List<String>>? = null,
     val size: List<String>? = null,
-    val proxy: String = "i.pixiv.re",
+    val proxy: String = "https://i.pixiv.re",
     val dataAfter: Long? = null,
     val dataBefore: Long? = null,
     val dsc: Boolean? = null

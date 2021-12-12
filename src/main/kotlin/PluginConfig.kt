@@ -92,7 +92,7 @@ object PluginConfig : AutoSavePluginConfig("Config") {
      * 自定义代理
      */
     @ValueDescription("获取Pixiv图片的代理")
-    val proxy: String by value("i.pixiv.re")
+    val proxy: String by value("https://i.pixiv.re")
 
     /**
      * Default recall time
