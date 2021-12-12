@@ -1,4 +1,12 @@
-<a name="4.2.0"></a>
+<a name="4.2.1"></a>
+
+# 4.2.1 (2021/12/12)
+
+## Bug Fixes
+
+* add https to default proxy ([5fb2c23a](https://github.com/Samarium150/mirai-console-lolicon/commits/5fb2c23a),
+  closes [#62](https://github.com/Samarium150/mirai-console-lolicon/issues/62))
+  <a name="4.2.0"></a>
 
 ## 4.2.0 (2021/12/06)
 
@@ -120,11 +128,10 @@
 
 ## Breaking Changes
 
-* due to [0de677c3](https://github.com/Samarium150/mirai-console-lolicon/commits/0de677c38ce09e26202c4b6f2cd2874e8a6f1a27),
-  Fixes #20;
-  change downloading image logic and deprecate timeout settings;
-  add reload command;
-  update mirai-console to 2.3.2
+* due
+  to [0de677c3](https://github.com/Samarium150/mirai-console-lolicon/commits/0de677c38ce09e26202c4b6f2cd2874e8a6f1a27),
+  Fixes #20; change downloading image logic and deprecate timeout settings; add reload command; update mirai-console to
+  2.3.2
 
 <a name="2.2"></a>
 ## 2.2 (2021/01/26)
