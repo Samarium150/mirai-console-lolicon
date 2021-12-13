@@ -6,7 +6,8 @@
 
 * add https to default proxy ([5fb2c23a](https://github.com/Samarium150/mirai-console-lolicon/commits/5fb2c23a),
   closes [#62](https://github.com/Samarium150/mirai-console-lolicon/issues/62))
-  <a name="4.2.0"></a>
+
+<a name="4.2.0"></a>
 
 ## 4.2.0 (2021/12/06)
 
@@ -16,7 +17,8 @@
   closes [#60](https://github.com/Samarium150/mirai-console-lolicon/issues/60))
 * support tags filtering ([a44483c5](https://github.com/Samarium150/mirai-console-lolicon/commits/a44483c5),
   closes [#55](https://github.com/Samarium150/mirai-console-lolicon/issues/55))
-  <a name="4.1.4"></a>
+
+<a name="4.1.4"></a>
 
 # 4.1.4 (2021/12/02)
 
@@ -25,37 +27,43 @@
 * blacklisted users can use commands in normal
   groups ([d2fbdc7a](https://github.com/Samarium150/mirai-console-lolicon/commits/d2fbdc7a),
   closes [#59](https://github.com/Samarium150/mirai-console-lolicon/issues/59))
-  <a name="4.1.3"></a>
+
+<a name="4.1.3"></a>
 
 # 4.1.3 (2021/11/24)
 
 ## Bug Fixes
 
 * resolve permission-granting conflict with LuckPerms ([75a83f20](https://github.com/Samarium150/mirai-console-lolicon/commits/75a83f20))
+
 <a name="4.1.2"></a>
 # 4.1.2 (2021/10/24)
 
 ## Bug Fixes
 
 * correct blacklist logic ([5c4082c6](https://github.com/Samarium150/mirai-console-lolicon/commits/5c4082c6), closes [#56](https://github.com/Samarium150/mirai-console-lolicon/issues/56))
+
 <a name="4.1.1"></a>
 # 4.1.1 (2021/09/13)
 
 ## Bug Fixes
 
 * correctly add bot master to userSet in whitelist mode ([95ff6a8e](https://github.com/Samarium150/mirai-console-lolicon/commits/95ff6a8e), closes [#53](https://github.com/Samarium150/mirai-console-lolicon/issues/53))
+
 <a name="4.1.0"></a>
 ## 4.1.0 (2021/09/10)
 
 ## Features
 
 * add white/blacklist and verbose mode ([3567f16c](https://github.com/Samarium150/mirai-console-lolicon/commits/3567f16c), closes [#50](https://github.com/Samarium150/mirai-console-lolicon/issues/50), [#47](https://github.com/Samarium150/mirai-console-lolicon/issues/47))
+
 <a name="4.0.0"></a>
 # 4.0.0 (2021/08/31)
 
 ## Features
 
 * implement advanced get ([e8b03171](https://github.com/Samarium150/mirai-console-lolicon/commits/e8b03171))
+
 <a name="4.0.0-beta.1"></a>
 ## 4.0.0-beta.1 (2021/07/18)
 
@@ -74,24 +82,28 @@
 ## Bug Fixes
 
 * replace deprecated functions ([d4aa0fb6](https://github.com/Samarium150/mirai-console-lolicon/commits/d4aa0fb6))
+
 <a name="3.4.0"></a>
 ## 3.4.0 (2021/05/08)
 
 ## Features
 
 * add recalling img info option ([5c0a828e](https://github.com/Samarium150/mirai-console-lolicon/commits/5c0a828e))
+
 <a name="3.3.1"></a>
 ## 3.3.1 (2021/05/01)
 
 ## Bug Fixes
 
 * re-implement proxy ([09523e14](https://github.com/Samarium150/mirai-console-lolicon/commits/09523e14))
+
 <a name="3.3.0"></a>
 ## 3.3.0 (2021/04/26)
 
 ## Features
 
 * add custom proxy settings; fix #37 ([5e837eb8](https://github.com/Samarium150/mirai-console-lolicon/commits/5e837eb8))
+
 <a name="3.2.1"></a>
 ## 3.2.1 (2021/04/15)
 
@@ -103,12 +115,14 @@
 ## Features
 
 * add custom caching and proxy options;  ([7d8d123a](https://github.com/Samarium150/mirai-console-lolicon/commits/7d8d123a), closes [#34](https://github.com/Samarium150/mirai-console-lolicon/issues/34))
+
 <a name="3.1.0"></a>
 ## 3.1.0 (2021/02/15)
 
 ## Features
 
 * enable custom reply messages, add experimental custom command name. ([7325face](https://github.com/Samarium150/mirai-console-lolicon/commits/7325face))
+
 <a name="3.0.1"></a>
 ## 3.0.1 (2021/02/11)
 
@@ -139,6 +153,7 @@
 ## Features
 
 * add options for timeout ([8c5c93cb](https://github.com/Samarium150/mirai-console-lolicon/commits/8c5c93cb), closes [#26](https://github.com/Samarium150/mirai-console-lolicon/issues/26))
+
 <a name="2.1"></a>
 ## 2.1 (2021/01/25)
 
@@ -146,6 +161,7 @@
 
 * resolve the conflict with chat-command ([4a259046](https://github.com/Samarium150/mirai-console-lolicon/commits/4a259046), closes [#22](https://github.com/Samarium150/mirai-console-lolicon/issues/22))
 * merge #23 ([9f5a16c7](https://github.com/Samarium150/mirai-console-lolicon/commits/9f5a16c7))
+
 <a name="2.0"></a>
 # 2.0 (2021/01/20)
 
@@ -177,42 +193,49 @@
 ## Bug Fixes
 
 * **#10:** change r18 setting logic ([6799000e](https://github.com/Samarium150/mirai-console-lolicon/commits/6799000e))
+
 <a name="1.4.2"></a>
 ## 1.4.2 (2021/01/07)
 
 ## Bug Fixes
 
 * **#9:** add one more condition in exceptions handling ([84eecbd4](https://github.com/Samarium150/mirai-console-lolicon/commits/84eecbd4))
+
 <a name="1.4.1"></a>
 ## 1.4.1 (2021/01/06)
 
 ## Bug Fixes
 
 * **#4:** detail exceptions handling ([69508d30](https://github.com/Samarium150/mirai-console-lolicon/commits/69508d30))
+
 <a name="1.4"></a>
 # 1.4 (2021/01/04)
 
 ## Features
 
 * implement cooldown time customization ([9de06dc9](https://github.com/Samarium150/mirai-console-lolicon/commits/9de06dc9))
+
 <a name="1.3"></a>
 # 1.3 (2020/12/31)
 
 ## Bug Fixes
 
 * add error checking ([8775247b](https://github.com/Samarium150/mirai-console-lolicon/commits/8775247b))
+
 <a name="1.2"></a>
 # 1.2 (2020/12/31)
 
 ## Bug Fixes
 
 * make the r18 property same as the Lolicon API ([9ed7f647](https://github.com/Samarium150/mirai-console-lolicon/commits/9ed7f647))
+
 <a name="1.1"></a>
 # 1.1 (2020/12/28)
 
 ## Features
 
 * update to mirai-console 2.0-M2 ([834cc213](https://github.com/Samarium150/mirai-console-lolicon/commits/834cc213))
+
 <a name="1.0"></a>
 # 1.0 (2020/12/25)
 

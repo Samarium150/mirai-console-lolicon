@@ -14,9 +14,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package com.github.samarium150.mirai.plugin
+package io.github.samarium150.mirai.plugin.command
 
+import io.github.samarium150.mirai.plugin.MiraiConsoleLolicon
+import io.github.samarium150.mirai.plugin.config.CommandConfig
+import io.github.samarium150.mirai.plugin.config.ExecutionConfig
+import io.github.samarium150.mirai.plugin.config.PluginConfig
+import io.github.samarium150.mirai.plugin.config.ReplyConfig
+import io.github.samarium150.mirai.plugin.data.PluginData
+import io.github.samarium150.mirai.plugin.data.RequestBody
+import io.github.samarium150.mirai.plugin.data.ResponseBody
+import io.github.samarium150.mirai.plugin.util.RequestHandler
+import io.github.samarium150.mirai.plugin.util.Timer
+import io.github.samarium150.mirai.plugin.util.Utils
 import kotlinx.coroutines.*
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import net.mamoe.mirai.console.command.CommandSender
@@ -32,56 +44,41 @@ import net.mamoe.mirai.message.data.FlashImage
 import net.mamoe.mirai.message.data.MessageChainBuilder
 import java.io.File
 import java.io.InputStream
-import java.net.URL
 
 /**
- * Command instance
- * <br>
  * 命令实例
  *
- * @constructor Create a CompositeCommand instance <br> 实例化命令
+ * @constructor 实例化命令
  * @see net.mamoe.mirai.console.command.CompositeCommand
  */
 object Lolicon : CompositeCommand(
-    Main, primaryName = "lolicon",
+    MiraiConsoleLolicon,
+    primaryName = "lolicon",
     secondaryNames = CommandConfig.lolicon
 ) {
-    /**
-     * Help information
-     * <br>
-     * 帮助信息
-     */
+
     private val help: String
+    private val logger = MiraiConsoleLolicon.logger
 
     /**
-     * set prefix to be optional
-     * <br>
-     * 忽略前缀
+     * 忽略命令前缀
      */
     @ExperimentalCommandDescriptors
     @ConsoleExperimentalApi
     override val prefixOptional: Boolean = true
 
     /**
-     * Read help info from text when initializing
-     * <br>
-     * 初始化时从文本文件读取帮助信息文件
+     * 初始化时从文本文件读取帮助信息
      */
     init {
         val helpFileName = "help.txt"
-        val helpFile: URL? = javaClass.classLoader.getResource(helpFileName)
-        if (helpFile != null) {
-            help = helpFile.readText()
-        } else throw Exception("没有找到 $helpFileName 文件")
+        help = javaClass.classLoader.getResource("help.txt")?.readText() ?: throw Exception("没有找到 $helpFileName 文件")
     }
 
     /**
-     * Subcommand get, get the image according to [tagArgs]
-     * <br>
      * 子命令get，根据 [tagArgs] 从API获取图片
      *
-     * @receiver [CommandSender] Command sender <br> 指令发送者
-     * @param tagArgs keyword for searching <br> 关键词
+     * @param tagArgs 关键词
      */
     @OptIn(DelicateCoroutinesApi::class)
     @SubCommand("get", "来一张")
@@ -89,7 +86,7 @@ object Lolicon : CompositeCommand(
     suspend fun CommandSender.get(vararg tagArgs: String) {
         if (!Utils.isPermitted(subject, user)) {
             val where = if (subject is Group) "@${(subject as Group).id}" else ""
-            Main.logger.info("当前模式为'${PluginConfig.mode}'，${user?.id}${where}的命令已被无视")
+            logger.info("当前模式为'${PluginConfig.mode}'，${user?.id}${where}的命令已被无视")
             return
         }
         if (!Timer.getCooldown(subject)) {
@@ -104,18 +101,18 @@ object Lolicon : CompositeCommand(
                 listOf(PluginConfig.size), PluginConfig.proxy
             )
         else RequestBody(r18, 1, listOf(), tags, listOf(), listOf(PluginConfig.size), PluginConfig.proxy)
-        Main.logger.info(body.toString())
+        logger.info(body.toString())
         val response: ResponseBody?
         try {
             response = RequestHandler.get(body)
         } catch (e: Exception) {
-            Main.logger.error(e)
+            logger.error(e)
             return
         }
-        Main.logger.info(response.toString())
+        logger.info(response.toString())
         if (response.error.isNotEmpty()) {
             sendMessage(ReplyConfig.invokeException)
-            Main.logger.warning(response.error)
+            logger.warning(response.error)
             return
         }
         if (response.data.isEmpty()) {
@@ -153,8 +150,8 @@ object Lolicon : CompositeCommand(
                         GlobalScope.launch {
                             val result = imgReceipt.recallIn((recall * 1000).toLong()).awaitIsSuccess()
                             withContext(Dispatchers.Default) {
-                                if (!result) Main.logger.warning(imgReceipt.target.toString() + "图片撤回失败")
-                                else Main.logger.info(imgReceipt.target.toString() + "图片已撤回")
+                                if (!result) logger.warning(imgReceipt.target.toString() + "图片撤回失败")
+                                else logger.info(imgReceipt.target.toString() + "图片已撤回")
                             }
                         }
                     if (cooldown > 0) {
@@ -162,13 +159,13 @@ object Lolicon : CompositeCommand(
                         GlobalScope.launch {
                             Timer.cooldown(subject, cooldown)
                             withContext(Dispatchers.Default) {
-                                Main.logger.info(imgReceipt.target.toString() + "命令已冷却")
+                                logger.info(imgReceipt.target.toString() + "命令已冷却")
                             }
                         }
                     }
                 }
             } catch (e: Exception) {
-                Main.logger.error(e)
+                logger.error(e)
                 sendMessage(ReplyConfig.networkError)
             } finally {
                 @Suppress("BlockingMethodInNonBlockingContext")
@@ -177,31 +174,29 @@ object Lolicon : CompositeCommand(
                     GlobalScope.launch {
                         val result = imgInfoReceipt.recallIn((recall * 1000).toLong()).awaitIsSuccess()
                         withContext(Dispatchers.Default) {
-                            if (!result) Main.logger.warning(imgInfoReceipt.target.toString() + "图片信息撤回失败")
-                            else Main.logger.info(imgInfoReceipt.target.toString() + "图片信息已撤回")
+                            if (!result) logger.warning(imgInfoReceipt.target.toString() + "图片信息撤回失败")
+                            else logger.info(imgInfoReceipt.target.toString() + "图片信息已撤回")
                         }
                     }
             }
         } catch (e: Exception) {
-            Main.logger.error(e)
+            logger.error(e)
         }
     }
 
     /**
-     * Advanced get
-     * <br>
-     * 子命令adv，根据 [jsonArgs] 获取图片
+     * 子命令adv，根据 [jsonArgs] 从API获取图片
      *
      * @param jsonArgs JSON字符串
      */
     @Suppress("unused")
-    @OptIn(DelicateCoroutinesApi::class, kotlinx.serialization.ExperimentalSerializationApi::class)
+    @OptIn(DelicateCoroutinesApi::class, ExperimentalSerializationApi::class)
     @SubCommand("adv", "高级")
     @Description("根据JSON字符串发送涩图")
     suspend fun CommandSender.advanced(vararg jsonArgs: String) {
         if (!Utils.isPermitted(subject, user)) {
             val where = if (subject is Group) "@${(subject as Group).id}" else ""
-            Main.logger.info("当前模式为'${PluginConfig.mode}'，${user?.id}${where}的命令已被无视")
+            logger.info("当前模式为'${PluginConfig.mode}'，${user?.id}${where}的命令已被无视")
             return
         }
         val json = jsonArgs.joinToString(" ")
@@ -211,10 +206,10 @@ object Lolicon : CompositeCommand(
             body = Json.decodeFromString<RequestBody>(json)
         } catch (e: Exception) {
             sendMessage(ReplyConfig.invalidJson)
-            Main.logger.warning(e)
+            logger.warning(e)
             return
         }
-        Main.logger.info(body.toString())
+        logger.info(body.toString())
         if (body.r18 != r18) {
             if (subject is Group && !Utils.checkMemberPerm(user)) {
                 sendMessage(ReplyConfig.nonAdminPermissionDenied)
@@ -229,13 +224,13 @@ object Lolicon : CompositeCommand(
         try {
             response = RequestHandler.get(body)
         } catch (e: Exception) {
-            Main.logger.error(e)
+            logger.error(e)
             return
         }
-        Main.logger.info(response.toString())
+        logger.info(response.toString())
         if (response.error.isNotEmpty()) {
             sendMessage(ReplyConfig.invokeException)
-            Main.logger.warning(response.error)
+            logger.warning(response.error)
             return
         }
         if (response.data.isEmpty()) {
@@ -269,7 +264,7 @@ object Lolicon : CompositeCommand(
                     imageInfoMsgBuilder.add(imageData.toReadable())
                     imageInfoMsgBuilder.add("\n")
                 } catch (e: Exception) {
-                    Main.logger.error(e)
+                    logger.error(e)
                     sendMessage(ReplyConfig.networkError)
                 } finally {
                     @Suppress("BlockingMethodInNonBlockingContext")
@@ -285,8 +280,8 @@ object Lolicon : CompositeCommand(
                     GlobalScope.launch {
                         val result = imgReceipt.recallIn((recall * 1000).toLong()).awaitIsSuccess()
                         withContext(Dispatchers.Default) {
-                            if (!result) Main.logger.warning(imgReceipt.target.toString() + "图片撤回失败")
-                            else Main.logger.info(imgReceipt.target.toString() + "图片已撤回")
+                            if (!result) logger.warning(imgReceipt.target.toString() + "图片撤回失败")
+                            else logger.info(imgReceipt.target.toString() + "图片已撤回")
                         }
                     }
                 if (cooldown > 0) {
@@ -294,7 +289,7 @@ object Lolicon : CompositeCommand(
                     GlobalScope.launch {
                         Timer.cooldown(subject, cooldown)
                         withContext(Dispatchers.Default) {
-                            Main.logger.info(imgReceipt.target.toString() + "命令已冷却")
+                            logger.info(imgReceipt.target.toString() + "命令已冷却")
                         }
                     }
                 }
@@ -303,23 +298,20 @@ object Lolicon : CompositeCommand(
                 GlobalScope.launch {
                     val result = imgInfoReceipt.recallIn((recall * 1000).toLong()).awaitIsSuccess()
                     withContext(Dispatchers.Default) {
-                        if (!result) Main.logger.warning(imgInfoReceipt.target.toString() + "图片信息撤回失败")
-                        else Main.logger.info(imgInfoReceipt.target.toString() + "图片信息已撤回")
+                        if (!result) logger.warning(imgInfoReceipt.target.toString() + "图片信息撤回失败")
+                        else logger.info(imgInfoReceipt.target.toString() + "图片信息已撤回")
                     }
                 }
         } catch (e: Exception) {
-            Main.logger.error(e)
+            logger.error(e)
         }
     }
 
     /**
-     * Subcommand set, set [property] and its [value]
-     * <br>
-     * 子命令set，设置属性和对应的值
+     * 子命令set，设置 [property] 和对应的 [value]
      *
-     * @receiver [CommandSender] Command sender <br> 指令发送者
-     * @param property target property <br> 目标属性
-     * @param value corresponding value <br> 对应值
+     * @param property 目标属性
+     * @param value 对应值
      * @see PluginConfig
      * @see PluginData
      */
@@ -394,15 +386,14 @@ object Lolicon : CompositeCommand(
     }
 
     /**
-     * Add user id or group id to corresponding set
-     * <br>
-     * 添加用户id或群组id到对应的集合，用于黑白名单
+     * 子命令add, 添加用户id或群组id到对应的集合，用于黑白名单
      *
-     * @param type
-     * @param id
+     * @param type group/user
+     * @param id 目标ID
      */
     @Suppress("unused")
     @SubCommand("add", "添加")
+    @Description("添加用户id或群组id到对应的集合，用于黑白名单")
     suspend fun CommandSender.add(type: String, id: Long) {
         if (!Utils.checkMaster(user)) {
             sendMessage(ReplyConfig.nonMasterPermissionDenied)
@@ -427,12 +418,9 @@ object Lolicon : CompositeCommand(
     }
 
     /**
-     * Subcommand trust, add user to trusted set
-     * <br>
      * 子命令trust，将用户添加到受信任名单
      *
-     * @receiver [CommandSender] Command sender <br> 指令发送者
-     * @param id id of the target user <br> 目标QQ号
+     * @param id 目标ID
      */
     @Suppress("unused")
     @SubCommand("trust", "信任")
@@ -450,11 +438,8 @@ object Lolicon : CompositeCommand(
     }
 
     /**
-     * Subcommand distrust, remove user from trusted set
-     * <br>
      * 子命令distrust，将用户从受信任名单中移除
      *
-     * @receiver [CommandSender] Command sender <br> 指令发送者
      * @param id id of the target user <br> 目标QQ号
      */
     @Suppress("unused")
@@ -477,11 +462,7 @@ object Lolicon : CompositeCommand(
     }
 
     /**
-     * Subcommand reload, reload plugin configuration and data
-     * <br>
      * 子命令reload，重新载入插件配置和数据
-     *
-     * @receiver [CommandSender] Command sender <br> 指令发送者
      */
     @Suppress("unused")
     @SubCommand("reload", "重载")
@@ -494,17 +475,13 @@ object Lolicon : CompositeCommand(
             sendMessage(ReplyConfig.nonMasterPermissionDenied)
             return
         }
-        Main.reloadPluginConfig(PluginConfig)
-        Main.reloadPluginData(PluginData)
+        MiraiConsoleLolicon.reloadPluginConfig(PluginConfig)
+        MiraiConsoleLolicon.reloadPluginData(PluginData)
         sendMessage(ReplyConfig.reloaded)
     }
 
     /**
-     * SubCommand help, send help information
-     * <br>
      * 子命令help，获取帮助信息
-     *
-     * @receiver [CommandSender] Command sender <br> 指令发送者
      */
     @Suppress("unused")
     @SubCommand("help", "帮助")

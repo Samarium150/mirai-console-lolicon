@@ -1,3 +1,5 @@
+import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
 
 plugins {
@@ -5,13 +7,13 @@ plugins {
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.8.2"
-    id("org.jetbrains.dokka") version "1.5.0"
+    id("net.mamoe.mirai-console") version "2.8.3"
+    id("org.jetbrains.dokka") version "1.6.0"
     id("com.geoffgranum.gradle-conventional-changelog") version "0.3.1"
 }
 
-group = "com.github.samarium150"
-version = "4.2.1"
+group = "io.github.samarium150"
+version = "5.0.0-beta.1"
 
 repositories {
     mavenLocal()
@@ -23,12 +25,12 @@ dependencies {
     implementation("io.ktor:ktor-client-serialization:1.5.4")
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
+tasks.withType<KotlinCompile>().all {
     kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
     kotlinOptions.jvmTarget = "11"
 }
 
-tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
+tasks.withType<DokkaTask>().configureEach {
     dokkaSourceSets {
         configureEach {
             includeNonPublic.set(true)
@@ -36,7 +38,7 @@ tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
             sourceLink {
                 localDirectory.set(file("src/main/kotlin"))
                 remoteUrl.set(
-                    URL("https://github.com/Samarium150/mirai-console-lolicon/tree/master/src/main/kotlin")
+                    URL("https://github.com/Samarium150/mirai-console-lolicon/tree/main/src/main/kotlin")
                 )
                 remoteLineSuffix.set("#L")
             }
@@ -49,5 +51,5 @@ changelog {
     appName = project.name
     versionNum = "$version"
     repoUrl = "https://github.com/Samarium150/mirai-console-lolicon"
-    trackerUrl = "https://github.com/Samarium150/mirai-console-lolicon"
+    trackerUrl = "https://github.com/Samarium150/mirai-console-lolicon/issues"
 }

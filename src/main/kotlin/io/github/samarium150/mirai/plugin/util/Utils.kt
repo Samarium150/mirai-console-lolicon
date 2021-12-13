@@ -14,68 +14,61 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package com.github.samarium150.mirai.plugin
+package io.github.samarium150.mirai.plugin.util
 
-import com.github.samarium150.mirai.plugin.Lolicon.set
+import io.github.samarium150.mirai.plugin.command.Lolicon
+import io.github.samarium150.mirai.plugin.command.Lolicon.set
+import io.github.samarium150.mirai.plugin.config.PluginConfig
+import io.github.samarium150.mirai.plugin.data.PluginData
+import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.contact.*
 import org.jetbrains.annotations.Nullable
 import java.net.Proxy
 
 /**
- * Object for utility functions
- * <br>
- * 实用函数
+ * 工具类
  *
- * @constructor Create a Utility instance <br> 实例化Utils
+ * @constructor 实例化工具类
  */
 object Utils {
 
     /**
-     * Check whether [user] is the bot owner
-     * <br>
      * 检查用户是否是Bot所有者
      *
-     * @param user target user <br> 目标用户
-     * @return checking result <br> 检查结果
+     * @param user 目标用户
+     * @return 检查结果
      */
     fun checkMaster(@Nullable user: User?): Boolean {
         return user == null || user.id == PluginConfig.master
     }
 
     /**
-     * Check whether [user] is trusted
-     * <br>
      * 检查用户是否受信任
      *
-     * @param user target user <br> 目标用户
-     * @return checking result <br> 检查结果
+     * @param user 目标用户
+     * @return 检查结果
      */
     fun checkUserPerm(@Nullable user: User?): Boolean {
         return user == null || PluginData.trustedUsers.contains(user.id)
     }
 
     /**
-     * Check whether [user] is a group owner or administrator
-     * <br>
      * 检查用户在群里的权限
      *
-     * @param user target user <br> 目标用户
-     * @return checking result <br> 检查结果
+     * @param user 目标用户
+     * @return 检查结果
      */
     fun checkMemberPerm(@Nullable user: User?): Boolean {
         return (user as Member).permission != MemberPermission.MEMBER
     }
 
     /**
-     * Convert [value] into a valid number
-     * for setting the corresponding property
-     * <br>
      * 将字符串转为整数值
      *
-     * @param value input string value <br> 输入的字符串
-     * @param type input property <br> 需要转化的类别
-     * @return integer value <br> 转换后的值
-     * @throws NumberFormatException if [value] is invalid <br> 数值非法时抛出
+     * @param value 输入的字符串
+     * @param type 需要转化的类别
+     * @return 转换后的值
+     * @throws NumberFormatException 数值非法时抛出
      * @see Lolicon.set
      */
     @Throws(NumberFormatException::class)
@@ -90,14 +83,12 @@ object Utils {
     }
 
     /**
-     * Get proxy type from the given string
-     * <br>
      * 根据输入值返回代理类型
      *
-     * @param value input string value <br> 输入的字符串
-     * @return [Proxy.Type] <br> 代理的类型
-     * @throws IllegalArgumentException if [value] is not [Proxy.Type] <br> 数值非法时抛出
-     * @see Proxy
+     * @param value 输入的字符串
+     * @return 代理的类型
+     * @throws IllegalArgumentException 数值非法时抛出
+     * @see Proxy.Type
      */
     @Throws(IllegalArgumentException::class)
     fun getProxyType(value: String): Proxy.Type {
@@ -110,10 +101,10 @@ object Utils {
     }
 
     /**
-     * Process tags
+     * 将字符串处理为标签列表
      *
-     * @param str
-     * @return
+     * @param str 输入的字符串
+     * @return 标签列表
      */
     fun processTags(str: String): List<List<String>> {
         val result: MutableList<List<String>> = listOf<List<String>>().toMutableList()
@@ -123,10 +114,10 @@ object Utils {
     }
 
     /**
-     * Is the given [tag] allowed
+     * 根据黑白名单检查标签是否合法
      *
-     * @param tag
-     * @return
+     * @param tag 标签
+     * @return 检查结果
      */
     private fun isTagAllowed(tag: String): Boolean {
         return when (PluginConfig.tagFilterMode) {
@@ -148,10 +139,10 @@ object Utils {
     }
 
     /**
-     * Are these given [tags] allowed
+     * 根据黑白名单检查标签列表中的标签是否合法
      *
-     * @param tags
-     * @return
+     * @param tags 标签列表
+     * @return 检查结果
      */
     fun areTagsAllowed(tags: List<String>): Boolean {
         return when (PluginConfig.tagFilterMode) {
@@ -193,13 +184,13 @@ object Utils {
     }
 
     /**
-     * Is the subject/user permitted to use the bot
-     * <br>
-     * 是否能执行命令
+     * 检查联系对象是否能执行命令
      *
-     * @param subject
-     * @param user
-     * @return
+     * @param subject 联系对象
+     * @param user 命令发起者
+     * @return 检查结果
+     * @see CommandSender.subject
+     * @see CommandSender.user
      */
     fun isPermitted(subject: Contact?, user: User?): Boolean {
         return when (PluginConfig.mode) {
@@ -208,7 +199,8 @@ object Utils {
                     subject == null -> true
                     subject is User && PluginData.userSet.contains(subject.id) -> true
                     subject is Group &&
-                        PluginData.groupSet.contains(subject.id) && PluginData.userSet.contains(user?.id) -> true
+                        PluginData.groupSet.contains(subject.id) &&
+                        PluginData.userSet.contains(user?.id) -> true
                     else -> false
                 }
             }
@@ -217,7 +209,8 @@ object Utils {
                     subject == null -> true
                     subject is User && !PluginData.userSet.contains(subject.id) -> true
                     subject is Group &&
-                        !PluginData.groupSet.contains(subject.id) && !PluginData.userSet.contains(user?.id) -> true
+                        !PluginData.groupSet.contains(subject.id) &&
+                        !PluginData.userSet.contains(user?.id) -> true
                     else -> false
                 }
             }

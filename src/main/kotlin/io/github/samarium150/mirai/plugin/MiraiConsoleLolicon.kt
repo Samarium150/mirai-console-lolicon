@@ -14,8 +14,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package com.github.samarium150.mirai.plugin
+package io.github.samarium150.mirai.plugin
 
+import io.github.samarium150.mirai.plugin.command.Lolicon
+import io.github.samarium150.mirai.plugin.config.CommandConfig
+import io.github.samarium150.mirai.plugin.config.PluginConfig
+import io.github.samarium150.mirai.plugin.config.ProxyConfig
+import io.github.samarium150.mirai.plugin.config.ReplyConfig
+import io.github.samarium150.mirai.plugin.data.PluginData
+import io.github.samarium150.mirai.plugin.util.Utils
 import io.ktor.client.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
@@ -31,35 +38,34 @@ import java.net.InetSocketAddress
 import java.net.Proxy
 
 /**
- * Plugin instance
- * <br>
- * 插件实例
+ * 插件主类
  *
- * @constructor Create a KotlinPlugin instance <br> 实例化插件
- * @see net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
+ * @constructor 创建插件实例
+ * @see KotlinPlugin
  */
-object Main : KotlinPlugin(
+object MiraiConsoleLolicon : KotlinPlugin(
     JvmPluginDescription(
-        id = "com.github.samarium150.mirai-console-lolicon",
-        version = "4.2.1",
-        name = "mirai-console-lolicon"
-    )
+        id = "io.github.samarium150.mirai.plugin.mirai-console-lolicon",
+        version = "5.0.0-beta.1",
+        name = "Lolicon"
+    ) {
+        author("Samarium150")
+        info("基于LoliconAPI的涩图插件")
+    }
 ) {
 
+    /**
+     * Ktor HTTP客户端
+     */
     lateinit var client: HttpClient
 
     /**
-     * Will be invoked when the plugin is enabled
-     * <br>
-     * 插件启用时将被调用
+     * 插件启用时调用
      */
     @OptIn(KtorExperimentalAPI::class)
     override fun onEnable() {
-        /**
-         * Load configurations and data
-         * <br>
-         * 加载配置及数据
-         */
+
+        // 重载配置和数据
         PluginConfig.reload()
         CommandConfig.reload()
         ReplyConfig.reload()
@@ -89,18 +95,10 @@ object Main : KotlinPlugin(
             }
         }
 
-        /**
-         * Register commands
-         * <br>
-         * 注册命令
-         */
+        // 注册命令
         Lolicon.register()
 
-        /**
-         * Grant permissions
-         * <br>
-         * 授予权限
-         */
+        // 授予权限
         try {
             AbstractPermitteeId.AnyContact.permit(Lolicon.permission)
         } catch (e: Exception) {
@@ -112,16 +110,11 @@ object Main : KotlinPlugin(
     }
 
     /**
-     * Will be invoked when the plugin is disabled
-     * <br>
      * 插件禁用时调用
      */
     override fun onDisable() {
-        /**
-         * Revoke permissions
-         * <br>
-         * 撤销权限
-         */
+
+        // 撤销权限
         try {
             AbstractPermitteeId.AnyContact.cancel(Lolicon.permission, true)
         } catch (e: Exception) {
@@ -129,11 +122,7 @@ object Main : KotlinPlugin(
             logger.warning("无法自动撤销权限，请自行使用权限管理来撤销权限")
         }
 
-        /**
-         * Unregister commands
-         * <br>
-         * 注销命令
-         */
+        // 注销命令
         Lolicon.unregister()
 
         client.close()

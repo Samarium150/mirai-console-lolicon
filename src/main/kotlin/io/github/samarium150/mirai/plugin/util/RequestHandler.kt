@@ -14,8 +14,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package com.github.samarium150.mirai.plugin
+package io.github.samarium150.mirai.plugin.util
 
+import io.github.samarium150.mirai.plugin.MiraiConsoleLolicon
+import io.github.samarium150.mirai.plugin.config.PluginConfig
+import io.github.samarium150.mirai.plugin.data.ImageData
+import io.github.samarium150.mirai.plugin.data.RequestBody
+import io.github.samarium150.mirai.plugin.data.ResponseBody
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -25,30 +30,36 @@ import java.io.File
 import java.io.InputStream
 
 /**
- * Object for handling GET request
+ * HTTP请求处理工具
  *
- * @constructor Create a handler instance <br> 实例化处理程序
+ * @constructor 实例化HTTP请求处理工具
  */
 object RequestHandler {
 
+    /**
+     * 发送包含 [RequestBody] 的POST请求给API
+     *
+     * @param body 请求参数
+     * @return API返回的数据
+     * @see RequestBody
+     * @see ResponseBody
+     */
     suspend fun get(body: RequestBody): ResponseBody {
-        return Main.client.post("https://api.lolicon.app/setu/v2") {
+        return MiraiConsoleLolicon.client.post("https://api.lolicon.app/setu/v2") {
             contentType(ContentType.Application.Json)
             this.body = body
         }
     }
 
     /**
-     * Downloads the image from [url]
-     * <br>
-     * 从 [url] 下载图片
+     * 从 [url] 下载图片, 并返回 [ByteArrayInputStream] 形式的图片数据
      *
-     * @param url URL from [ImageData.urls] <br> 来自 [ImageData.urls] 的 URL
-     * @return The image [ByteArrayInputStream] <br> 图片字节输入流
+     * @param url 来自 [ImageData.urls] 的 URL
+     * @return 图片字节输入流
      * @see ImageData
      */
     suspend fun download(url: String): InputStream {
-        val response: HttpResponse = Main.client.get(url)
+        val response: HttpResponse = MiraiConsoleLolicon.client.get(url)
         val result: ByteArray = response.receive()
         if (PluginConfig.save) {
             val dir = File(System.getProperty("user.dir") + "/data/mirai-console-lolicon/download/")

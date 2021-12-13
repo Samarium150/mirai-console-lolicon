@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package com.github.samarium150.mirai.plugin
+package io.github.samarium150.mirai.plugin.data
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
@@ -22,19 +22,36 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 /**
- * Response body
+ * 进行POST请求所需的参数
  *
- * @property error
- * @property data
- * @constructor Create empty Response body
+ * @property r18 是否为R18内容
+ * @property num 数量
+ * @property uid 作者ID
+ * @property keyword 关键词
+ * @property tag 标签
+ * @property size 图片大小
+ * @property proxy 代理地址
+ * @property dataAfter 这个时间戳及以后
+ * @property dataBefore 这个时间戳及以前
+ * @property dsc 是否禁用缩写
+ * @constructor 实例化请求参数, 参见: [LoliconAPI](https://api.lolicon.app/#/setu?id=%e8%af%b7%e6%b1%82)
  */
 @Serializable
-data class ResponseBody(
-    val error: String,
-    val data: List<ImageData>
+data class RequestBody(
+    val r18: Int = 0,
+    val num: Int = 1,
+    val uid: List<Int>? = null,
+    val keyword: String? = "",
+    val tag: List<List<String>>? = null,
+    val size: List<String>? = null,
+    val proxy: String = "https://i.pixiv.re",
+    val dataAfter: Long? = null,
+    val dataBefore: Long? = null,
+    val dsc: Boolean? = null
 ) {
     @OptIn(ExperimentalSerializationApi::class)
     override fun toString(): String {
-        return Json.encodeToString(this)
+        val format = Json { encodeDefaults = true }
+        return format.encodeToString(value = this)
     }
 }

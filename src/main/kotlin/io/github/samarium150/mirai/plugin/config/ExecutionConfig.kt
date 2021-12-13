@@ -14,60 +14,53 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package com.github.samarium150.mirai.plugin
+package io.github.samarium150.mirai.plugin.config
 
-import com.github.samarium150.mirai.plugin.Lolicon.get
+import io.github.samarium150.mirai.plugin.command.Lolicon
+import io.github.samarium150.mirai.plugin.command.Lolicon.get
+import io.github.samarium150.mirai.plugin.data.PluginData
+import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.User
 import org.jetbrains.annotations.Nullable
 
 /**
- * The configuration used during get-command
- * <br>
  * 执行get命令时的配置
  *
- * @property r18 [PluginData.customR18Users] and [PluginData.customR18Groups]
- * @property recall [PluginConfig.recall]
- * @property cooldown [PluginConfig.cooldown]
- * @constructor Create a configuration instance <br> 实例化配置
- * @see PluginConfig
- * @see PluginData
+ * @property r18 是否为R18模式
+ * @property recall 撤回时间
+ * @property cooldown 冷却时间
+ * @constructor 实例化配置
  */
-data class ExecutionConfig(
+internal data class ExecutionConfig(
     var r18: Int = 0,
     var recall: Int = PluginConfig.recall,
     var cooldown: Int = PluginConfig.cooldown
 ) {
 
     /**
-     * Set [r18] to [value]
-     * <br>
      * 将 [r18] 的值设置为 [value]
      *
-     * @param value Input value <br> 输入的值
+     * @param value 输入的值
      */
     private fun setR18(@Nullable value: Int?) {
         if (value != null) r18 = value
     }
 
     /**
-     * Set [recall] to [value]
-     * <br>
      * 将 [recall] 的值设置为 [value]
      *
-     * @param value Input value <br> 输入的值
+     * @param value 输入的值
      */
     private fun setRecall(@Nullable value: Int?) {
         if (value != null) this.recall = value
     }
 
     /**
-     * Set [cooldown] to [value]
-     * <br>
      * 将 [cooldown] 设置为 [value]
      *
-     * @param value Input value <br> 输入的值
+     * @param value 输入的值
      */
     private fun setCooldown(@Nullable value: Int?) {
         if (value != null) this.cooldown = value
@@ -75,13 +68,12 @@ data class ExecutionConfig(
 
     companion object {
         /**
-         * Create the instance according to [subject]
-         * <br>
          * 根据 [subject] 创建一个 [ExecutionConfig] 实例
          *
-         * @param subject [net.mamoe.mirai.console.command.CommandSender.subject]
-         * @return Configuration instance <br> 实例化的配置
+         * @param subject 联系对象
+         * @return 实例化的配置
          * @see Lolicon.get
+         * @see CommandSender.subject
          */
         @JvmStatic
         fun create(@Nullable subject: Contact?): ExecutionConfig {

@@ -45,7 +45,7 @@ jobs:
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: ./build/mirai/mirai-console-lolicon-${{ steps.vars.outputs.tag }}.mirai.jar
+          artifacts: ./build/mirai/${{ github.event.repository.name }}-${{ steps.vars.outputs.tag }}.mirai.jar
           artifactContentType: application/jar
           tag: ${{ steps.vars.outputs.tag }}
           token: ${{ secrets.GITHUB_TOKEN }}

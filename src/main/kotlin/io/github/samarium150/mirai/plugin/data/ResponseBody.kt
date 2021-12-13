@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package com.github.samarium150.mirai.plugin
+package io.github.samarium150.mirai.plugin.data
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
@@ -22,38 +22,20 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 /**
- * The information for making a GET request
- * <br>
- * 进行GET请求所需的信息
+ * API返回的数据
  *
- * @property r18
- * @property num
- * @property uid
- * @property keyword
- * @property tag
- * @property size
- * @property proxy
- * @property dataAfter
- * @property dataBefore
- * @property dsc
- * @constructor Create a RequestBody instance <br> 实例化请求参数
+ * @property error 错误信息
+ * @property data 图片信息列表
+ * @constructor 实例化数据
+ * @see ImageData
  */
 @Serializable
-data class RequestBody(
-    val r18: Int = 0,
-    val num: Int = 1,
-    val uid: List<Int>? = null,
-    val keyword: String? = "",
-    val tag: List<List<String>>? = null,
-    val size: List<String>? = null,
-    val proxy: String = "https://i.pixiv.re",
-    val dataAfter: Long? = null,
-    val dataBefore: Long? = null,
-    val dsc: Boolean? = null
+data class ResponseBody(
+    val error: String,
+    val data: List<ImageData>
 ) {
     @OptIn(ExperimentalSerializationApi::class)
     override fun toString(): String {
-        val format = Json { encodeDefaults = true }
-        return format.encodeToString(value = this)
+        return Json.encodeToString(this)
     }
 }

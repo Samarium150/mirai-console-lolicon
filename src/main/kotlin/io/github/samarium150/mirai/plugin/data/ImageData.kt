@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package com.github.samarium150.mirai.plugin
+package io.github.samarium150.mirai.plugin.data
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
@@ -22,21 +22,19 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 /**
- * The image information returned by Lolicon API
- * <br>
- *  Lolicon API 返回的图片信息
+ * API 返回的图片信息
  *
- * @property pid Image PID <br> 图片PID
- * @property p the page of the image <br> 图片所在页数
- * @property uid Author UID <br> 作者UID
- * @property title Image title <br> 图片标题
- * @property author Author's name <br> 作者名字
- * @property r18 R18 category <br> 是否为R18
- * @property width Width of the image <br> 宽度
- * @property height Height of the image <br> 高度
- * @property tags Image tags <br> 标签
- * @property urls Image urls <br> 链接
- * @constructor Create an Image data instance <br> 实例化图片数据
+ * @property pid 图片PID
+ * @property p 图片所在页数
+ * @property uid 作者UID
+ * @property title 图片标题
+ * @property author 作者名字
+ * @property r18 是否为R18
+ * @property width 宽度
+ * @property height 高度
+ * @property tags 标签
+ * @property urls 链接
+ * @constructor 实例化图片数据, 参见: [API](https://api.lolicon.app/#/setu?id=%e5%93%8d%e5%ba%94)
  * @see ResponseBody
  */
 @Serializable
@@ -61,11 +59,9 @@ data class ImageData(
     }
 
     /**
-     * Return the readable information
-     * <br>
      * 返回具有可读性的信息
      *
-     * @return readable information <br> 具有可读性的信息
+     * @return 具有可读性的信息
      */
     fun toReadable(): String {
         return (
