@@ -13,7 +13,7 @@ Social preview的图片来自 [AliceSoft](https://www.alicesoft.com) 制作的�
 
 在群内随机发送来自 [Lolicon API v2](https://api.lolicon.app/#/setu) 的图片(默认30s自动撤回+60s冷却)，支持标签检索和JSON高级检索
 
-适配 [mirai-console](https://github.com/mamoe/mirai-console) [![Version](https://img.shields.io/badge/version-2.8.2-blue)](https://github.com/mamoe/mirai/releases/tag/v2.8.2)
+适配 [mirai-console](https://github.com/mamoe/mirai-console) [![Version](https://img.shields.io/badge/version-2.8.3-blue)](https://github.com/mamoe/mirai/releases/tag/v2.8.3)
 
 使用文档已经移到了 [Wiki](https://github.com/Samarium150/mirai-console-lolicon/wiki) 页面
 
