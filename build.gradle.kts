@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "io.github.samarium150"
-version = "5.0.0-beta.1"
+version = "5.0.0-beta.2"
 
 repositories {
     mavenLocal()
@@ -43,6 +43,10 @@ tasks.withType<DokkaTask>().configureEach {
                 remoteLineSuffix.set("#L")
             }
             jdkVersion.set(11)
+            externalDocumentationLink {
+                url.set(URL("https://kdoc.mirai.mamoe.net/2.9.0-RC"))
+                packageListUrl.set(URL("https://kdoc.mirai.mamoe.net/2.9.0-RC/package-list"))
+            }
         }
     }
 }

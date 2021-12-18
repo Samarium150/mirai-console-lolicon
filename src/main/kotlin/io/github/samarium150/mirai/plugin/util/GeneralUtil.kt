@@ -16,13 +16,23 @@
  */
 package io.github.samarium150.mirai.plugin.util
 
+import io.github.samarium150.mirai.plugin.MiraiConsoleLolicon
 import io.github.samarium150.mirai.plugin.command.Lolicon
 import io.github.samarium150.mirai.plugin.command.Lolicon.set
 import io.github.samarium150.mirai.plugin.config.PluginConfig
+import io.github.samarium150.mirai.plugin.config.ReplyConfig
 import io.github.samarium150.mirai.plugin.data.PluginData
+import io.github.samarium150.mirai.plugin.data.RequestBody
+import io.github.samarium150.mirai.plugin.data.ResponseBody
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.contact.*
+import net.mamoe.mirai.message.MessageReceipt
 import org.jetbrains.annotations.Nullable
+import java.io.File
+import java.io.InputStream
 import java.net.Proxy
 
 /**
@@ -30,7 +40,11 @@ import java.net.Proxy
  *
  * @constructor 实例化工具类
  */
-object Utils {
+object GeneralUtil {
+
+    private val logger = MiraiConsoleLolicon.logger
+
+    private val cachePath = MiraiConsoleLolicon.cachePath
 
     /**
      * 检查用户是否是Bot所有者
@@ -192,7 +206,7 @@ object Utils {
      * @see CommandSender.subject
      * @see CommandSender.user
      */
-    fun isPermitted(subject: Contact?, user: User?): Boolean {
+    private fun isPermitted(subject: Contact?, user: User?): Boolean {
         return when (PluginConfig.mode) {
             "whitelist" -> {
                 when {
@@ -216,5 +230,95 @@ object Utils {
             }
             else -> true
         }
+    }
+
+    /**
+     * 检查指令发送者是否能执行指令
+     *
+     * @param sender
+     * @return
+     * @see CommandSender
+     */
+    suspend fun checkPermissionAndCooldown(sender: CommandSender): Boolean {
+        val subject = sender.subject
+        val user = sender.user
+        if (!isPermitted(subject, user)) {
+            val where = if (subject is Group) "@${subject.id}" else ""
+            logger.info("当前模式为'${PluginConfig.mode}'，${user?.id}${where}的命令已被无视")
+            return false
+        }
+        if (CooldownUtil.getCooldownStatus(subject)) {
+            sender.sendMessage(ReplyConfig.inCooldown)
+            return false
+        }
+        return true
+    }
+
+    /**
+     * 处理HTTP请求
+     *
+     * @param sender
+     * @param body
+     * @return
+     * @see RequestHandler
+     */
+    suspend fun processRequest(sender: CommandSender, body: RequestBody): ResponseBody? {
+        val response: ResponseBody?
+        try {
+            response = RequestHandler.get(body)
+        } catch (e: Exception) {
+            logger.error(e)
+            return null
+        }
+        logger.info(response.toString())
+        if (response.error.isNotEmpty()) {
+            sender.sendMessage(ReplyConfig.invokeException)
+            logger.warning(response.error)
+            return null
+        }
+        if (response.data.isEmpty()) {
+            sender.sendMessage(ReplyConfig.emptyImageData)
+            return null
+        }
+        return response
+    }
+
+    /**
+     * 获取图片输入流
+     *
+     * @param url
+     * @return
+     * @see RequestHandler
+     */
+    suspend fun getImageInputStream(url: String): InputStream {
+        return if (PluginConfig.save && PluginConfig.cache) {
+            try {
+                val paths = url.split("/")
+                val path = "${cachePath}/${paths[paths.lastIndex]}"
+                val cache = File(System.getProperty("user.dir") + path)
+                if (cache.exists()) cache.inputStream() else RequestHandler.download(url)
+            } catch (e: Exception) {
+                RequestHandler.download(url)
+            }
+        } else RequestHandler.download(url)
+    }
+
+    enum class RecallType {
+        IMAGE,
+        IMAGE_INFO
+    }
+
+    /**
+     * 撤回图片或图片信息
+     *
+     * @param type
+     * @param receipt
+     * @param time
+     */
+    @OptIn(DelicateCoroutinesApi::class)
+    suspend fun recall(type: RecallType, receipt: MessageReceipt<Contact>, time: Int) = GlobalScope.launch {
+        val result = receipt.recallIn((time * 1000).toLong()).awaitIsSuccess()
+        if (result) logger.info("${receipt.target}${type}已撤回")
+        else logger.warning("${receipt.target}${type}撤回失败")
     }
 }

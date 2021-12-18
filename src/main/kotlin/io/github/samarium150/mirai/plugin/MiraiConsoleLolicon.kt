@@ -22,7 +22,7 @@ import io.github.samarium150.mirai.plugin.config.PluginConfig
 import io.github.samarium150.mirai.plugin.config.ProxyConfig
 import io.github.samarium150.mirai.plugin.config.ReplyConfig
 import io.github.samarium150.mirai.plugin.data.PluginData
-import io.github.samarium150.mirai.plugin.util.Utils
+import io.github.samarium150.mirai.plugin.util.GeneralUtil
 import io.ktor.client.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
@@ -32,6 +32,7 @@ import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
 import net.mamoe.mirai.console.permission.AbstractPermitteeId
 import net.mamoe.mirai.console.permission.PermissionService.Companion.cancel
 import net.mamoe.mirai.console.permission.PermissionService.Companion.permit
+import net.mamoe.mirai.console.plugin.id
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import java.net.InetSocketAddress
@@ -46,7 +47,7 @@ import java.net.Proxy
 object MiraiConsoleLolicon : KotlinPlugin(
     JvmPluginDescription(
         id = "io.github.samarium150.mirai.plugin.mirai-console-lolicon",
-        version = "5.0.0-beta.1",
+        version = "5.0.0-beta.2",
         name = "Lolicon"
     ) {
         author("Samarium150")
@@ -58,6 +59,8 @@ object MiraiConsoleLolicon : KotlinPlugin(
      * Ktor HTTP客户端
      */
     lateinit var client: HttpClient
+
+    val cachePath = "/data/${id}/download"
 
     /**
      * 插件启用时调用
@@ -83,7 +86,7 @@ object MiraiConsoleLolicon : KotlinPlugin(
         client = HttpClient {
             engine {
                 proxy = if (ProxyConfig.type != "DIRECT") Proxy(
-                    Utils.getProxyType(ProxyConfig.type),
+                    GeneralUtil.getProxyType(ProxyConfig.type),
                     InetSocketAddress(ProxyConfig.hostname, ProxyConfig.port)
                 ) else Proxy.NO_PROXY
             }
@@ -102,11 +105,10 @@ object MiraiConsoleLolicon : KotlinPlugin(
         try {
             AbstractPermitteeId.AnyContact.permit(Lolicon.permission)
         } catch (e: Exception) {
-            logger.warning(e)
             logger.warning("无法自动授予权限，请自行使用权限管理来授予权限")
         }
 
-        logger.info("Plugin mirai-console-lolicon loaded")
+        logger.info("Plugin loaded")
     }
 
     /**
@@ -118,7 +120,6 @@ object MiraiConsoleLolicon : KotlinPlugin(
         try {
             AbstractPermitteeId.AnyContact.cancel(Lolicon.permission, true)
         } catch (e: Exception) {
-            logger.warning(e)
             logger.warning("无法自动撤销权限，请自行使用权限管理来撤销权限")
         }
 
@@ -127,6 +128,6 @@ object MiraiConsoleLolicon : KotlinPlugin(
 
         client.close()
 
-        logger.info("Plugin mirai-console-lolicon unloaded")
+        logger.info("Plugin unloaded")
     }
 }

@@ -62,7 +62,7 @@ object RequestHandler {
         val response: HttpResponse = MiraiConsoleLolicon.client.get(url)
         val result: ByteArray = response.receive()
         if (PluginConfig.save) {
-            val dir = File(System.getProperty("user.dir") + "/data/mirai-console-lolicon/download/")
+            val dir = File(System.getProperty("user.dir") + "${MiraiConsoleLolicon.cachePath}/")
             if (!dir.exists()) dir.mkdirs()
             val urlPaths = url.split("/")
             val file = File("${dir}/${urlPaths[urlPaths.lastIndex]}")
