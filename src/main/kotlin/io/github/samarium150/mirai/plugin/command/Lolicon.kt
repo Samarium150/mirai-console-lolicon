@@ -23,7 +23,6 @@ import io.github.samarium150.mirai.plugin.config.PluginConfig
 import io.github.samarium150.mirai.plugin.config.ReplyConfig
 import io.github.samarium150.mirai.plugin.data.PluginData
 import io.github.samarium150.mirai.plugin.data.RequestBody
-import io.github.samarium150.mirai.plugin.data.ResponseBody
 import io.github.samarium150.mirai.plugin.util.CooldownUtil
 import io.github.samarium150.mirai.plugin.util.ThrottleUtil
 import io.github.samarium150.mirai.plugin.util.GeneralUtil
@@ -97,14 +96,22 @@ object Lolicon : CompositeCommand(
             )
         else RequestBody(r18, 1, listOf(), tags, listOf(), listOf(PluginConfig.size), PluginConfig.proxy)
         logger.info("request body: $body")
-        val response = GeneralUtil.processRequest(this, body) ?: return
+        val response = GeneralUtil.processRequest(this, body)
+        if (response == null) {
+            ThrottleUtil.unlock(subject)
+            return
+        }
         try {
             val imageData = response.data[0]
             if (!GeneralUtil.areTagsAllowed(imageData.tags)) {
                 sendMessage(ReplyConfig.filteredTag)
                 return
             }
-            val url = imageData.urls[PluginConfig.size] ?: return
+            val url = imageData.urls[PluginConfig.size]
+            if (url == null) {
+                ThrottleUtil.unlock(subject)
+                return
+            }
             val imgInfoReceipt =
                 if (PluginConfig.verbose || subject == null) sendMessage(imageData.toReadable())
                 else null
@@ -113,10 +120,11 @@ object Lolicon : CompositeCommand(
                 stream = GeneralUtil.getImageInputStream(url)
                 val img = subject?.uploadImage(stream)
                 if (img != null) {
-                    val imgReceipt = (
-                        if (PluginConfig.flash) sendMessage(FlashImage(img)) else sendMessage(img)
-                        ) ?: return
-                    if (recall > 0 && PluginConfig.recallImg)
+                    val imgReceipt = if (PluginConfig.flash) sendMessage(FlashImage(img)) else sendMessage(img)
+                    if (imgReceipt == null) {
+                        ThrottleUtil.unlock(subject)
+                        return
+                    } else if (recall > 0 && PluginConfig.recallImg)
                         GeneralUtil.recall(GeneralUtil.RecallType.IMAGE, imgReceipt, recall)
                     if (cooldown > 0)
                         CooldownUtil.cooldown(subject, cooldown)
@@ -158,6 +166,7 @@ object Lolicon : CompositeCommand(
         try {
             body = Json.decodeFromString<RequestBody>(json)
         } catch (e: Exception) {
+            ThrottleUtil.unlock(subject)
             sendMessage(ReplyConfig.invalidJson)
             logger.warning(e)
             return
@@ -166,14 +175,20 @@ object Lolicon : CompositeCommand(
         if (body.r18 != r18) {
             if (subject is Group && !GeneralUtil.checkMemberPerm(user)) {
                 sendMessage(ReplyConfig.nonAdminPermissionDenied)
+                ThrottleUtil.unlock(subject)
                 return
             }
             if (subject is User && !GeneralUtil.checkUserPerm(user)) {
                 sendMessage(ReplyConfig.untrusted)
+                ThrottleUtil.unlock(subject)
                 return
             }
         }
-        val response: ResponseBody = GeneralUtil.processRequest(this, body) ?: return
+        val response = GeneralUtil.processRequest(this, body)
+        if (response == null) {
+            ThrottleUtil.unlock(subject)
+            return
+        }
         try {
             val imageInfoMsgBuilder = MessageChainBuilder()
             val imageMsgBuilder = MessageChainBuilder()
@@ -202,8 +217,11 @@ object Lolicon : CompositeCommand(
             val imgInfoReceipt =
                 if (PluginConfig.verbose || subject == null) sendMessage(imageInfoMsgBuilder.asMessageChain())
                 else null
-            val imgReceipt = sendMessage(imageMsgBuilder.asMessageChain()) ?: return
-            if (recall > 0 && PluginConfig.recallImg)
+            val imgReceipt = sendMessage(imageMsgBuilder.asMessageChain())
+            if (imgReceipt == null) {
+                ThrottleUtil.unlock(subject)
+                return
+            } else if (recall > 0 && PluginConfig.recallImg)
                 GeneralUtil.recall(GeneralUtil.RecallType.IMAGE, imgReceipt, recall)
             if (cooldown > 0)
                 CooldownUtil.cooldown(subject, cooldown)
