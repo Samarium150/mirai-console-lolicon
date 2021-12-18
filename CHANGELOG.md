@@ -1,3 +1,11 @@
+<a name="5.0.0-beta.4"></a>
+# 5.0.0-beta.4 (2021/12/18)
+
+
+## Bug Fixes
+
+* resolve dead locks ([7d602d4e](https://github.com/Samarium150/mirai-console-lolicon/commits/7d602d4e), closes [#67](https://github.com/Samarium150/mirai-console-lolicon/issues/issues/67))
+
 <a name="5.0.0-beta.3"></a>
 # 5.0.0-beta.3 (2021/12/18)
 
