@@ -1,3 +1,11 @@
+<a name="5.0.0-beta.3"></a>
+# 5.0.0-beta.3 (2021/12/18)
+
+
+## Bug Fixes
+
+* correct cooldown ([31fac3c0](https://github.com/Samarium150/mirai-console-lolicon/commits/31fac3c0), closes [#66](https://github.com/Samarium150/mirai-console-lolicon/issues/issues/66))
+
 <a name="5.0.0-beta.2"></a>
 # 5.0.0-beta.2 (2021/12/18)
 
