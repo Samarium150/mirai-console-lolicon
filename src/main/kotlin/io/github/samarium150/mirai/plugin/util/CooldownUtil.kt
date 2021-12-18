@@ -49,6 +49,21 @@ object CooldownUtil {
         return groupLockMap.getOrPut(id) { Mutex() }
     }
 
+    private fun getLock(subject: Contact?): Mutex? {
+        return when (subject) {
+            is User -> getUserLock(subject.id)
+            is Group -> getGroupLock(subject.id)
+            else -> null
+        }
+    }
+
+    private fun removeLock(subject: Contact?) {
+        when (subject) {
+            is User -> userLockMap.remove(subject.id)
+            is Group -> groupLockMap.remove(subject.id)
+        }
+    }
+
     /**
      * 获取冷却状态
      *
@@ -57,11 +72,7 @@ object CooldownUtil {
      * @see CommandSender.subject
      */
     fun getCooldownStatus(subject: Contact?): Boolean {
-        return when(subject) {
-            is User -> getUserLock(subject.id).isLocked
-            is Group -> getGroupLock(subject.id).isLocked
-            else -> false
-        }
+        return getLock(subject)?.isLocked ?: false
     }
 
     /**
@@ -73,15 +84,11 @@ object CooldownUtil {
      */
     @OptIn(DelicateCoroutinesApi::class)
     suspend fun cooldown(subject: Contact?, time: Int) = GlobalScope.launch {
-        val mutex = when (subject) {
-            is User -> userLockMap.remove(subject.id)
-            is Group -> groupLockMap.remove(subject.id)
-            else -> null
-        }
-        mutex?.withLock {
+        getLock(subject)?.withLock {
             logger.info("${subject}进入冷却")
             delay(time * 1000L)
             logger.info("${subject}已冷却")
         }
+        removeLock(subject)
     }
 }
