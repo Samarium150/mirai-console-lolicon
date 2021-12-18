@@ -1,3 +1,12 @@
+<a name="5.0.0-beta.2"></a>
+# 5.0.0-beta.2 (2021/12/18)
+
+
+## Refactor
+
+* redesign cooldown feature also fix cache path
+  closes [#64](https://github.com/Samarium150/mirai-console-lolicon/issues/64)
+
 <a name="5.0.0-beta.1"></a>
 # 5.0.0-beta.1 (2021/12/13)
 
@@ -5,6 +14,7 @@
 ## Refactor
 
 * relocate files into packages
+ 
 <a name="4.2.1"></a>
 
 # 4.2.1 (2021/12/12)
