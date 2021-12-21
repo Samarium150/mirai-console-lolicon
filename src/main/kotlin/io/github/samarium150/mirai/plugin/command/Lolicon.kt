@@ -24,8 +24,10 @@ import io.github.samarium150.mirai.plugin.config.ReplyConfig
 import io.github.samarium150.mirai.plugin.data.PluginData
 import io.github.samarium150.mirai.plugin.data.RequestBody
 import io.github.samarium150.mirai.plugin.util.CooldownUtil
-import io.github.samarium150.mirai.plugin.util.ThrottleUtil
 import io.github.samarium150.mirai.plugin.util.GeneralUtil
+import io.github.samarium150.mirai.plugin.util.ThrottleUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -105,6 +107,7 @@ object Lolicon : CompositeCommand(
             val imageData = response.data[0]
             if (!GeneralUtil.areTagsAllowed(imageData.tags)) {
                 sendMessage(ReplyConfig.filteredTag)
+                ThrottleUtil.unlock(subject)
                 return
             }
             val url = imageData.urls[PluginConfig.size]
@@ -133,8 +136,7 @@ object Lolicon : CompositeCommand(
                 logger.error(e)
                 sendMessage(ReplyConfig.networkError)
             } finally {
-                @Suppress("BlockingMethodInNonBlockingContext")
-                stream?.close()
+                withContext(Dispatchers.IO) { stream?.close() }
                 if (PluginConfig.verbose && imgInfoReceipt != null && recall > 0 && PluginConfig.recallImgInfo)
                     GeneralUtil.recall(GeneralUtil.RecallType.IMAGE_INFO, imgInfoReceipt, recall)
             }
@@ -210,8 +212,7 @@ object Lolicon : CompositeCommand(
                     logger.error(e)
                     sendMessage(ReplyConfig.networkError)
                 } finally {
-                    @Suppress("BlockingMethodInNonBlockingContext")
-                    stream?.close()
+                    withContext(Dispatchers.IO) { stream?.close() }
                 }
             }
             val imgInfoReceipt =
