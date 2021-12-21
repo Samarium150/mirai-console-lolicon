@@ -1,3 +1,11 @@
+<a name="5.0.0-beta.5"></a>
+# 5.0.0-beta.5 (2021/12/21)
+
+
+## Bug Fixes
+
+* correctly close stream ([f88e4bb6](https://github.com/Samarium150/mirai-console-lolicon/commits/f88e4bb6))
+
 <a name="5.0.0-beta.4"></a>
 # 5.0.0-beta.4 (2021/12/18)
 
