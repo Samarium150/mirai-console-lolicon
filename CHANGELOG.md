@@ -1,3 +1,10 @@
+<a name="5.0.0-beta.6"></a>
+# 5.0.0-beta.6 (2021/12/22)
+
+
+## Refactor
+
+* use top-level functions instead of util classes
 <a name="5.0.0-beta.5"></a>
 # 5.0.0-beta.5 (2021/12/21)
 
