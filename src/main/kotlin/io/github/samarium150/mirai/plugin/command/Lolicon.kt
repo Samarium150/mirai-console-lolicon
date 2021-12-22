@@ -23,9 +23,7 @@ import io.github.samarium150.mirai.plugin.config.PluginConfig
 import io.github.samarium150.mirai.plugin.config.ReplyConfig
 import io.github.samarium150.mirai.plugin.data.PluginData
 import io.github.samarium150.mirai.plugin.data.RequestBody
-import io.github.samarium150.mirai.plugin.util.CooldownUtil
-import io.github.samarium150.mirai.plugin.util.GeneralUtil
-import io.github.samarium150.mirai.plugin.util.ThrottleUtil
+import io.github.samarium150.mirai.plugin.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -59,8 +57,6 @@ object Lolicon : CompositeCommand(
      */
     private val help: String
 
-    private val logger = MiraiConsoleLolicon.logger
-
     /**
      * 忽略命令前缀
      */
@@ -84,8 +80,8 @@ object Lolicon : CompositeCommand(
     @SubCommand("get", "来一张")
     @Description("根据标签发送涩图, 不提供则随机发送一张")
     suspend fun CommandSender.get(vararg tagArgs: String) {
-        if (!GeneralUtil.checkPermissionAndCooldown(this)) return
-        if (!ThrottleUtil.lock(subject)) {
+        if (!checkPermissionAndCooldown(this)) return
+        if (!lock(subject)) {
             logger.info("throttled")
             return
         }
@@ -93,26 +89,26 @@ object Lolicon : CompositeCommand(
         val tags = tagArgs.joinToString(" ")
         val body = if (tags.isNotEmpty())
             RequestBody(
-                r18, 1, listOf(), "", GeneralUtil.processTags(tags),
+                r18, 1, listOf(), "", processTags(tags),
                 listOf(PluginConfig.size), PluginConfig.proxy
             )
         else RequestBody(r18, 1, listOf(), tags, listOf(), listOf(PluginConfig.size), PluginConfig.proxy)
         logger.info("request body: $body")
-        val response = GeneralUtil.processRequest(this, body)
+        val response = processRequest(this, body)
         if (response == null) {
-            ThrottleUtil.unlock(subject)
+            unlock(subject)
             return
         }
         try {
             val imageData = response.data[0]
-            if (!GeneralUtil.areTagsAllowed(imageData.tags)) {
+            if (!areTagsAllowed(imageData.tags)) {
                 sendMessage(ReplyConfig.filteredTag)
-                ThrottleUtil.unlock(subject)
+                unlock(subject)
                 return
             }
             val url = imageData.urls[PluginConfig.size]
             if (url == null) {
-                ThrottleUtil.unlock(subject)
+                unlock(subject)
                 return
             }
             val imgInfoReceipt =
@@ -120,17 +116,17 @@ object Lolicon : CompositeCommand(
                 else null
             var stream: InputStream? = null
             try {
-                stream = GeneralUtil.getImageInputStream(url)
+                stream = getImageInputStream(url)
                 val img = subject?.uploadImage(stream)
                 if (img != null) {
                     val imgReceipt = if (PluginConfig.flash) sendMessage(FlashImage(img)) else sendMessage(img)
                     if (imgReceipt == null) {
-                        ThrottleUtil.unlock(subject)
+                        unlock(subject)
                         return
                     } else if (recall > 0 && PluginConfig.recallImg)
-                        GeneralUtil.recall(GeneralUtil.RecallType.IMAGE, imgReceipt, recall)
+                        recall(RecallType.IMAGE, imgReceipt, recall)
                     if (cooldown > 0)
-                        CooldownUtil.cooldown(subject, cooldown)
+                        cooldown(subject, cooldown)
                 }
             } catch (e: Exception) {
                 logger.error(e)
@@ -138,12 +134,12 @@ object Lolicon : CompositeCommand(
             } finally {
                 withContext(Dispatchers.IO) { stream?.close() }
                 if (PluginConfig.verbose && imgInfoReceipt != null && recall > 0 && PluginConfig.recallImgInfo)
-                    GeneralUtil.recall(GeneralUtil.RecallType.IMAGE_INFO, imgInfoReceipt, recall)
+                    recall(RecallType.IMAGE_INFO, imgInfoReceipt, recall)
             }
         } catch (e: Exception) {
             logger.error(e)
         } finally {
-            ThrottleUtil.unlock(subject)
+            unlock(subject)
         }
     }
 
@@ -157,8 +153,8 @@ object Lolicon : CompositeCommand(
     @SubCommand("adv", "高级")
     @Description("根据JSON字符串发送涩图")
     suspend fun CommandSender.advanced(vararg jsonArgs: String) {
-        if (!GeneralUtil.checkPermissionAndCooldown(this)) return
-        if (!ThrottleUtil.lock(subject)) {
+        if (!checkPermissionAndCooldown(this)) return
+        if (!lock(subject)) {
             logger.info("throttled")
             return
         }
@@ -168,27 +164,27 @@ object Lolicon : CompositeCommand(
         try {
             body = Json.decodeFromString<RequestBody>(json)
         } catch (e: Exception) {
-            ThrottleUtil.unlock(subject)
+            unlock(subject)
             sendMessage(ReplyConfig.invalidJson)
             logger.warning(e)
             return
         }
         logger.info(body.toString())
         if (body.r18 != r18) {
-            if (subject is Group && !GeneralUtil.checkMemberPerm(user)) {
+            if (subject is Group && !checkMemberPerm(user)) {
                 sendMessage(ReplyConfig.nonAdminPermissionDenied)
-                ThrottleUtil.unlock(subject)
+                unlock(subject)
                 return
             }
-            if (subject is User && !GeneralUtil.checkUserPerm(user)) {
+            if (subject is User && !checkUserPerm(user)) {
                 sendMessage(ReplyConfig.untrusted)
-                ThrottleUtil.unlock(subject)
+                unlock(subject)
                 return
             }
         }
-        val response = GeneralUtil.processRequest(this, body)
+        val response = processRequest(this, body)
         if (response == null) {
-            ThrottleUtil.unlock(subject)
+            unlock(subject)
             return
         }
         try {
@@ -196,10 +192,10 @@ object Lolicon : CompositeCommand(
             val imageMsgBuilder = MessageChainBuilder()
             for (imageData in response.data) {
                 if (imageData.urls.isEmpty()) continue
-                val url = GeneralUtil.getUrl(imageData.urls) ?: continue
+                val url = getUrl(imageData.urls) ?: continue
                 var stream: InputStream? = null
                 try {
-                    stream = GeneralUtil.getImageInputStream(url)
+                    stream = getImageInputStream(url)
                     val img = subject?.uploadImage(stream)
                     if (img != null)
                         if (PluginConfig.flash)
@@ -220,18 +216,18 @@ object Lolicon : CompositeCommand(
                 else null
             val imgReceipt = sendMessage(imageMsgBuilder.asMessageChain())
             if (imgReceipt == null) {
-                ThrottleUtil.unlock(subject)
+                unlock(subject)
                 return
             } else if (recall > 0 && PluginConfig.recallImg)
-                GeneralUtil.recall(GeneralUtil.RecallType.IMAGE, imgReceipt, recall)
+                recall(RecallType.IMAGE, imgReceipt, recall)
             if (cooldown > 0)
-                CooldownUtil.cooldown(subject, cooldown)
+                cooldown(subject, cooldown)
             if (PluginConfig.verbose && imgInfoReceipt != null && recall > 0 && PluginConfig.recallImgInfo)
-                GeneralUtil.recall(GeneralUtil.RecallType.IMAGE_INFO, imgInfoReceipt, recall)
+                recall(RecallType.IMAGE_INFO, imgInfoReceipt, recall)
         } catch (e: Exception) {
             logger.error(e)
         } finally {
-            ThrottleUtil.unlock(subject)
+            unlock(subject)
         }
     }
 
@@ -246,19 +242,19 @@ object Lolicon : CompositeCommand(
     @SubCommand("set", "设置")
     @Description("设置属性, 详见帮助信息")
     suspend fun CommandSender.set(property: String, value: String) {
-        if (subject is Group && !GeneralUtil.checkMemberPerm(user)) {
+        if (subject is Group && !checkMemberPerm(user)) {
             sendMessage(ReplyConfig.nonAdminPermissionDenied)
             return
         }
         when (property) {
             "r18" -> {
-                if (subject is User && !GeneralUtil.checkUserPerm(user)) {
+                if (subject is User && !checkUserPerm(user)) {
                     sendMessage(ReplyConfig.untrusted)
                     return
                 }
                 val setting: Int
                 try {
-                    setting = GeneralUtil.convertValue(value, "r18")
+                    setting = convertValue(value, "r18")
                 } catch (e: NumberFormatException) {
                     sendMessage(value + ReplyConfig.illegalValue)
                     return
@@ -270,13 +266,13 @@ object Lolicon : CompositeCommand(
                 sendMessage(ReplyConfig.setSucceeded)
             }
             "recall" -> {
-                if (subject is User && !GeneralUtil.checkUserPerm(user)) {
+                if (subject is User && !checkUserPerm(user)) {
                     sendMessage(ReplyConfig.untrusted)
                     return
                 }
                 val setting: Int
                 try {
-                    setting = GeneralUtil.convertValue(value, "recall")
+                    setting = convertValue(value, "recall")
                 } catch (e: NumberFormatException) {
                     sendMessage(value + ReplyConfig.illegalValue)
                     return
@@ -289,13 +285,13 @@ object Lolicon : CompositeCommand(
                 sendMessage(ReplyConfig.setSucceeded)
             }
             "cooldown" -> {
-                if (subject is User && !GeneralUtil.checkUserPerm(user)) {
+                if (subject is User && !checkUserPerm(user)) {
                     sendMessage(ReplyConfig.untrusted)
                     return
                 }
                 val setting: Int
                 try {
-                    setting = GeneralUtil.convertValue(value, "cooldown")
+                    setting = convertValue(value, "cooldown")
                 } catch (e: NumberFormatException) {
                     sendMessage(value + ReplyConfig.illegalValue)
                     return
@@ -321,7 +317,7 @@ object Lolicon : CompositeCommand(
     @SubCommand("add", "添加")
     @Description("添加用户id或群组id到对应的集合，用于黑白名单")
     suspend fun CommandSender.add(type: String, id: Long) {
-        if (!GeneralUtil.checkMaster(user)) {
+        if (!checkMaster(user)) {
             sendMessage(ReplyConfig.nonMasterPermissionDenied)
             if (PluginConfig.master == 0L) sendMessage(ReplyConfig.noMasterID)
             return
@@ -352,7 +348,7 @@ object Lolicon : CompositeCommand(
     @SubCommand("trust", "信任")
     @Description("将用户添加到受信任名单")
     suspend fun CommandSender.trust(id: Long) {
-        if (!GeneralUtil.checkMaster(user)) {
+        if (!checkMaster(user)) {
             sendMessage(ReplyConfig.nonMasterPermissionDenied)
             if (PluginConfig.master == 0L) sendMessage(ReplyConfig.noMasterID)
             return
@@ -372,7 +368,7 @@ object Lolicon : CompositeCommand(
     @SubCommand("distrust", "不信任")
     @Description("将用户从受信任名单中移除")
     suspend fun CommandSender.distrust(id: Long) {
-        if (!GeneralUtil.checkMaster(user)) {
+        if (!checkMaster(user)) {
             sendMessage(ReplyConfig.nonMasterPermissionDenied)
             if (PluginConfig.master == 0L) sendMessage(ReplyConfig.noMasterID)
             return

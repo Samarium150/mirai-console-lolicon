@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "io.github.samarium150"
-version = "5.0.0-beta.5"
+version = "5.0.0-beta.6"
 
 repositories {
     mavenLocal()
@@ -33,7 +33,6 @@ tasks.withType<KotlinCompile>().all {
 tasks.withType<DokkaTask>().configureEach {
     dokkaSourceSets {
         configureEach {
-            includeNonPublic.set(true)
             includes.from("Module.md")
             sourceLink {
                 localDirectory.set(file("src/main/kotlin"))

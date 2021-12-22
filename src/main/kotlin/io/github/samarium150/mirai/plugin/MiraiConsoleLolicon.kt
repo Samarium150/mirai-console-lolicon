@@ -22,7 +22,7 @@ import io.github.samarium150.mirai.plugin.config.PluginConfig
 import io.github.samarium150.mirai.plugin.config.ProxyConfig
 import io.github.samarium150.mirai.plugin.config.ReplyConfig
 import io.github.samarium150.mirai.plugin.data.PluginData
-import io.github.samarium150.mirai.plugin.util.GeneralUtil
+import io.github.samarium150.mirai.plugin.util.getProxyType
 import io.ktor.client.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
@@ -47,7 +47,7 @@ import java.net.Proxy
 object MiraiConsoleLolicon : KotlinPlugin(
     JvmPluginDescription(
         id = "io.github.samarium150.mirai.plugin.mirai-console-lolicon",
-        version = "5.0.0-beta.5",
+        version = "5.0.0-beta.6",
         name = "Lolicon"
     ) {
         author("Samarium150")
@@ -86,7 +86,7 @@ object MiraiConsoleLolicon : KotlinPlugin(
         client = HttpClient {
             engine {
                 proxy = if (ProxyConfig.type != "DIRECT") Proxy(
-                    GeneralUtil.getProxyType(ProxyConfig.type),
+                    getProxyType(ProxyConfig.type),
                     InetSocketAddress(ProxyConfig.hostname, ProxyConfig.port)
                 ) else Proxy.NO_PROXY
             }

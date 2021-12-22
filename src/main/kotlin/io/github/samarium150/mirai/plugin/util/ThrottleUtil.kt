@@ -22,53 +22,45 @@ import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.User
 
+private val userThrottleLockMap = mutableMapOf<Long, Mutex>()
+
+private val groupThrottleLockMap = mutableMapOf<Long, Mutex>()
+
+private fun getUserThrottleLock(id: Long): Mutex {
+    return userThrottleLockMap.getOrPut(id) { Mutex() }
+}
+
+private fun getGroupThrottleLock(id: Long): Mutex {
+    return groupThrottleLockMap.getOrPut(id) { Mutex() }
+}
+
 /**
- * 节流工具类
+ * 上锁以节流
  *
- * @constructor 实例化节流工具类
+ * @param subject 联系对象
+ * @return 上锁结果
+ * @see CommandSender.subject
  */
-object ThrottleUtil {
-
-    private val userLockMap = mutableMapOf<Long, Mutex>()
-
-    private val groupLockMap = mutableMapOf<Long, Mutex>()
-
-    private fun getUserLock(id: Long): Mutex {
-        return userLockMap.getOrPut(id) { Mutex() }
+fun lock(subject: Contact?): Boolean {
+    val mutex = when (subject) {
+        is User -> getUserThrottleLock(subject.id)
+        is Group -> getGroupThrottleLock(subject.id)
+        else -> null
     }
+    return mutex?.tryLock() ?: false
+}
 
-    private fun getGroupLock(id: Long): Mutex {
-        return groupLockMap.getOrPut(id) { Mutex() }
+/**
+ * 解锁并从map中移除锁
+ *
+ * @param subject 联系对象
+ * @see CommandSender.subject
+ */
+fun unlock(subject: Contact?) {
+    val mutex = when (subject) {
+        is User -> userThrottleLockMap.remove(subject.id)
+        is Group -> groupThrottleLockMap.remove(subject.id)
+        else -> null
     }
-
-    /**
-     * 上锁以节流
-     *
-     * @param subject 联系对象
-     * @return 上锁结果
-     * @see CommandSender.subject
-     */
-    fun lock(subject: Contact?): Boolean {
-        val mutex = when(subject) {
-            is User -> getUserLock(subject.id)
-            is Group -> getGroupLock(subject.id)
-            else -> null
-        }
-        return mutex?.tryLock() ?: false
-    }
-
-    /**
-     * 从map中移除锁并解锁
-     *
-     * @param subject 联系对象
-     * @see CommandSender.subject
-     */
-    fun unlock(subject: Contact?) {
-        val mutex = when(subject) {
-            is User -> userLockMap.remove(subject.id)
-            is Group -> groupLockMap.remove(subject.id)
-            else -> null
-        }
-        mutex?.unlock()
-    }
+    mutex?.unlock()
 }

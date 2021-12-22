@@ -30,44 +30,36 @@ import java.io.File
 import java.io.InputStream
 
 /**
- * HTTP请求处理工具
+ * 发送包含 [RequestBody] 的POST请求给 [API](https://api.lolicon.app/setu/v2)
  *
- * @constructor 实例化HTTP请求处理工具
+ * @param body 请求参数
+ * @return API返回的数据
+ * @see RequestBody
+ * @see ResponseBody
  */
-object RequestHandler {
-
-    /**
-     * 发送包含 [RequestBody] 的POST请求给API
-     *
-     * @param body 请求参数
-     * @return API返回的数据
-     * @see RequestBody
-     * @see ResponseBody
-     */
-    suspend fun get(body: RequestBody): ResponseBody {
-        return MiraiConsoleLolicon.client.post("https://api.lolicon.app/setu/v2") {
-            contentType(ContentType.Application.Json)
-            this.body = body
-        }
+suspend fun getAPIResponse(body: RequestBody): ResponseBody {
+    return MiraiConsoleLolicon.client.post("https://api.lolicon.app/setu/v2") {
+        contentType(ContentType.Application.Json)
+        this.body = body
     }
+}
 
-    /**
-     * 从 [url] 下载图片, 并返回 [ByteArrayInputStream] 形式的图片数据
-     *
-     * @param url 来自 [ImageData.urls] 的 URL
-     * @return 图片字节输入流
-     * @see ImageData
-     */
-    suspend fun download(url: String): InputStream {
-        val response: HttpResponse = MiraiConsoleLolicon.client.get(url)
-        val result: ByteArray = response.receive()
-        if (PluginConfig.save) {
-            val dir = File(System.getProperty("user.dir") + "${MiraiConsoleLolicon.cachePath}/")
-            if (!dir.exists()) dir.mkdirs()
-            val urlPaths = url.split("/")
-            val file = File("${dir}/${urlPaths[urlPaths.lastIndex]}")
-            file.writeBytes(result)
-        }
-        return ByteArrayInputStream(result)
+/**
+ * 从 [url] 下载图片, 并返回 [ByteArrayInputStream] 形式的图片数据
+ *
+ * @param url 来自 [ImageData.urls] 的 URL
+ * @return 图片字节输入流
+ * @see ImageData
+ */
+suspend fun downloadImage(url: String): InputStream {
+    val response: HttpResponse = MiraiConsoleLolicon.client.get(url)
+    val result: ByteArray = response.receive()
+    if (PluginConfig.save) {
+        val dir = File(System.getProperty("user.dir")).resolve("${cachePath}/")
+        if (!dir.exists()) dir.mkdirs()
+        val urlPaths = url.split("/")
+        val file = File("${dir}/${urlPaths[urlPaths.lastIndex]}")
+        file.writeBytes(result)
     }
+    return ByteArrayInputStream(result)
 }

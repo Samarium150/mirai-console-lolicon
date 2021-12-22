@@ -35,290 +35,280 @@ import java.io.File
 import java.io.InputStream
 import java.net.Proxy
 
+internal val logger = MiraiConsoleLolicon.logger
+
+internal val cachePath = MiraiConsoleLolicon.cachePath
+
 /**
- * 工具类
+ * 检查用户是否是Bot所有者
  *
- * @constructor 实例化工具类
+ * @param user 目标用户
+ * @return 检查结果
  */
-object GeneralUtil {
+fun checkMaster(@Nullable user: User?): Boolean {
+    return user == null || user.id == PluginConfig.master
+}
 
-    private val logger = MiraiConsoleLolicon.logger
+/**
+ * 检查用户是否受信任
+ *
+ * @param user 目标用户
+ * @return 检查结果
+ */
+fun checkUserPerm(@Nullable user: User?): Boolean {
+    return user == null || PluginData.trustedUsers.contains(user.id)
+}
 
-    private val cachePath = MiraiConsoleLolicon.cachePath
+/**
+ * 检查用户在群里的权限
+ *
+ * @param user 目标用户
+ * @return 检查结果
+ */
+fun checkMemberPerm(@Nullable user: User?): Boolean {
+    return (user as Member).permission != MemberPermission.MEMBER
+}
 
-    /**
-     * 检查用户是否是Bot所有者
-     *
-     * @param user 目标用户
-     * @return 检查结果
-     */
-    fun checkMaster(@Nullable user: User?): Boolean {
-        return user == null || user.id == PluginConfig.master
+/**
+ * 将字符串转为整数值
+ *
+ * @param value 输入的字符串
+ * @param type 需要转化的类别
+ * @return 转换后的值
+ * @throws NumberFormatException 数值非法时抛出
+ * @see Lolicon.set
+ */
+@Throws(NumberFormatException::class)
+fun convertValue(value: String, type: String): Int {
+    val setting = value.toInt()
+    when (type) {
+        "r18" -> if (setting != 0 && setting != 1 && setting != 2) throw NumberFormatException(value)
+        "recall" -> if (setting < 0 || setting >= 120) throw NumberFormatException(value)
+        "cooldown" -> if (setting < 0) throw NumberFormatException(value)
     }
+    return setting
+}
 
-    /**
-     * 检查用户是否受信任
-     *
-     * @param user 目标用户
-     * @return 检查结果
-     */
-    fun checkUserPerm(@Nullable user: User?): Boolean {
-        return user == null || PluginData.trustedUsers.contains(user.id)
+/**
+ * 根据输入值返回代理类型
+ *
+ * @param value 输入的字符串
+ * @return 代理的类型
+ * @throws IllegalArgumentException 数值非法时抛出
+ * @see Proxy.Type
+ */
+@Throws(IllegalArgumentException::class)
+fun getProxyType(value: String): Proxy.Type {
+    return when (value) {
+        "DIRECT" -> Proxy.Type.DIRECT
+        "HTTP" -> Proxy.Type.HTTP
+        "SOCKS" -> Proxy.Type.SOCKS
+        else -> throw IllegalArgumentException(value)
     }
+}
 
-    /**
-     * 检查用户在群里的权限
-     *
-     * @param user 目标用户
-     * @return 检查结果
-     */
-    fun checkMemberPerm(@Nullable user: User?): Boolean {
-        return (user as Member).permission != MemberPermission.MEMBER
-    }
+/**
+ * 将字符串处理为标签列表
+ *
+ * @param str 输入的字符串
+ * @return 标签列表
+ */
+fun processTags(str: String): List<List<String>> {
+    val result: MutableList<List<String>> = listOf<List<String>>().toMutableList()
+    val and = str.split("&")
+    for (s in and) result.add(s.split("|"))
+    return result.toList()
+}
 
-    /**
-     * 将字符串转为整数值
-     *
-     * @param value 输入的字符串
-     * @param type 需要转化的类别
-     * @return 转换后的值
-     * @throws NumberFormatException 数值非法时抛出
-     * @see Lolicon.set
-     */
-    @Throws(NumberFormatException::class)
-    fun convertValue(value: String, type: String): Int {
-        val setting = value.toInt()
-        when (type) {
-            "r18" -> if (setting != 0 && setting != 1 && setting != 2) throw NumberFormatException(value)
-            "recall" -> if (setting < 0 || setting >= 120) throw NumberFormatException(value)
-            "cooldown" -> if (setting < 0) throw NumberFormatException(value)
-        }
-        return setting
-    }
-
-    /**
-     * 根据输入值返回代理类型
-     *
-     * @param value 输入的字符串
-     * @return 代理的类型
-     * @throws IllegalArgumentException 数值非法时抛出
-     * @see Proxy.Type
-     */
-    @Throws(IllegalArgumentException::class)
-    fun getProxyType(value: String): Proxy.Type {
-        return when (value) {
-            "DIRECT" -> Proxy.Type.DIRECT
-            "HTTP" -> Proxy.Type.HTTP
-            "SOCKS" -> Proxy.Type.SOCKS
-            else -> throw IllegalArgumentException(value)
-        }
-    }
-
-    /**
-     * 将字符串处理为标签列表
-     *
-     * @param str 输入的字符串
-     * @return 标签列表
-     */
-    fun processTags(str: String): List<List<String>> {
-        val result: MutableList<List<String>> = listOf<List<String>>().toMutableList()
-        val and = str.split("&")
-        for (s in and) result.add(s.split("|"))
-        return result.toList()
-    }
-
-    /**
-     * 根据黑白名单检查标签是否合法
-     *
-     * @param tag 标签
-     * @return 检查结果
-     */
-    private fun isTagAllowed(tag: String): Boolean {
-        return when (PluginConfig.tagFilterMode) {
-            "none" -> true
-            "whitelist" -> {
-                for (filter in PluginConfig.tagFilter) {
-                    if (filter.toRegex(setOf(RegexOption.IGNORE_CASE)).matches(tag)) return true
-                }
-                false
+/**
+ * 根据黑白名单检查标签是否合法
+ *
+ * @param tag 标签
+ * @return 检查结果
+ */
+private fun isTagAllowed(tag: String): Boolean {
+    return when (PluginConfig.tagFilterMode) {
+        "none" -> true
+        "whitelist" -> {
+            for (filter in PluginConfig.tagFilter) {
+                if (filter.toRegex(setOf(RegexOption.IGNORE_CASE)).matches(tag)) return true
             }
-            "blacklist" -> {
-                for (filter in PluginConfig.tagFilter) {
-                    if (filter.toRegex(setOf(RegexOption.IGNORE_CASE)).matches(tag)) return false
-                }
-                true
-            }
-            else -> true
+            false
         }
-    }
-
-    /**
-     * 根据黑白名单检查标签列表中的标签是否合法
-     *
-     * @param tags 标签列表
-     * @return 检查结果
-     */
-    fun areTagsAllowed(tags: List<String>): Boolean {
-        return when (PluginConfig.tagFilterMode) {
-            "none" -> true
-            "whitelist" -> {
-                var flag = false
-                for (tag in tags) {
-                    if (isTagAllowed(tag)) {
-                        flag = true
-                        break
-                    }
-                }
-                flag
+        "blacklist" -> {
+            for (filter in PluginConfig.tagFilter) {
+                if (filter.toRegex(setOf(RegexOption.IGNORE_CASE)).matches(tag)) return false
             }
-            "blacklist" -> {
-                var flag = true
-                for (tag in tags) {
-                    if (!isTagAllowed(tag)) {
-                        flag = false
-                        break
-                    }
-                }
-                flag
-            }
-            else -> true
+            true
         }
+        else -> true
     }
+}
 
-    private val sizeMap: Map<String, Int> = mapOf(
-        "original" to 0,
-        "regular" to 1,
-        "small" to 2,
-        "thumb" to 3,
-        "mini" to 4
-    )
-
-    fun getUrl(urls: Map<String, String>): String? {
-        return urls[urls.keys.sortedBy { sizeMap[it] }[0]]
-    }
-
-    /**
-     * 检查联系对象是否能执行命令
-     *
-     * @param subject 联系对象
-     * @param user 命令发起者
-     * @return 检查结果
-     * @see CommandSender.subject
-     * @see CommandSender.user
-     */
-    private fun isPermitted(subject: Contact?, user: User?): Boolean {
-        return when (PluginConfig.mode) {
-            "whitelist" -> {
-                when {
-                    subject == null -> true
-                    subject is User && PluginData.userSet.contains(subject.id) -> true
-                    subject is Group &&
-                        PluginData.groupSet.contains(subject.id) &&
-                        PluginData.userSet.contains(user?.id) -> true
-                    else -> false
+/**
+ * 根据黑白名单检查标签列表中的标签是否合法
+ *
+ * @param tags 标签列表
+ * @return 检查结果
+ */
+fun areTagsAllowed(tags: List<String>): Boolean {
+    return when (PluginConfig.tagFilterMode) {
+        "none" -> true
+        "whitelist" -> {
+            var flag = false
+            for (tag in tags) {
+                if (isTagAllowed(tag)) {
+                    flag = true
+                    break
                 }
             }
-            "blacklist" -> {
-                when {
-                    subject == null -> true
-                    subject is User && !PluginData.userSet.contains(subject.id) -> true
-                    subject is Group &&
-                        !PluginData.groupSet.contains(subject.id) &&
-                        !PluginData.userSet.contains(user?.id) -> true
-                    else -> false
+            flag
+        }
+        "blacklist" -> {
+            var flag = true
+            for (tag in tags) {
+                if (!isTagAllowed(tag)) {
+                    flag = false
+                    break
                 }
             }
-            else -> true
+            flag
         }
+        else -> true
     }
+}
 
-    /**
-     * 检查指令发送者是否能执行指令
-     *
-     * @param sender
-     * @return
-     * @see CommandSender
-     */
-    suspend fun checkPermissionAndCooldown(sender: CommandSender): Boolean {
-        val subject = sender.subject
-        val user = sender.user
-        if (!isPermitted(subject, user)) {
-            val where = if (subject is Group) "@${subject.id}" else ""
-            logger.info("当前模式为'${PluginConfig.mode}'，${user?.id}${where}的命令已被无视")
-            return false
+private val sizeMap: Map<String, Int> = mapOf(
+    "original" to 0,
+    "regular" to 1,
+    "small" to 2,
+    "thumb" to 3,
+    "mini" to 4
+)
+
+fun getUrl(urls: Map<String, String>): String? {
+    return urls[urls.keys.sortedBy { sizeMap[it] }[0]]
+}
+
+/**
+ * 检查联系对象是否能执行命令
+ *
+ * @param subject 联系对象
+ * @param user 命令发起者
+ * @return 检查结果
+ * @see CommandSender.subject
+ * @see CommandSender.user
+ */
+private fun isPermitted(subject: Contact?, user: User?): Boolean {
+    return when (PluginConfig.mode) {
+        "whitelist" -> {
+            when {
+                subject == null -> true
+                subject is User && PluginData.userSet.contains(subject.id) -> true
+                subject is Group &&
+                    PluginData.groupSet.contains(subject.id) &&
+                    PluginData.userSet.contains(user?.id) -> true
+                else -> false
+            }
         }
-        if (CooldownUtil.getCooldownStatus(subject)) {
-            sender.sendMessage(ReplyConfig.inCooldown)
-            return false
+        "blacklist" -> {
+            when {
+                subject == null -> true
+                subject is User && !PluginData.userSet.contains(subject.id) -> true
+                subject is Group &&
+                    !PluginData.groupSet.contains(subject.id) &&
+                    !PluginData.userSet.contains(user?.id) -> true
+                else -> false
+            }
         }
-        return true
+        else -> true
     }
+}
 
-    /**
-     * 处理HTTP请求
-     *
-     * @param sender
-     * @param body
-     * @return
-     * @see RequestHandler
-     */
-    suspend fun processRequest(sender: CommandSender, body: RequestBody): ResponseBody? {
-        val response: ResponseBody?
+/**
+ * 检查指令发送者是否能执行指令
+ *
+ * @param sender
+ * @return
+ * @see CommandSender
+ */
+suspend fun checkPermissionAndCooldown(sender: CommandSender): Boolean {
+    val subject = sender.subject
+    val user = sender.user
+    if (!isPermitted(subject, user)) {
+        val where = if (subject is Group) "@${subject.id}" else ""
+        logger.info("当前模式为'${PluginConfig.mode}'，${user?.id}${where}的命令已被无视")
+        return false
+    }
+    if (getCooldownStatus(subject)) {
+        sender.sendMessage(ReplyConfig.inCooldown)
+        return false
+    }
+    return true
+}
+
+/**
+ * 处理HTTP请求
+ *
+ * @param sender
+ * @param body
+ * @return
+ */
+suspend fun processRequest(sender: CommandSender, body: RequestBody): ResponseBody? {
+    val response: ResponseBody?
+    try {
+        response = getAPIResponse(body)
+    } catch (e: Exception) {
+        logger.error(e)
+        return null
+    }
+    logger.info(response.toString())
+    if (response.error.isNotEmpty()) {
+        sender.sendMessage(ReplyConfig.invokeException)
+        logger.warning(response.error)
+        return null
+    }
+    if (response.data.isEmpty()) {
+        sender.sendMessage(ReplyConfig.emptyImageData)
+        return null
+    }
+    return response
+}
+
+/**
+ * 获取图片输入流
+ *
+ * @param url
+ * @return
+ */
+suspend fun getImageInputStream(url: String): InputStream {
+    return if (PluginConfig.save && PluginConfig.cache) {
         try {
-            response = RequestHandler.get(body)
+            val paths = url.split("/")
+            val path = "${cachePath}/${paths[paths.lastIndex]}"
+            val cache = File(System.getProperty("user.dir") + path)
+            if (cache.exists()) cache.inputStream() else downloadImage(url)
         } catch (e: Exception) {
-            logger.error(e)
-            return null
+            downloadImage(url)
         }
-        logger.info(response.toString())
-        if (response.error.isNotEmpty()) {
-            sender.sendMessage(ReplyConfig.invokeException)
-            logger.warning(response.error)
-            return null
-        }
-        if (response.data.isEmpty()) {
-            sender.sendMessage(ReplyConfig.emptyImageData)
-            return null
-        }
-        return response
-    }
+    } else downloadImage(url)
+}
 
-    /**
-     * 获取图片输入流
-     *
-     * @param url
-     * @return
-     * @see RequestHandler
-     */
-    suspend fun getImageInputStream(url: String): InputStream {
-        return if (PluginConfig.save && PluginConfig.cache) {
-            try {
-                val paths = url.split("/")
-                val path = "${cachePath}/${paths[paths.lastIndex]}"
-                val cache = File(System.getProperty("user.dir") + path)
-                if (cache.exists()) cache.inputStream() else RequestHandler.download(url)
-            } catch (e: Exception) {
-                RequestHandler.download(url)
-            }
-        } else RequestHandler.download(url)
-    }
+enum class RecallType {
+    IMAGE,
+    IMAGE_INFO
+}
 
-    enum class RecallType {
-        IMAGE,
-        IMAGE_INFO
-    }
-
-    /**
-     * 撤回图片或图片信息
-     *
-     * @param type
-     * @param receipt
-     * @param time
-     */
-    @OptIn(DelicateCoroutinesApi::class)
-    suspend fun recall(type: RecallType, receipt: MessageReceipt<Contact>, time: Int) = GlobalScope.launch {
-        val result = receipt.recallIn((time * 1000).toLong()).awaitIsSuccess()
-        if (result) logger.info("${receipt.target}${type}已撤回")
-        else logger.warning("${receipt.target}${type}撤回失败")
-    }
+/**
+ * 撤回图片或图片信息
+ *
+ * @param type
+ * @param receipt
+ * @param time
+ */
+@OptIn(DelicateCoroutinesApi::class)
+suspend fun recall(type: RecallType, receipt: MessageReceipt<Contact>, time: Int) = GlobalScope.launch {
+    val result = receipt.recallIn((time * 1000).toLong()).awaitIsSuccess()
+    if (result) logger.info("${receipt.target}${type}已撤回")
+    else logger.warning("${receipt.target}${type}撤回失败")
 }
