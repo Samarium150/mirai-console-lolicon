@@ -1,3 +1,15 @@
+<a name="5.0.0-beta.7"></a>
+# 5.0.0-beta.7 (2022/01/02)
+
+
+## Bug Fixes
+
+* create download folder correctly ([bf873fd6](https://github.com/Samarium150/mirai-console-lolicon/commits/bf873fd6), closes [#71](https://github.com/Samarium150/mirai-console-lolicon/issues/issues/71), [#70](https://github.com/Samarium150/mirai-console-lolicon/issues/issues/70))
+
+## Refactor
+
+* rename package
+
 <a name="5.0.0-beta.6"></a>
 # 5.0.0-beta.6 (2021/12/22)
 
