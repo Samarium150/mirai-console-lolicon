@@ -129,5 +129,5 @@ object ReplyConfig : AutoSavePluginConfig("ReplyConfig") {
      */
     @ValueDescription("用户不在信任列表中")
     val doesNotExists: String by value("该用户不在名单中")
-    
+
 }

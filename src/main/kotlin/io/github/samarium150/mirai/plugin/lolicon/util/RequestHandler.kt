@@ -55,7 +55,7 @@ suspend fun downloadImage(url: String): InputStream {
     val response: HttpResponse = MiraiConsoleLolicon.client.get(url)
     val result: ByteArray = response.receive()
     if (PluginConfig.save) {
-        val dir = File(System.getProperty("user.dir")).resolve("${cachePath}/")
+        val dir = File(System.getProperty("user.dir") + "${cachePath}/")
         if (!dir.exists()) dir.mkdirs()
         val urlPaths = url.split("/")
         val file = File("${dir}/${urlPaths[urlPaths.lastIndex]}")
