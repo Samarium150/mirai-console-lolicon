@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package io.github.samarium150.mirai.plugin.config
+package io.github.samarium150.mirai.plugin.lolicon.config
 
 import net.mamoe.mirai.console.data.AutoSavePluginConfig
 import net.mamoe.mirai.console.data.ValueDescription
@@ -74,7 +74,7 @@ object PluginConfig : AutoSavePluginConfig("Config") {
      * 获取Pixiv图片的反向代理
      */
     @ValueDescription("获取Pixiv图片的反向代理")
-    val proxy: String by value("https://i.pixiv.re")
+    val proxy: String by value("i.pixiv.re")
 
     /**
      * 默认的撤回时间(单位: s)

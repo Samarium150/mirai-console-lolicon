@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package io.github.samarium150.mirai.plugin.config
+package io.github.samarium150.mirai.plugin.lolicon.config
 
-import io.github.samarium150.mirai.plugin.command.Lolicon
-import io.github.samarium150.mirai.plugin.command.Lolicon.get
-import io.github.samarium150.mirai.plugin.data.PluginData
+import io.github.samarium150.mirai.plugin.lolicon.command.Lolicon
+import io.github.samarium150.mirai.plugin.lolicon.command.Lolicon.get
+import io.github.samarium150.mirai.plugin.lolicon.data.PluginData
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.contact.Group

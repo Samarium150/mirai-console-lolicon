@@ -14,16 +14,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package io.github.samarium150.mirai.plugin.util
+package io.github.samarium150.mirai.plugin.lolicon.util
 
-import io.github.samarium150.mirai.plugin.MiraiConsoleLolicon
-import io.github.samarium150.mirai.plugin.command.Lolicon
-import io.github.samarium150.mirai.plugin.command.Lolicon.set
-import io.github.samarium150.mirai.plugin.config.PluginConfig
-import io.github.samarium150.mirai.plugin.config.ReplyConfig
-import io.github.samarium150.mirai.plugin.data.PluginData
-import io.github.samarium150.mirai.plugin.data.RequestBody
-import io.github.samarium150.mirai.plugin.data.ResponseBody
+import io.github.samarium150.mirai.plugin.lolicon.MiraiConsoleLolicon
+import io.github.samarium150.mirai.plugin.lolicon.command.Lolicon
+import io.github.samarium150.mirai.plugin.lolicon.command.Lolicon.set
+import io.github.samarium150.mirai.plugin.lolicon.config.PluginConfig
+import io.github.samarium150.mirai.plugin.lolicon.config.ReplyConfig
+import io.github.samarium150.mirai.plugin.lolicon.data.PluginData
+import io.github.samarium150.mirai.plugin.lolicon.data.RequestBody
+import io.github.samarium150.mirai.plugin.lolicon.data.ResponseBody
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -285,7 +285,7 @@ suspend fun getImageInputStream(url: String): InputStream {
     return if (PluginConfig.save && PluginConfig.cache) {
         try {
             val paths = url.split("/")
-            val path = "${cachePath}/${paths[paths.lastIndex]}"
+            val path = "$cachePath/${paths[paths.lastIndex]}"
             val cache = File(System.getProperty("user.dir") + path)
             if (cache.exists()) cache.inputStream() else downloadImage(url)
         } catch (e: Exception) {

@@ -25,34 +25,37 @@ dependencies {
     implementation("io.ktor:ktor-client-serialization:1.5.4")
 }
 
-tasks.withType<KotlinCompile>().all {
-    kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
-    kotlinOptions.jvmTarget = "11"
-}
+tasks {
 
-tasks.withType<DokkaTask>().configureEach {
-    dokkaSourceSets {
-        configureEach {
-            includes.from("Module.md")
-            sourceLink {
-                localDirectory.set(file("src/main/kotlin"))
-                remoteUrl.set(
-                    URL("https://github.com/Samarium150/mirai-console-lolicon/tree/main/src/main/kotlin")
-                )
-                remoteLineSuffix.set("#L")
-            }
-            jdkVersion.set(11)
-            externalDocumentationLink {
-                url.set(URL("https://kdoc.mirai.mamoe.net/2.9.0-RC2"))
-                packageListUrl.set(URL("https://kdoc.mirai.mamoe.net/2.9.0-RC2/package-list"))
+    withType<KotlinCompile>().all {
+        kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+        kotlinOptions.jvmTarget = "11"
+    }
+
+    withType<DokkaTask>().configureEach {
+        dokkaSourceSets {
+            configureEach {
+                includes.from("Module.md")
+                sourceLink {
+                    localDirectory.set(file("src/main/kotlin"))
+                    remoteUrl.set(
+                        URL("https://github.com/Samarium150/mirai-console-lolicon/tree/main/src/main/kotlin")
+                    )
+                    remoteLineSuffix.set("#L")
+                }
+                jdkVersion.set(11)
+                externalDocumentationLink {
+                    url.set(URL("https://kdoc.mirai.mamoe.net/2.9.0-RC2"))
+                    packageListUrl.set(URL("https://kdoc.mirai.mamoe.net/2.9.0-RC2/package-list"))
+                }
             }
         }
     }
-}
 
-changelog {
-    appName = project.name
-    versionNum = "$version"
-    repoUrl = "https://github.com/Samarium150/mirai-console-lolicon"
-    trackerUrl = "https://github.com/Samarium150/mirai-console-lolicon/issues"
+    changelog {
+        appName = project.name
+        versionNum = "$version"
+        repoUrl = "https://github.com/Samarium150/mirai-console-lolicon"
+        trackerUrl = "https://github.com/Samarium150/mirai-console-lolicon/issues"
+    }
 }

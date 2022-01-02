@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="RunTerminalKt" type="JetRunConfigurationType" nameIsGenerated="true">
-    <option name="MAIN_CLASS_NAME" value="io.github.samarium150.mirai.plugin.RunTerminalKt" />
+    <option name="MAIN_CLASS_NAME" value="io.github.samarium150.mirai.plugin.lolicon.RunTerminalKt" />
     <module name="mirai-console-lolicon.test" />
     <shortenClasspath name="NONE" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/run" />

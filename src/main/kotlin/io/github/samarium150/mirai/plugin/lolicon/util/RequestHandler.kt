@@ -14,13 +14,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package io.github.samarium150.mirai.plugin.util
+package io.github.samarium150.mirai.plugin.lolicon.util
 
-import io.github.samarium150.mirai.plugin.MiraiConsoleLolicon
-import io.github.samarium150.mirai.plugin.config.PluginConfig
-import io.github.samarium150.mirai.plugin.data.ImageData
-import io.github.samarium150.mirai.plugin.data.RequestBody
-import io.github.samarium150.mirai.plugin.data.ResponseBody
+import io.github.samarium150.mirai.plugin.lolicon.MiraiConsoleLolicon
+import io.github.samarium150.mirai.plugin.lolicon.config.PluginConfig
+import io.github.samarium150.mirai.plugin.lolicon.data.ImageData
+import io.github.samarium150.mirai.plugin.lolicon.data.RequestBody
+import io.github.samarium150.mirai.plugin.lolicon.data.ResponseBody
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*

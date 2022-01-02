@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package io.github.samarium150.mirai.plugin.config
+package io.github.samarium150.mirai.plugin.lolicon.config
 
 import net.mamoe.mirai.console.data.AutoSavePluginConfig
 import net.mamoe.mirai.console.data.ValueDescription
@@ -129,10 +129,5 @@ object ReplyConfig : AutoSavePluginConfig("ReplyConfig") {
      */
     @ValueDescription("用户不在信任列表中")
     val doesNotExists: String by value("该用户不在名单中")
-
-    /**
-     * 配置已重载
-     */
-    @ValueDescription("配置已重载")
-    val reloaded: String by value("配置已重载")
+    
 }

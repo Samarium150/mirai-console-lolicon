@@ -14,15 +14,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
  */
-package io.github.samarium150.mirai.plugin
+package io.github.samarium150.mirai.plugin.lolicon
 
-import io.github.samarium150.mirai.plugin.command.Lolicon
-import io.github.samarium150.mirai.plugin.config.CommandConfig
-import io.github.samarium150.mirai.plugin.config.PluginConfig
-import io.github.samarium150.mirai.plugin.config.ProxyConfig
-import io.github.samarium150.mirai.plugin.config.ReplyConfig
-import io.github.samarium150.mirai.plugin.data.PluginData
-import io.github.samarium150.mirai.plugin.util.getProxyType
+import io.github.samarium150.mirai.plugin.lolicon.command.Lolicon
+import io.github.samarium150.mirai.plugin.lolicon.config.CommandConfig
+import io.github.samarium150.mirai.plugin.lolicon.config.PluginConfig
+import io.github.samarium150.mirai.plugin.lolicon.config.ProxyConfig
+import io.github.samarium150.mirai.plugin.lolicon.config.ReplyConfig
+import io.github.samarium150.mirai.plugin.lolicon.data.PluginData
+import io.github.samarium150.mirai.plugin.lolicon.util.getProxyType
 import io.ktor.client.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
