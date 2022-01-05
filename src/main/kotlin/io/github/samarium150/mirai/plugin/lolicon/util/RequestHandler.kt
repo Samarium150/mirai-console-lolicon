@@ -26,7 +26,6 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import java.io.ByteArrayInputStream
-import java.io.File
 import java.io.InputStream
 
 /**
@@ -55,10 +54,8 @@ suspend fun downloadImage(url: String): InputStream {
     val response: HttpResponse = MiraiConsoleLolicon.client.get(url)
     val result: ByteArray = response.receive()
     if (PluginConfig.save) {
-        val dir = File(System.getProperty("user.dir") + "${cachePath}/")
-        if (!dir.exists()) dir.mkdirs()
         val urlPaths = url.split("/")
-        val file = File("${dir}/${urlPaths[urlPaths.lastIndex]}")
+        val file = cacheFolder.resolve(urlPaths[urlPaths.lastIndex])
         file.writeBytes(result)
     }
     return ByteArrayInputStream(result)

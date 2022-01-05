@@ -32,7 +32,6 @@ import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
 import net.mamoe.mirai.console.permission.AbstractPermitteeId
 import net.mamoe.mirai.console.permission.PermissionService.Companion.cancel
 import net.mamoe.mirai.console.permission.PermissionService.Companion.permit
-import net.mamoe.mirai.console.plugin.id
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import java.net.InetSocketAddress
@@ -59,8 +58,6 @@ object MiraiConsoleLolicon : KotlinPlugin(
      * Ktor HTTP客户端
      */
     lateinit var client: HttpClient
-
-    val cachePath = "/data/${id}/download"
 
     /**
      * 插件启用时调用

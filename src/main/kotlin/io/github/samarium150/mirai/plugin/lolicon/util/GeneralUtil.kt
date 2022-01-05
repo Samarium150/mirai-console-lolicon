@@ -35,9 +35,14 @@ import java.io.File
 import java.io.InputStream
 import java.net.Proxy
 
-internal val logger = MiraiConsoleLolicon.logger
+internal val logger by lazy { MiraiConsoleLolicon.logger }
 
-internal val cachePath = MiraiConsoleLolicon.cachePath
+internal val cacheFolder: File by lazy {
+    val folder = MiraiConsoleLolicon.dataFolder.resolve("download")
+    if (PluginConfig.save && !folder.exists())
+        folder.mkdirs()
+    folder
+}
 
 /**
  * 检查用户是否是Bot所有者
@@ -285,7 +290,7 @@ suspend fun getImageInputStream(url: String): InputStream {
     return if (PluginConfig.save && PluginConfig.cache) {
         try {
             val paths = url.split("/")
-            val path = "$cachePath/${paths[paths.lastIndex]}"
+            val path = "$cacheFolder/${paths[paths.lastIndex]}"
             val cache = File(System.getProperty("user.dir") + path)
             if (cache.exists()) cache.inputStream() else downloadImage(url)
         } catch (e: Exception) {
