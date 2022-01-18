@@ -22,7 +22,12 @@ repositories {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-client-serialization:1.5.4")
+    implementation("io.ktor:ktor-client-serialization:1.5.4") {
+        exclude(group = "org.jetbrains.kotlin")
+        exclude(group = "org.jetbrains.kotlinx")
+        exclude(group = "org.slf4j")
+        exclude(group = "io.ktor", module = "ktor-client-core")
+    }
 }
 
 tasks {
