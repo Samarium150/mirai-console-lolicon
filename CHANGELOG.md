@@ -1,3 +1,11 @@
+<a name="5.0.0"></a>
+## 5.0.0 (2022/01/31)
+
+
+## Refactor
+
+* simplify caching
+
 <a name="5.0.0-beta.7"></a>
 # 5.0.0-beta.7 (2022/01/02)
 
