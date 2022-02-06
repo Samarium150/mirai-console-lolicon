@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 Samarium
+ * Copyright (c) 2020-2022 Samarium
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -318,6 +318,14 @@ suspend fun recall(type: RecallType, receipt: MessageReceipt<Contact>, time: Int
     else logger.warning("${receipt.target}${type}撤回失败")
 }
 
+/**
+ * 根据配置生成图片消息
+ *
+ * @param contact
+ * @param imageInfo
+ * @param image
+ * @return
+ */
 fun buildMessage(contact: Contact, imageInfo: String, image: Image): SingleMessage {
     return when (PluginConfig.messageType) {
         Simple -> image

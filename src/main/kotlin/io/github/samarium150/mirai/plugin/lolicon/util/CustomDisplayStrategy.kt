@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 Samarium
+ * Copyright (c) 2020-2022 Samarium
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -19,6 +19,12 @@ package io.github.samarium150.mirai.plugin.lolicon.util
 import net.mamoe.mirai.message.data.ForwardMessage.DisplayStrategy
 import net.mamoe.mirai.message.data.RawForwardMessage
 
+/**
+ * 自定义转发消息显示策略
+ *
+ * @constructor 实例化策略
+ * @see DisplayStrategy
+ */
 object CustomDisplayStrategy : DisplayStrategy {
 
     override fun generateTitle(forward: RawForwardMessage): String = "神秘的聊天记录"
