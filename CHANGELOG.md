@@ -1,6 +1,15 @@
-<a name="5.0.0"></a>
-## 5.0.0 (2022/01/31)
+<a name="5.1.0"></a>
 
+## 5.1.0 (2022/02/06)
+
+## Features
+
+* send image in forward messages ([fc0d98e6](https://github.com/Samarium150/mirai-console-lolicon/commits/fc0d98e6),
+  closes [#75](https://github.com/Samarium150/mirai-console-lolicon/issues/issues/75))
+
+<a name="5.0.0"></a>
+
+## 5.0.0 (2022/01/31)
 
 ## Refactor
 
@@ -8,7 +17,6 @@
 
 <a name="5.0.0-beta.7"></a>
 # 5.0.0-beta.7 (2022/01/02)
-
 
 ## Bug Fixes
 
@@ -21,13 +29,11 @@
 <a name="5.0.0-beta.6"></a>
 # 5.0.0-beta.6 (2021/12/22)
 
-
 ## Refactor
 
 * use top-level functions instead of util classes
 <a name="5.0.0-beta.5"></a>
 # 5.0.0-beta.5 (2021/12/21)
-
 
 ## Bug Fixes
 
@@ -36,14 +42,12 @@
 <a name="5.0.0-beta.4"></a>
 # 5.0.0-beta.4 (2021/12/18)
 
-
 ## Bug Fixes
 
 * resolve dead locks ([7d602d4e](https://github.com/Samarium150/mirai-console-lolicon/commits/7d602d4e), closes [#67](https://github.com/Samarium150/mirai-console-lolicon/issues/issues/67))
 
 <a name="5.0.0-beta.3"></a>
 # 5.0.0-beta.3 (2021/12/18)
-
 
 ## Bug Fixes
 
@@ -52,28 +56,24 @@
 <a name="5.0.0-beta.2"></a>
 # 5.0.0-beta.2 (2021/12/18)
 
-
 ## Refactor
 
-* redesign cooldown feature also fix cache path
-  closes [#64](https://github.com/Samarium150/mirai-console-lolicon/issues/64)
+* redesign cooldown feature also fix cache path closes [#64](https://github.com/Samarium150/mirai-console-lolicon/issues/64)
 
 <a name="5.0.0-beta.1"></a>
 # 5.0.0-beta.1 (2021/12/13)
 
-
 ## Refactor
 
 * relocate files into packages
- 
+
 <a name="4.2.1"></a>
 
 # 4.2.1 (2021/12/12)
 
 ## Bug Fixes
 
-* add https to default proxy ([5fb2c23a](https://github.com/Samarium150/mirai-console-lolicon/commits/5fb2c23a),
-  closes [#62](https://github.com/Samarium150/mirai-console-lolicon/issues/62))
+* add https to default proxy ([5fb2c23a](https://github.com/Samarium150/mirai-console-lolicon/commits/5fb2c23a), closes [#62](https://github.com/Samarium150/mirai-console-lolicon/issues/62))
 
 <a name="4.2.0"></a>
 
@@ -81,10 +81,8 @@
 
 ## Features
 
-* support spaced tags ([6b339d11](https://github.com/Samarium150/mirai-console-lolicon/commits/6b339d11),
-  closes [#60](https://github.com/Samarium150/mirai-console-lolicon/issues/60))
-* support tags filtering ([a44483c5](https://github.com/Samarium150/mirai-console-lolicon/commits/a44483c5),
-  closes [#55](https://github.com/Samarium150/mirai-console-lolicon/issues/55))
+* support spaced tags ([6b339d11](https://github.com/Samarium150/mirai-console-lolicon/commits/6b339d11), closes [#60](https://github.com/Samarium150/mirai-console-lolicon/issues/60))
+* support tags filtering ([a44483c5](https://github.com/Samarium150/mirai-console-lolicon/commits/a44483c5), closes [#55](https://github.com/Samarium150/mirai-console-lolicon/issues/55))
 
 <a name="4.1.4"></a>
 
@@ -92,8 +90,7 @@
 
 ## Bug Fixes
 
-* blacklisted users can use commands in normal
-  groups ([d2fbdc7a](https://github.com/Samarium150/mirai-console-lolicon/commits/d2fbdc7a),
+* blacklisted users can use commands in normal groups ([d2fbdc7a](https://github.com/Samarium150/mirai-console-lolicon/commits/d2fbdc7a),
   closes [#59](https://github.com/Samarium150/mirai-console-lolicon/issues/59))
 
 <a name="4.1.3"></a>
@@ -210,8 +207,7 @@
 
 ## Breaking Changes
 
-* due
-  to [0de677c3](https://github.com/Samarium150/mirai-console-lolicon/commits/0de677c38ce09e26202c4b6f2cd2874e8a6f1a27),
+* due to [0de677c3](https://github.com/Samarium150/mirai-console-lolicon/commits/0de677c38ce09e26202c4b6f2cd2874e8a6f1a27),
   Fixes #20; change downloading image logic and deprecate timeout settings; add reload command; update mirai-console to
   2.3.2
 
