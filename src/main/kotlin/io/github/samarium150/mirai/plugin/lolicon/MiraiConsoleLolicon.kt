@@ -26,7 +26,6 @@ import io.github.samarium150.mirai.plugin.lolicon.util.getProxyType
 import io.ktor.client.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
-import io.ktor.util.*
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
 import net.mamoe.mirai.console.permission.AbstractPermitteeId
@@ -46,7 +45,7 @@ import java.net.Proxy
 object MiraiConsoleLolicon : KotlinPlugin(
     JvmPluginDescription(
         id = "io.github.samarium150.mirai.plugin.mirai-console-lolicon",
-        version = "5.0.0",
+        version = "5.1.0",
         name = "Lolicon"
     ) {
         author("Samarium150")
@@ -62,7 +61,6 @@ object MiraiConsoleLolicon : KotlinPlugin(
     /**
      * 插件启用时调用
      */
-    @OptIn(KtorExperimentalAPI::class)
     override fun onEnable() {
 
         // 重载配置和数据
@@ -74,9 +72,9 @@ object MiraiConsoleLolicon : KotlinPlugin(
 
         if (PluginConfig.master != 0L) {
             PluginData.trustedUsers.add(PluginConfig.master)
-            if (PluginConfig.mode == "whitelist")
+            if (PluginConfig.mode == PluginConfig.Mode.Whitelist)
                 PluginData.userSet.add(PluginConfig.master)
-            if (PluginConfig.mode == "blacklist")
+            if (PluginConfig.mode == PluginConfig.Mode.Blacklist)
                 PluginData.userSet.remove(PluginConfig.master)
         } else logger.warning("请先在配置文件设置Bot所有者id")
 

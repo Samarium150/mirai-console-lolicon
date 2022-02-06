@@ -20,6 +20,7 @@ import io.github.samarium150.mirai.plugin.lolicon.MiraiConsoleLolicon
 import io.github.samarium150.mirai.plugin.lolicon.command.Lolicon
 import io.github.samarium150.mirai.plugin.lolicon.command.Lolicon.set
 import io.github.samarium150.mirai.plugin.lolicon.config.PluginConfig
+import io.github.samarium150.mirai.plugin.lolicon.config.PluginConfig.Type.*
 import io.github.samarium150.mirai.plugin.lolicon.config.ReplyConfig
 import io.github.samarium150.mirai.plugin.lolicon.data.PluginData
 import io.github.samarium150.mirai.plugin.lolicon.data.RequestBody
@@ -30,6 +31,7 @@ import kotlinx.coroutines.launch
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.contact.*
 import net.mamoe.mirai.message.MessageReceipt
+import net.mamoe.mirai.message.data.*
 import org.jetbrains.annotations.Nullable
 import java.io.File
 import java.io.InputStream
@@ -133,20 +135,19 @@ fun processTags(str: String): List<List<String>> {
  */
 private fun isTagAllowed(tag: String): Boolean {
     return when (PluginConfig.tagFilterMode) {
-        "none" -> true
-        "whitelist" -> {
+        PluginConfig.Mode.None -> true
+        PluginConfig.Mode.Whitelist -> {
             for (filter in PluginConfig.tagFilter) {
                 if (filter.toRegex(setOf(RegexOption.IGNORE_CASE)).matches(tag)) return true
             }
             false
         }
-        "blacklist" -> {
+        PluginConfig.Mode.Blacklist -> {
             for (filter in PluginConfig.tagFilter) {
                 if (filter.toRegex(setOf(RegexOption.IGNORE_CASE)).matches(tag)) return false
             }
             true
         }
-        else -> true
     }
 }
 
@@ -158,8 +159,8 @@ private fun isTagAllowed(tag: String): Boolean {
  */
 fun areTagsAllowed(tags: List<String>): Boolean {
     return when (PluginConfig.tagFilterMode) {
-        "none" -> true
-        "whitelist" -> {
+        PluginConfig.Mode.None -> true
+        PluginConfig.Mode.Whitelist -> {
             var flag = false
             for (tag in tags) {
                 if (isTagAllowed(tag)) {
@@ -169,7 +170,7 @@ fun areTagsAllowed(tags: List<String>): Boolean {
             }
             flag
         }
-        "blacklist" -> {
+        PluginConfig.Mode.Blacklist -> {
             var flag = true
             for (tag in tags) {
                 if (!isTagAllowed(tag)) {
@@ -179,7 +180,6 @@ fun areTagsAllowed(tags: List<String>): Boolean {
             }
             flag
         }
-        else -> true
     }
 }
 
@@ -206,7 +206,7 @@ fun getUrl(urls: Map<String, String>): String? {
  */
 private fun isPermitted(subject: Contact?, user: User?): Boolean {
     return when (PluginConfig.mode) {
-        "whitelist" -> {
+        PluginConfig.Mode.Whitelist -> {
             when {
                 subject == null -> true
                 subject is User && PluginData.userSet.contains(subject.id) -> true
@@ -216,7 +216,7 @@ private fun isPermitted(subject: Contact?, user: User?): Boolean {
                 else -> false
             }
         }
-        "blacklist" -> {
+        PluginConfig.Mode.Blacklist -> {
             when {
                 subject == null -> true
                 subject is User && !PluginData.userSet.contains(subject.id) -> true
@@ -316,4 +316,15 @@ suspend fun recall(type: RecallType, receipt: MessageReceipt<Contact>, time: Int
     val result = receipt.recallIn((time * 1000).toLong()).awaitIsSuccess()
     if (result) logger.info("${receipt.target}${type}已撤回")
     else logger.warning("${receipt.target}${type}撤回失败")
+}
+
+fun buildMessage(contact: Contact, imageInfo: String, image: Image): SingleMessage {
+    return when (PluginConfig.messageType) {
+        Simple -> image
+        Flash -> FlashImage(image)
+        Forward -> buildForwardMessage(contact, CustomDisplayStrategy) {
+            add(contact.bot, PlainText(imageInfo))
+            add(contact.bot, image)
+        }
+    }
 }

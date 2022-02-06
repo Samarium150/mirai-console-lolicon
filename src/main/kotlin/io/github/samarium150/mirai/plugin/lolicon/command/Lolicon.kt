@@ -33,11 +33,11 @@ import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
+import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.contact.Contact.Companion.uploadImage
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.User
-import net.mamoe.mirai.message.data.FlashImage
-import net.mamoe.mirai.message.data.MessageChainBuilder
+import net.mamoe.mirai.message.data.*
 import java.io.InputStream
 
 /**
@@ -90,9 +90,9 @@ object Lolicon : CompositeCommand(
         val body = if (tags.isNotEmpty())
             RequestBody(
                 r18, 1, listOf(), "", processTags(tags),
-                listOf(PluginConfig.size), PluginConfig.proxy
+                listOf(PluginConfig.size.name.lowercase()), PluginConfig.proxy
             )
-        else RequestBody(r18, 1, listOf(), tags, listOf(), listOf(PluginConfig.size), PluginConfig.proxy)
+        else RequestBody(r18, 1, listOf(), tags, listOf(), listOf(PluginConfig.size.name.lowercase()), PluginConfig.proxy)
         logger.info("request body: $body")
         val response = processRequest(this, body)
         if (response == null) {
@@ -106,20 +106,22 @@ object Lolicon : CompositeCommand(
                 unlock(subject)
                 return
             }
-            val url = imageData.urls[PluginConfig.size]
+            val url = imageData.urls[PluginConfig.size.name.lowercase()]
             if (url == null) {
                 unlock(subject)
                 return
             }
             val imgInfoReceipt =
-                if (PluginConfig.verbose || subject == null) sendMessage(imageData.toReadable())
+                if (subject == null ||
+                    PluginConfig.verbose && PluginConfig.messageType != PluginConfig.Type.Forward)
+                    sendMessage(imageData.toReadable())
                 else null
             var stream: InputStream? = null
             try {
                 stream = getImageInputStream(url)
                 val img = subject?.uploadImage(stream)
                 if (img != null) {
-                    val imgReceipt = if (PluginConfig.flash) sendMessage(FlashImage(img)) else sendMessage(img)
+                    val imgReceipt = sendMessage(buildMessage(subject!!, imageData.toReadable(), img))
                     if (imgReceipt == null) {
                         unlock(subject)
                         return
@@ -188,42 +190,74 @@ object Lolicon : CompositeCommand(
             return
         }
         try {
-            val imageInfoMsgBuilder = MessageChainBuilder()
-            val imageMsgBuilder = MessageChainBuilder()
-            for (imageData in response.data) {
-                if (imageData.urls.isEmpty()) continue
-                val url = getUrl(imageData.urls) ?: continue
-                var stream: InputStream? = null
-                try {
-                    stream = getImageInputStream(url)
-                    val img = subject?.uploadImage(stream)
-                    if (img != null)
-                        if (PluginConfig.flash)
-                            imageMsgBuilder.add(FlashImage(img))
-                        else
-                            imageMsgBuilder.add(img)
-                    imageInfoMsgBuilder.add(imageData.toReadable())
-                    imageInfoMsgBuilder.add("\n")
-                } catch (e: Exception) {
-                    logger.error(e)
-                    sendMessage(ReplyConfig.networkError)
-                } finally {
-                    withContext(Dispatchers.IO) { stream?.close() }
+            if (subject != null && PluginConfig.messageType == PluginConfig.Type.Forward) {
+                val contact = subject as Contact
+                val imageMsgBuilder = ForwardMessageBuilder(contact)
+                imageMsgBuilder.displayStrategy = CustomDisplayStrategy
+                for (imageData in response.data) {
+                    if (imageData.urls.isEmpty()) continue
+                    val url = getUrl(imageData.urls) ?: continue
+                    var stream: InputStream? = null
+                    try {
+                        stream = getImageInputStream(url)
+                        val img = contact.uploadImage(stream)
+                        imageMsgBuilder.add(contact.bot, PlainText(imageData.toReadable()))
+                        imageMsgBuilder.add(contact.bot, img)
+                    } catch (e: Exception) {
+                        logger.error(e)
+                        imageMsgBuilder.add(contact.bot, PlainText(imageData.toReadable()))
+                        imageMsgBuilder.add(contact.bot, PlainText(ReplyConfig.networkError))
+                    } finally {
+                        withContext(Dispatchers.IO) { stream?.close() }
+                    }
                 }
+                val imgReceipt = sendMessage(imageMsgBuilder.build())
+                if (imgReceipt == null) {
+                    unlock(subject)
+                    return
+                } else if (recall > 0 && PluginConfig.recallImg)
+                    recall(RecallType.IMAGE, imgReceipt, recall)
+                if (cooldown > 0)
+                    cooldown(subject, cooldown)
+            } else {
+                val imageInfoMsgBuilder = MessageChainBuilder()
+                val imageMsgBuilder = MessageChainBuilder()
+                for (imageData in response.data) {
+                    if (imageData.urls.isEmpty()) continue
+                    val url = getUrl(imageData.urls) ?: continue
+                    var stream: InputStream? = null
+                    try {
+                        stream = getImageInputStream(url)
+                        val img = subject?.uploadImage(stream)
+                        if (img != null)
+                            if (PluginConfig.messageType == PluginConfig.Type.Flash)
+                                imageMsgBuilder.add(FlashImage(img))
+                            else
+                                imageMsgBuilder.add(img)
+                        imageInfoMsgBuilder.add(imageData.toReadable())
+                        imageInfoMsgBuilder.add("\n")
+                    } catch (e: Exception) {
+                        logger.error(e)
+                        sendMessage(ReplyConfig.networkError)
+                    } finally {
+                        withContext(Dispatchers.IO) { stream?.close() }
+                    }
+                }
+                val imgInfoReceipt =
+                    if (subject == null || PluginConfig.verbose)
+                        sendMessage(imageInfoMsgBuilder.asMessageChain())
+                    else null
+                val imgReceipt = sendMessage(imageMsgBuilder.asMessageChain())
+                if (imgReceipt == null) {
+                    unlock(subject)
+                    return
+                } else if (recall > 0 && PluginConfig.recallImg)
+                    recall(RecallType.IMAGE, imgReceipt, recall)
+                if (cooldown > 0)
+                    cooldown(subject, cooldown)
+                if (PluginConfig.verbose && imgInfoReceipt != null && recall > 0 && PluginConfig.recallImgInfo)
+                    recall(RecallType.IMAGE_INFO, imgInfoReceipt, recall)
             }
-            val imgInfoReceipt =
-                if (PluginConfig.verbose || subject == null) sendMessage(imageInfoMsgBuilder.asMessageChain())
-                else null
-            val imgReceipt = sendMessage(imageMsgBuilder.asMessageChain())
-            if (imgReceipt == null) {
-                unlock(subject)
-                return
-            } else if (recall > 0 && PluginConfig.recallImg)
-                recall(RecallType.IMAGE, imgReceipt, recall)
-            if (cooldown > 0)
-                cooldown(subject, cooldown)
-            if (PluginConfig.verbose && imgInfoReceipt != null && recall > 0 && PluginConfig.recallImgInfo)
-                recall(RecallType.IMAGE_INFO, imgInfoReceipt, recall)
         } catch (e: Exception) {
             logger.error(e)
         } finally {

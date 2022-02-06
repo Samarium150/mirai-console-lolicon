@@ -28,6 +28,27 @@ import net.mamoe.mirai.console.data.value
  */
 object PluginConfig : AutoSavePluginConfig("Config") {
 
+    enum class Mode {
+        None,
+        Whitelist,
+        Blacklist
+    }
+
+    @Suppress("unused")
+    enum class Size {
+        Original,
+        Regular,
+        Small,
+        Thumb,
+        Mini
+    }
+
+    enum class Type {
+        Simple,
+        Flash,
+        Forward
+    }
+
     /**
      * Bot 所有者账号
      */
@@ -37,8 +58,8 @@ object PluginConfig : AutoSavePluginConfig("Config") {
     /**
      * Get命令和Adv命令的模式
      */
-    @ValueDescription("Get命令和Adv命令的模式：none/whitelist/blacklist")
-    val mode: String by value("none")
+    @ValueDescription("Get命令和Adv命令的模式: None/Whitelist/Blacklist")
+    val mode: Mode by value(Mode.None)
 
     /**
      * 是否保存图片
@@ -59,16 +80,16 @@ object PluginConfig : AutoSavePluginConfig("Config") {
     val verbose: Boolean by value(true)
 
     /**
-     * 是否启用闪照模式
+     * 图片发送模式
      */
-    @ValueDescription("是否启用闪照模式")
-    val flash: Boolean by value(false)
+    @ValueDescription("图片发送模式: Simple/Flash/Forward")
+    val messageType: Type by value(Type.Simple)
 
     /**
      * 图片大小
      */
-    @ValueDescription("original/regular/small/thumb/mini")
-    val size: String by value("regular")
+    @ValueDescription("图片大小: Original/Regular/Small/Thumb/Mini")
+    val size: Size by value(Size.Regular)
 
     /**
      * 获取Pixiv图片的反向代理
@@ -103,8 +124,8 @@ object PluginConfig : AutoSavePluginConfig("Config") {
     /**
      * 标签过滤模式
      */
-    @ValueDescription("标签过滤模式: none/whitelist/blacklist")
-    val tagFilterMode: String by value("none")
+    @ValueDescription("标签过滤模式: None/Whitelist/Blacklist")
+    val tagFilterMode: Mode by value(Mode.None)
 
     /**
      * 标签过滤器
