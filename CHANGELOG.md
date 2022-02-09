@@ -1,3 +1,13 @@
+<a name="5.2.0"></a>
+
+## 5.2.0 (2022/02/09)
+
+## Features
+
+* notification message after get-command
+  received ([57cc19d3](https://github.com/Samarium150/mirai-console-lolicon/commits/57cc19d3),
+  closes [#76](https://github.com/Samarium150/mirai-console-lolicon/issues/issues/76))
+
 <a name="5.1.0"></a>
 
 ## 5.1.0 (2022/02/06)
