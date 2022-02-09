@@ -74,6 +74,12 @@ object PluginConfig : AutoSavePluginConfig("Config") {
     val cache: Boolean by value(false)
 
     /**
+     * 是否提示Get和Adv命令已受理
+     */
+    @ValueDescription("是否提示Get和Adv命令已受理")
+    val notify: Boolean by value(true)
+
+    /**
      * 是否发送图片信息
      */
     @ValueDescription("是否发送图片信息")

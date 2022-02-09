@@ -88,6 +88,8 @@ object Lolicon : CompositeCommand(
             logger.info("throttled")
             return
         }
+        if (PluginConfig.notify)
+            sendMessage(ReplyConfig.notify)
         val (r18, recall, cooldown) = ExecutionConfig.create(subject)
         val tags = tagArgs.joinToString(" ")
         val body = if (tags.isNotEmpty())
@@ -95,7 +97,15 @@ object Lolicon : CompositeCommand(
                 r18, 1, listOf(), "", processTags(tags),
                 listOf(PluginConfig.size.name.lowercase()), PluginConfig.proxy
             )
-        else RequestBody(r18, 1, listOf(), tags, listOf(), listOf(PluginConfig.size.name.lowercase()), PluginConfig.proxy)
+        else RequestBody(
+            r18,
+            1,
+            listOf(),
+            tags,
+            listOf(),
+            listOf(PluginConfig.size.name.lowercase()),
+            PluginConfig.proxy
+        )
         logger.info("request body: $body")
         val response = processRequest(this, body)
         if (response == null) {
@@ -163,6 +173,8 @@ object Lolicon : CompositeCommand(
             logger.info("throttled")
             return
         }
+        if (PluginConfig.notify)
+            sendMessage(ReplyConfig.notify)
         val json = jsonArgs.joinToString(" ")
         val (r18, recall, cooldown) = ExecutionConfig.create(subject)
         val body: RequestBody?

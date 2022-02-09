@@ -130,4 +130,10 @@ object ReplyConfig : AutoSavePluginConfig("ReplyConfig") {
     @ValueDescription("用户不在信任列表中")
     val doesNotExists: String by value("该用户不在名单中")
 
+    /**
+     * 提示Get和Adv命令已受理
+     */
+    @ValueDescription("提示Get和Adv命令已受理")
+    val notify: String by value("正在获取图片...")
+
 }
