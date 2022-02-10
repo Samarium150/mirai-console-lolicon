@@ -1,3 +1,12 @@
+<a name="5.2.1"></a>
+
+# 5.2.1 (2022/02/10)
+
+## Bug Fixes
+
+* correct logic for throttling ([41205b5c](https://github.com/Samarium150/mirai-console-lolicon/commits/41205b5c))
+* use quote for notifying ([c12836ef](https://github.com/Samarium150/mirai-console-lolicon/commits/c12836ef))
+
 <a name="5.2.0"></a>
 
 ## 5.2.0 (2022/02/09)
