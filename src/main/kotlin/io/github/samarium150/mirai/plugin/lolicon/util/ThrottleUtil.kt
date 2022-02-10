@@ -47,7 +47,7 @@ fun lock(subject: Contact?): Boolean {
         is Group -> getGroupThrottleLock(subject.id)
         else -> null
     }
-    return mutex?.tryLock() ?: false
+    return mutex?.tryLock() ?: true
 }
 
 /**
