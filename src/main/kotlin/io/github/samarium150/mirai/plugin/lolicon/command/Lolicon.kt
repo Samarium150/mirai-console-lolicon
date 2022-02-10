@@ -30,6 +30,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import net.mamoe.mirai.console.command.CommandSender
+import net.mamoe.mirai.console.command.CommandSenderOnMessage
 import net.mamoe.mirai.console.command.CompositeCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
@@ -40,6 +41,7 @@ import net.mamoe.mirai.contact.User
 import net.mamoe.mirai.message.data.FlashImage
 import net.mamoe.mirai.message.data.ForwardMessageBuilder
 import net.mamoe.mirai.message.data.MessageChainBuilder
+import net.mamoe.mirai.message.data.MessageSource.Key.quote
 import net.mamoe.mirai.message.data.PlainText
 import java.io.InputStream
 
@@ -89,7 +91,10 @@ object Lolicon : CompositeCommand(
             return
         }
         if (PluginConfig.notify)
-            sendMessage(ReplyConfig.notify)
+            if (subject != null)
+                sendMessage((this as CommandSenderOnMessage<*>).fromEvent.source.quote() + ReplyConfig.notify)
+            else
+                sendMessage(ReplyConfig.notify)
         val (r18, recall, cooldown) = ExecutionConfig.create(subject)
         val tags = tagArgs.joinToString(" ")
         val body = if (tags.isNotEmpty())
@@ -174,7 +179,10 @@ object Lolicon : CompositeCommand(
             return
         }
         if (PluginConfig.notify)
-            sendMessage(ReplyConfig.notify)
+            if (subject != null)
+                sendMessage((this as CommandSenderOnMessage<*>).fromEvent.source.quote() + ReplyConfig.notify)
+            else
+                sendMessage(ReplyConfig.notify)
         val json = jsonArgs.joinToString(" ")
         val (r18, recall, cooldown) = ExecutionConfig.create(subject)
         val body: RequestBody?
