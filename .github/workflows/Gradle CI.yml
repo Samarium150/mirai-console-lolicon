@@ -30,7 +30,7 @@ jobs:
       
       # Setup JDK
       - name: Setup Java JDK
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'microsoft'
           java-version: 11
