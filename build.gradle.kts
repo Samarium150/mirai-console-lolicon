@@ -3,13 +3,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
 
 plugins {
-    val kotlinVersion = "1.6.10"
+    val kotlinVersion = "1.6.20"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.10.0"
+    id("net.mamoe.mirai-console") version "2.10.1"
     id("org.jetbrains.dokka") version "1.6.0"
-    id("com.geoffgranum.gradle-conventional-changelog") version "0.3.1"
+    id("com.geoffgranum.gradle-conventional-changelog") version "+"
 }
 
 group = "io.github.samarium150"
@@ -33,7 +33,7 @@ dependencies {
 tasks {
 
     withType<KotlinCompile>().all {
-        kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+        kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
         kotlinOptions.jvmTarget = "11"
     }
 
@@ -50,8 +50,8 @@ tasks {
                 }
                 jdkVersion.set(11)
                 externalDocumentationLink {
-                    url.set(URL("https://kdoc.mirai.mamoe.net/2.10.0"))
-                    packageListUrl.set(URL("https://kdoc.mirai.mamoe.net/2.10.0/package-list"))
+                    url.set(URL("https://kdoc.mirai.mamoe.net/2.10.1"))
+                    packageListUrl.set(URL("https://kdoc.mirai.mamoe.net/2.10.1/package-list"))
                 }
             }
         }
