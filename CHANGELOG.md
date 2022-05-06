@@ -1,3 +1,12 @@
+<a name="5.3.0"></a>
+
+## 5.3.0 (2022/05/06)
+
+## Features
+
+* customize timeouts ([63a0bc5b](https://github.com/Samarium150/mirai-console-lolicon/commits/63a0bc5b),
+  closes [#78](https://github.com/Samarium150/mirai-console-lolicon/issues/issues/78))
+
 <a name="5.2.1"></a>
 
 # 5.2.1 (2022/02/10)
