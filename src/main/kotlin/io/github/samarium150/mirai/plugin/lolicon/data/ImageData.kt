@@ -37,6 +37,7 @@ import kotlinx.serialization.json.Json
  * @constructor 实例化图片数据, 参见: [API](https://api.lolicon.app/#/setu?id=%e5%93%8d%e5%ba%94)
  * @see ResponseBody
  */
+@ExperimentalSerializationApi
 @Serializable
 data class ImageData(
     val pid: Int,
@@ -52,8 +53,6 @@ data class ImageData(
     val uploadDate: Long,
     val urls: Map<String, String>
 ) {
-
-    @OptIn(ExperimentalSerializationApi::class)
     override fun toString(): String {
         return "ImageData" + Json.encodeToString(this)
     }

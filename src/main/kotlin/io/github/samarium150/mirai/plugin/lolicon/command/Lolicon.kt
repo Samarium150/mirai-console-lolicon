@@ -51,6 +51,8 @@ import java.io.InputStream
  * @constructor 实例化命令
  * @see CompositeCommand
  */
+@Suppress("unused")
+@OptIn(ExperimentalSerializationApi::class)
 object Lolicon : CompositeCommand(
     MiraiConsoleLolicon,
     primaryName = "lolicon",
@@ -168,8 +170,6 @@ object Lolicon : CompositeCommand(
      *
      * @param jsonArgs JSON字符串
      */
-    @Suppress("unused")
-    @OptIn(ExperimentalSerializationApi::class)
     @SubCommand("adv", "高级")
     @Description("根据JSON字符串发送涩图")
     suspend fun CommandSender.advanced(vararg jsonArgs: String) {
@@ -370,7 +370,6 @@ object Lolicon : CompositeCommand(
      * @param type group/user
      * @param id 目标ID
      */
-    @Suppress("unused")
     @SubCommand("add", "添加")
     @Description("添加用户id或群组id到对应的集合，用于黑白名单")
     suspend fun CommandSender.add(type: String, id: Long) {
@@ -401,7 +400,6 @@ object Lolicon : CompositeCommand(
      *
      * @param id 目标ID
      */
-    @Suppress("unused")
     @SubCommand("trust", "信任")
     @Description("将用户添加到受信任名单")
     suspend fun CommandSender.trust(id: Long) {
@@ -421,7 +419,6 @@ object Lolicon : CompositeCommand(
      *
      * @param id 目标ID
      */
-    @Suppress("unused")
     @SubCommand("distrust", "不信任")
     @Description("将用户从受信任名单中移除")
     suspend fun CommandSender.distrust(id: Long) {
@@ -443,7 +440,6 @@ object Lolicon : CompositeCommand(
     /**
      * 子命令help，获取帮助信息
      */
-    @Suppress("unused")
     @SubCommand("help", "帮助")
     @Description("获取帮助信息")
     suspend fun CommandSender.help() {

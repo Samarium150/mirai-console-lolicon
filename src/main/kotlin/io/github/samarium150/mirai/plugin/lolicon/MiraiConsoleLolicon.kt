@@ -23,7 +23,9 @@ import io.github.samarium150.mirai.plugin.lolicon.config.ProxyConfig
 import io.github.samarium150.mirai.plugin.lolicon.config.ReplyConfig
 import io.github.samarium150.mirai.plugin.lolicon.data.PluginData
 import io.github.samarium150.mirai.plugin.lolicon.util.getProxyType
+import io.github.samarium150.mirai.plugin.lolicon.util.toTimeoutMillis
 import io.ktor.client.*
+import io.ktor.client.features.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
@@ -45,7 +47,7 @@ import java.net.Proxy
 object MiraiConsoleLolicon : KotlinPlugin(
     JvmPluginDescription(
         id = "io.github.samarium150.mirai.plugin.mirai-console-lolicon",
-        version = "5.2.1",
+        version = "5.3.0",
         name = "Lolicon"
     ) {
         author("Samarium150")
@@ -90,6 +92,11 @@ object MiraiConsoleLolicon : KotlinPlugin(
                     prettyPrint = true
                     isLenient = true
                 })
+            }
+            install(HttpTimeout) {
+                requestTimeoutMillis = ProxyConfig.requestTimeoutMillis.toTimeoutMillis()
+                connectTimeoutMillis = ProxyConfig.connectTimeoutMillis.toTimeoutMillis()
+                socketTimeoutMillis = ProxyConfig.socketTimeoutMillis.toTimeoutMillis()
             }
         }
 

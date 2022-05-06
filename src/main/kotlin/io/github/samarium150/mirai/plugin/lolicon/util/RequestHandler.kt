@@ -25,6 +25,7 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.serialization.ExperimentalSerializationApi
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 
@@ -36,6 +37,7 @@ import java.io.InputStream
  * @see RequestBody
  * @see ResponseBody
  */
+@OptIn(ExperimentalSerializationApi::class)
 suspend fun getAPIResponse(body: RequestBody): ResponseBody {
     return MiraiConsoleLolicon.client.post("https://api.lolicon.app/setu/v2") {
         contentType(ContentType.Application.Json)

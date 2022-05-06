@@ -25,9 +25,11 @@ import io.github.samarium150.mirai.plugin.lolicon.config.ReplyConfig
 import io.github.samarium150.mirai.plugin.lolicon.data.PluginData
 import io.github.samarium150.mirai.plugin.lolicon.data.RequestBody
 import io.github.samarium150.mirai.plugin.lolicon.data.ResponseBody
+import io.ktor.client.features.*
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.serialization.ExperimentalSerializationApi
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.contact.*
 import net.mamoe.mirai.message.MessageReceipt
@@ -259,6 +261,7 @@ suspend fun checkPermissionAndCooldown(sender: CommandSender): Boolean {
  * @param body
  * @return
  */
+@OptIn(ExperimentalSerializationApi::class)
 suspend fun processRequest(sender: CommandSender, body: RequestBody): ResponseBody? {
     val response: ResponseBody?
     try {
@@ -335,4 +338,10 @@ fun buildMessage(contact: Contact, imageInfo: String, image: Image): SingleMessa
             add(contact.bot, image)
         }
     }
+}
+
+fun Long.toTimeoutMillis(): Long? {
+    return if (this < 0L) null
+    else if (this == 0L) HttpTimeout.INFINITE_TIMEOUT_MS
+    else this
 }

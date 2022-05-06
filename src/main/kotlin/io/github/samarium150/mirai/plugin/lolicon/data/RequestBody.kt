@@ -36,6 +36,7 @@ import kotlinx.serialization.json.Json
  * @property dsc 是否禁用缩写
  * @constructor 实例化请求参数, 参见: [LoliconAPI](https://api.lolicon.app/#/setu?id=%e8%af%b7%e6%b1%82)
  */
+@ExperimentalSerializationApi
 @Serializable
 data class RequestBody(
     val r18: Int = 0,
@@ -49,7 +50,6 @@ data class RequestBody(
     val dataBefore: Long? = null,
     val dsc: Boolean? = null
 ) {
-    @OptIn(ExperimentalSerializationApi::class)
     override fun toString(): String {
         val format = Json { encodeDefaults = true }
         return format.encodeToString(value = this)

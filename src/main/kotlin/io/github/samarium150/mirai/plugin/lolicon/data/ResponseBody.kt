@@ -29,12 +29,12 @@ import kotlinx.serialization.json.Json
  * @constructor 实例化数据
  * @see ImageData
  */
+@ExperimentalSerializationApi
 @Serializable
 data class ResponseBody(
     val error: String,
     val data: List<ImageData>
 ) {
-    @OptIn(ExperimentalSerializationApi::class)
     override fun toString(): String {
         return Json.encodeToString(this)
     }

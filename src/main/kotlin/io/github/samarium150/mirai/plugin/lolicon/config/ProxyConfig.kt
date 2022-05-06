@@ -45,4 +45,13 @@ object ProxyConfig : AutoSavePluginConfig("ProxyConfig") {
      */
     @ValueDescription("端口")
     val port: Int by value(1080)
+
+    @ValueDescription("整个HTTP请求的超时时间，单位：毫秒")
+    val requestTimeoutMillis: Long by value(-1L)
+
+    @ValueDescription("建立连接的超时时间，单位：毫秒")
+    val connectTimeoutMillis: Long by value(-1L)
+
+    @ValueDescription("两个数据包之间间隔的超时时间，单位：毫秒")
+    val socketTimeoutMillis: Long by value(-1L)
 }
