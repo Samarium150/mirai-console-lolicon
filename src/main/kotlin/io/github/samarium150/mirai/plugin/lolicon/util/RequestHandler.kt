@@ -26,8 +26,6 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.ExperimentalSerializationApi
-import java.io.ByteArrayInputStream
-import java.io.InputStream
 
 /**
  * 发送包含 [RequestBody] 的POST请求给 [API](https://api.lolicon.app/setu/v2)
@@ -46,19 +44,13 @@ suspend fun getAPIResponse(body: RequestBody): ResponseBody {
 }
 
 /**
- * 从 [url] 下载图片, 并返回 [ByteArrayInputStream] 形式的图片数据
+ * 从 [url] 下载图片, 并返回 [ByteArray] 形式的图片数据
  *
  * @param url 来自 [ImageData.urls] 的 URL
  * @return 图片字节输入流
  * @see ImageData
  */
-suspend fun downloadImage(url: String): InputStream {
+suspend fun downloadImage(url: String): ByteArray {
     val response: HttpResponse = MiraiConsoleLolicon.client.get(url)
-    val result: ByteArray = response.receive()
-    if (PluginConfig.save) {
-        val urlPaths = url.split("/")
-        val file = cacheFolder.resolve(urlPaths[urlPaths.lastIndex])
-        file.writeBytes(result)
-    }
-    return ByteArrayInputStream(result)
+    return response.receive()
 }

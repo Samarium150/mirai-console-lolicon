@@ -16,13 +16,15 @@
  */
 package io.github.samarium150.mirai.plugin.lolicon
 
+import io.github.samarium150.mirai.plugin.lolicon.MiraiConsoleLolicon.reload
 import io.github.samarium150.mirai.plugin.lolicon.command.Lolicon
-import io.github.samarium150.mirai.plugin.lolicon.config.CommandConfig
-import io.github.samarium150.mirai.plugin.lolicon.config.PluginConfig
-import io.github.samarium150.mirai.plugin.lolicon.config.ProxyConfig
-import io.github.samarium150.mirai.plugin.lolicon.config.ReplyConfig
+import io.github.samarium150.mirai.plugin.lolicon.config.*
 import io.github.samarium150.mirai.plugin.lolicon.data.PluginData
 import io.github.samarium150.mirai.plugin.lolicon.util.getProxyType
+import io.github.samarium150.mirai.plugin.lolicon.util.storage.AbstractImageStorage
+import io.github.samarium150.mirai.plugin.lolicon.util.storage.FileImageStorage
+import io.github.samarium150.mirai.plugin.lolicon.util.storage.OSSImageStorage
+import io.github.samarium150.mirai.plugin.lolicon.util.storage.S3ImageStorage
 import io.github.samarium150.mirai.plugin.lolicon.util.toTimeoutMillis
 import io.ktor.client.*
 import io.ktor.client.features.*
@@ -61,6 +63,11 @@ object MiraiConsoleLolicon : KotlinPlugin(
     lateinit var client: HttpClient
 
     /**
+     * Storage 客户端
+     */
+    lateinit var storage: AbstractImageStorage
+
+    /**
      * 插件启用时调用
      */
     override fun onEnable() {
@@ -70,6 +77,7 @@ object MiraiConsoleLolicon : KotlinPlugin(
         CommandConfig.reload()
         ReplyConfig.reload()
         ProxyConfig.reload()
+        StorageConfig.reload()
         PluginData.reload()
 
         if (PluginConfig.master != 0L) {
@@ -98,6 +106,13 @@ object MiraiConsoleLolicon : KotlinPlugin(
                 connectTimeoutMillis = ProxyConfig.connectTimeoutMillis.toTimeoutMillis()
                 socketTimeoutMillis = ProxyConfig.socketTimeoutMillis.toTimeoutMillis()
             }
+        }
+
+        storage = when (StorageConfig.type) {
+            "File" -> FileImageStorage()
+            "S3" -> S3ImageStorage()
+            "OSS" -> OSSImageStorage()
+            else -> throw IllegalStateException("未知的存储类型")
         }
 
         // 注册命令

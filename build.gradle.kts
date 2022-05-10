@@ -28,6 +28,8 @@ dependencies {
         exclude(group = "org.slf4j")
         exclude(group = "io.ktor", module = "ktor-client-core")
     }
+    implementation("aws.sdk.kotlin:s3:0.+")
+    implementation("com.aliyun.oss:aliyun-sdk-oss:3.14.1")
 }
 
 tasks {

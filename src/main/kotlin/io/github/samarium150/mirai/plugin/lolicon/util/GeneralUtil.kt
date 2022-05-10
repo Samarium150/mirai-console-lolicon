@@ -36,7 +36,6 @@ import net.mamoe.mirai.message.MessageReceipt
 import net.mamoe.mirai.message.data.*
 import org.jetbrains.annotations.Nullable
 import java.io.File
-import java.io.InputStream
 import java.net.Proxy
 
 internal val logger by lazy { MiraiConsoleLolicon.logger }
@@ -289,18 +288,18 @@ suspend fun processRequest(sender: CommandSender, body: RequestBody): ResponseBo
  * @param url
  * @return
  */
-suspend fun getImageInputStream(url: String): InputStream {
-    return if (PluginConfig.save && PluginConfig.cache) {
-        try {
-            val paths = url.split("/")
-            val path = "$cacheFolder/${paths[paths.lastIndex]}"
-            val cache = File(System.getProperty("user.dir") + path)
-            if (cache.exists()) cache.inputStream() else downloadImage(url)
-        } catch (e: Exception) {
-            downloadImage(url)
-        }
-    } else downloadImage(url)
-}
+//suspend fun getImageInputStream(url: String): InputStream {
+//    return if (PluginConfig.save && PluginConfig.cache) {
+//        try {
+//            val paths = url.split("/")
+//            val path = "$cacheFolder/${paths[paths.lastIndex]}"
+//            val cache = File(System.getProperty("user.dir") + path)
+//            if (cache.exists()) cache.inputStream() else downloadImage(url)
+//        } catch (e: Exception) {
+//            downloadImage(url)
+//        }
+//    } else downloadImage(url)
+//}
 
 enum class RecallType {
     IMAGE,
