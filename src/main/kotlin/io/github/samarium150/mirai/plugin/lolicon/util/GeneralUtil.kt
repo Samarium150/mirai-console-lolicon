@@ -282,25 +282,6 @@ suspend fun processRequest(sender: CommandSender, body: RequestBody): ResponseBo
     return response
 }
 
-/**
- * 获取图片输入流
- *
- * @param url
- * @return
- */
-//suspend fun getImageInputStream(url: String): InputStream {
-//    return if (PluginConfig.save && PluginConfig.cache) {
-//        try {
-//            val paths = url.split("/")
-//            val path = "$cacheFolder/${paths[paths.lastIndex]}"
-//            val cache = File(System.getProperty("user.dir") + path)
-//            if (cache.exists()) cache.inputStream() else downloadImage(url)
-//        } catch (e: Exception) {
-//            downloadImage(url)
-//        }
-//    } else downloadImage(url)
-//}
-
 enum class RecallType {
     IMAGE,
     IMAGE_INFO

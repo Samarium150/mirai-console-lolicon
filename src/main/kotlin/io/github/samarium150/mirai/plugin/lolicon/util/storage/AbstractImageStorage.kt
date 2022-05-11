@@ -8,9 +8,9 @@ import java.io.InputStream
  * 抽象一个存储图片的Class，具有存储和读取图片的功能
  */
 abstract class AbstractImageStorage {
-    abstract suspend fun load(url: String) : ByteArray
+    abstract suspend fun load(url: String): ByteArray
     abstract suspend fun save(url: String, bytes: ByteArray)
-    suspend fun getImageWithCache(url: String) : InputStream {
+    suspend fun getImageWithCache(url: String): InputStream {
         val bytes = if (PluginConfig.cache) {
             try {
                 load(url)
@@ -21,7 +21,6 @@ abstract class AbstractImageStorage {
         } else {
             downloadImage(url)
         }
-
         if (PluginConfig.save) {
             save(url, bytes)
         }

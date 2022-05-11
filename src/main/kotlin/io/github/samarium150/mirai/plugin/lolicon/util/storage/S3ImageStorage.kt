@@ -14,6 +14,7 @@ import io.github.samarium150.mirai.plugin.lolicon.MiraiConsoleLolicon
 import io.github.samarium150.mirai.plugin.lolicon.config.StorageConfig
 
 class S3ImageStorage: AbstractImageStorage() {
+
     private val client: S3Client
     init {
         // init client with endpoint,ak/sk,region
@@ -54,7 +55,6 @@ class S3ImageStorage: AbstractImageStorage() {
     }
 
     override suspend fun save(url: String, bytes: ByteArray) {
-
         try {
             val request = PutObjectRequest {
                 bucket = StorageConfig.bucket
@@ -67,7 +67,6 @@ class S3ImageStorage: AbstractImageStorage() {
         } catch (e: Exception) {
             MiraiConsoleLolicon.logger.error("S3ImageStorage.save", e)
         }
-
     }
 }
 

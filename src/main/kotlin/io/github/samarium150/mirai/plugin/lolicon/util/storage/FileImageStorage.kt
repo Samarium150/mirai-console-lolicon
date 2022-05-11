@@ -4,9 +4,7 @@ import io.github.samarium150.mirai.plugin.lolicon.util.cacheFolder
 import java.io.File
 
 class FileImageStorage: AbstractImageStorage() {
-    init {
 
-    }
     override suspend fun load(url: String): ByteArray {
         val paths = url.split("/")
         val path = "$cacheFolder/${paths[paths.lastIndex]}"

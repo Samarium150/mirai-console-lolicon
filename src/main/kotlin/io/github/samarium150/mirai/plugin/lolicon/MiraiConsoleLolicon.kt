@@ -16,7 +16,6 @@
  */
 package io.github.samarium150.mirai.plugin.lolicon
 
-import io.github.samarium150.mirai.plugin.lolicon.MiraiConsoleLolicon.reload
 import io.github.samarium150.mirai.plugin.lolicon.command.Lolicon
 import io.github.samarium150.mirai.plugin.lolicon.config.*
 import io.github.samarium150.mirai.plugin.lolicon.data.PluginData
@@ -49,7 +48,7 @@ import java.net.Proxy
 object MiraiConsoleLolicon : KotlinPlugin(
     JvmPluginDescription(
         id = "io.github.samarium150.mirai.plugin.mirai-console-lolicon",
-        version = "5.3.0",
+        version = "5.4.0",
         name = "Lolicon"
     ) {
         author("Samarium150")
@@ -109,10 +108,9 @@ object MiraiConsoleLolicon : KotlinPlugin(
         }
 
         storage = when (StorageConfig.type) {
-            "File" -> FileImageStorage()
-            "S3" -> S3ImageStorage()
-            "OSS" -> OSSImageStorage()
-            else -> throw IllegalStateException("未知的存储类型")
+            StorageConfig.StorageType.FILE -> FileImageStorage()
+            StorageConfig.StorageType.S3 -> S3ImageStorage()
+            StorageConfig.StorageType.OSS -> OSSImageStorage()
         }
 
         // 注册命令

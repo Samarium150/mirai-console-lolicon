@@ -11,11 +11,18 @@ import net.mamoe.mirai.console.data.value
  * @see AutoSavePluginConfig
  */
 object StorageConfig : AutoSavePluginConfig("StorageConfig") {
+
+    enum class StorageType {
+        FILE,
+        S3,
+        OSS
+    }
+
     /**
      * 存储类型
      */
     @ValueDescription("可选：FILE/S3/OSS")
-    val type: String by value("FILE")
+    val type: StorageType by value(StorageType.FILE)
 
     val accessKey: String by value("")
     val secretKey: String by value("")

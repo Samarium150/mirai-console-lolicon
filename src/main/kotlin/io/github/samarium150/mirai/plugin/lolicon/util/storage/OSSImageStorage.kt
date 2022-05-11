@@ -7,14 +7,18 @@ import io.github.samarium150.mirai.plugin.lolicon.MiraiConsoleLolicon
 import io.github.samarium150.mirai.plugin.lolicon.config.StorageConfig
 
 class OSSImageStorage: AbstractImageStorage() {
-    private val client: OSS = OSSClientBuilder().build(StorageConfig.endpoint,
-        StorageConfig.accessKey,
-        StorageConfig.secretKey)
+    private val client: OSS = OSSClientBuilder()
+        .build(
+            StorageConfig.endpoint,
+            StorageConfig.accessKey,
+            StorageConfig.secretKey
+        )
 
     private fun urlToPath(url: String): String {
         val path = url.split("/").drop(5).joinToString("/")
         return "lolicon/$path"
     }
+
     override suspend fun load(url: String): ByteArray {
         val request = GetObjectRequest(StorageConfig.bucket, urlToPath(url))
         return try {

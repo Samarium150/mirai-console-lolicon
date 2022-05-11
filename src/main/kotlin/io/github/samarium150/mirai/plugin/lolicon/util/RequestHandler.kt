@@ -17,7 +17,6 @@
 package io.github.samarium150.mirai.plugin.lolicon.util
 
 import io.github.samarium150.mirai.plugin.lolicon.MiraiConsoleLolicon
-import io.github.samarium150.mirai.plugin.lolicon.config.PluginConfig
 import io.github.samarium150.mirai.plugin.lolicon.data.ImageData
 import io.github.samarium150.mirai.plugin.lolicon.data.RequestBody
 import io.github.samarium150.mirai.plugin.lolicon.data.ResponseBody
