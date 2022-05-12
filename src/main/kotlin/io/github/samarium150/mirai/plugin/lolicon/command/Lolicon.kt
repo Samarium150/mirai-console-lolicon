@@ -138,7 +138,7 @@ object Lolicon : CompositeCommand(
                 else null
             var stream: InputStream? = null
             try {
-                stream = getImageInputStream(url)
+                stream = MiraiConsoleLolicon.storage.getImageWithCache(url)
                 val img = subject?.uploadImage(stream)
                 if (img != null) {
                     val imgReceipt = sendMessage(buildMessage(subject!!, imageData.toReadable(), img))
@@ -222,7 +222,7 @@ object Lolicon : CompositeCommand(
                     val url = getUrl(imageData.urls) ?: continue
                     var stream: InputStream? = null
                     try {
-                        stream = getImageInputStream(url)
+                        stream = MiraiConsoleLolicon.storage.getImageWithCache(url)
                         val img = contact.uploadImage(stream)
                         imageMsgBuilder.add(contact.bot, PlainText(imageData.toReadable()))
                         imageMsgBuilder.add(contact.bot, img)
@@ -250,7 +250,7 @@ object Lolicon : CompositeCommand(
                     val url = getUrl(imageData.urls) ?: continue
                     var stream: InputStream? = null
                     try {
-                        stream = getImageInputStream(url)
+                        stream = MiraiConsoleLolicon.storage.getImageWithCache(url)
                         val img = subject?.uploadImage(stream)
                         if (img != null)
                             if (PluginConfig.messageType == PluginConfig.Type.Flash)

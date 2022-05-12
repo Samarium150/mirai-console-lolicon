@@ -17,12 +17,13 @@
 package io.github.samarium150.mirai.plugin.lolicon
 
 import io.github.samarium150.mirai.plugin.lolicon.command.Lolicon
-import io.github.samarium150.mirai.plugin.lolicon.config.CommandConfig
-import io.github.samarium150.mirai.plugin.lolicon.config.PluginConfig
-import io.github.samarium150.mirai.plugin.lolicon.config.ProxyConfig
-import io.github.samarium150.mirai.plugin.lolicon.config.ReplyConfig
+import io.github.samarium150.mirai.plugin.lolicon.config.*
 import io.github.samarium150.mirai.plugin.lolicon.data.PluginData
 import io.github.samarium150.mirai.plugin.lolicon.util.getProxyType
+import io.github.samarium150.mirai.plugin.lolicon.util.storage.AbstractImageStorage
+import io.github.samarium150.mirai.plugin.lolicon.util.storage.FileImageStorage
+import io.github.samarium150.mirai.plugin.lolicon.util.storage.OSSImageStorage
+import io.github.samarium150.mirai.plugin.lolicon.util.storage.S3ImageStorage
 import io.github.samarium150.mirai.plugin.lolicon.util.toTimeoutMillis
 import io.ktor.client.*
 import io.ktor.client.features.*
@@ -47,7 +48,7 @@ import java.net.Proxy
 object MiraiConsoleLolicon : KotlinPlugin(
     JvmPluginDescription(
         id = "io.github.samarium150.mirai.plugin.mirai-console-lolicon",
-        version = "5.3.0",
+        version = "5.4.0",
         name = "Lolicon"
     ) {
         author("Samarium150")
@@ -61,6 +62,11 @@ object MiraiConsoleLolicon : KotlinPlugin(
     lateinit var client: HttpClient
 
     /**
+     * Storage 客户端
+     */
+    lateinit var storage: AbstractImageStorage
+
+    /**
      * 插件启用时调用
      */
     override fun onEnable() {
@@ -70,6 +76,7 @@ object MiraiConsoleLolicon : KotlinPlugin(
         CommandConfig.reload()
         ReplyConfig.reload()
         ProxyConfig.reload()
+        StorageConfig.reload()
         PluginData.reload()
 
         if (PluginConfig.master != 0L) {
@@ -98,6 +105,12 @@ object MiraiConsoleLolicon : KotlinPlugin(
                 connectTimeoutMillis = ProxyConfig.connectTimeoutMillis.toTimeoutMillis()
                 socketTimeoutMillis = ProxyConfig.socketTimeoutMillis.toTimeoutMillis()
             }
+        }
+
+        storage = when (StorageConfig.type) {
+            StorageConfig.StorageType.FILE -> FileImageStorage()
+            StorageConfig.StorageType.S3 -> S3ImageStorage()
+            StorageConfig.StorageType.OSS -> OSSImageStorage()
         }
 
         // 注册命令
