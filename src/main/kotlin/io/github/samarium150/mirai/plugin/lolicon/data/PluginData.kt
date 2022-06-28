@@ -20,65 +20,29 @@ import net.mamoe.mirai.console.data.AutoSavePluginData
 import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
 
-/**
- * 插件数据
- *
- * @constructor 实例化插件数据
- * @see AutoSavePluginData
- */
 object PluginData : AutoSavePluginData("Data") {
 
-    /**
-     * 用户列表
-     */
-    @ValueDescription("用户列表")
-    val userSet: MutableSet<Long> by value()
+    enum class Property {
+        R18,
+        RECALL,
+        COOLDOWN
+    }
 
-    /**
-     * 群组列表
-     */
-    @ValueDescription("群组列表")
-    val groupSet: MutableSet<Long> by value()
-
-    /**
-     * 受信任的用户
-     */
-    @ValueDescription("受信任的用户")
-    val trustedUsers: MutableSet<Long> by value()
-
-    /**
-     * 自定义了 R18 属性的用户
-     */
     @ValueDescription("自定义了R18属性的用户")
     val customR18Users: MutableMap<Long, Int> by value()
 
-    /**
-     * 自定义了 R18 属性的群
-     */
     @ValueDescription("自定义了R18属性的群")
     val customR18Groups: MutableMap<Long, Int> by value()
 
-    /**
-     * 自定义了撤回时间的用户和对应的值
-     */
     @ValueDescription("自定义了撤回时间的用户和对应的值")
     val customRecallUsers: MutableMap<Long, Int> by value()
 
-    /**
-     * 自定义了撤回时间的用户和对应的值
-     */
     @ValueDescription("自定义了撤回时间的用户和对应的值")
     val customRecallGroups: MutableMap<Long, Int> by value()
 
-    /**
-     * 自定义了冷却时间的用户和对应的值
-     */
     @ValueDescription("自定义了冷却时间的用户和对应的值")
     val customCooldownUsers: MutableMap<Long, Int> by value()
 
-    /**
-     * 自定义了冷却时间的群和对应的值
-     */
     @ValueDescription("自定义了冷却时间的群和对应的值")
     val customCooldownGroups: MutableMap<Long, Int> by value()
 }

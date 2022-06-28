@@ -6,7 +6,6 @@
 [![visitors](https://visitor-badge.glitch.me/badge?page_id=Samarium150.mirai%2Dconsole%2Dlolicon)]()
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FSamarium150%2Fmirai-console-lolicon.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FSamarium150%2Fmirai-console-lolicon?ref=badge_shield)
 
-
 受 [ACGPro](https://github.com/ShrBox/ACGPro) 启发而写
 
 Social preview的图片来自 [AliceSoft](https://www.alicesoft.com) 制作的游戏 [ドーナドーナ いっしょにわるいことをしよう](https://www.alicesoft.com/dohnadohna)

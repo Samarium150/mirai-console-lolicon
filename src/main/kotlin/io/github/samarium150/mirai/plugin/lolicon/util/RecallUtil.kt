@@ -13,23 +13,23 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
+ *
  */
 package io.github.samarium150.mirai.plugin.lolicon.util
 
-import kotlinx.coroutines.sync.Mutex
+import io.github.samarium150.mirai.plugin.lolicon.MiraiConsoleLolicon
+import kotlinx.coroutines.launch
 import net.mamoe.mirai.contact.Contact
-import net.mamoe.mirai.contact.Group
-import net.mamoe.mirai.contact.User
-import java.util.*
+import net.mamoe.mirai.message.MessageReceipt
 
-private val userThrottleMutexMap = Collections.synchronizedMap(mutableMapOf<Long, Mutex>())
+enum class RecallType {
+    NOTIFICATION,
+    IMAGE,
+    IMAGE_INFO
+}
 
-private val groupThrottleMutexMap = Collections.synchronizedMap(mutableMapOf<Long, Mutex>())
-
-fun getThrottleMutex(subject: Contact?): Mutex {
-    return when (subject) {
-        is User -> userThrottleMutexMap.getOrPut(subject.id) { Mutex() }
-        is Group -> groupThrottleMutexMap.getOrPut(subject.id) { Mutex() }
-        else -> Mutex()
-    }
+suspend fun recall(type: RecallType, receipt: MessageReceipt<Contact>, time: Int) = MiraiConsoleLolicon.launch {
+    val result = receipt.recallIn((time * 1000).toLong()).awaitIsSuccess()
+    if (result) logger.info("${receipt.target}${type}已撤回")
+    else logger.warning("${receipt.target}${type}撤回失败")
 }

@@ -25,219 +25,190 @@ import io.github.samarium150.mirai.plugin.lolicon.data.PluginData
 import io.github.samarium150.mirai.plugin.lolicon.data.RequestBody
 import io.github.samarium150.mirai.plugin.lolicon.util.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.coroutines.runInterruptible
+import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CommandSenderOnMessage
 import net.mamoe.mirai.console.command.CompositeCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
+import net.mamoe.mirai.console.permission.Permission
+import net.mamoe.mirai.console.permission.PermissionService
+import net.mamoe.mirai.console.permission.PermissionService.Companion.hasPermission
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
-import net.mamoe.mirai.contact.Contact
+import net.mamoe.mirai.contact.*
 import net.mamoe.mirai.contact.Contact.Companion.uploadImage
-import net.mamoe.mirai.contact.Group
-import net.mamoe.mirai.contact.User
+import net.mamoe.mirai.event.events.FriendMessageEvent
+import net.mamoe.mirai.event.events.GroupMessageEvent
+import net.mamoe.mirai.event.events.MessageEvent
 import net.mamoe.mirai.message.data.FlashImage
 import net.mamoe.mirai.message.data.ForwardMessageBuilder
 import net.mamoe.mirai.message.data.MessageChainBuilder
-import net.mamoe.mirai.message.data.MessageSource.Key.quote
 import net.mamoe.mirai.message.data.PlainText
 import java.io.InputStream
 
-/**
- * 命令实例
- *
- * @constructor 实例化命令
- * @see CompositeCommand
- */
-@Suppress("unused")
-@OptIn(ExperimentalSerializationApi::class)
 object Lolicon : CompositeCommand(
     MiraiConsoleLolicon,
     primaryName = "lolicon",
     secondaryNames = CommandConfig.lolicon
 ) {
 
-    /**
-     * 帮助信息
-     */
-    private val help: String
+    val trusted: Permission by lazy {
+        PermissionService.INSTANCE.register(MiraiConsoleLolicon.permissionId("trusted"), "受信任权限")
+    }
 
-    /**
-     * 忽略命令前缀
-     */
     @ExperimentalCommandDescriptors
     @ConsoleExperimentalApi
     override val prefixOptional: Boolean = true
 
-    /**
-     * 初始化时从文本文件读取帮助信息
-     */
-    init {
-        val helpFileName = "help.txt"
-        help = javaClass.classLoader.getResource("help.txt")?.readText() ?: throw Exception("没有找到 $helpFileName 文件")
-    }
-
-    /**
-     * 子命令get，根据 [tagArgs] 从API获取图片
-     *
-     * @param tagArgs 关键词
-     */
     @SubCommand("get", "来一张")
     @Description("根据标签发送涩图, 不提供则随机发送一张")
-    suspend fun CommandSender.get(vararg tagArgs: String) {
-        if (!checkPermissionAndCooldown(this)) return
-        if (!lock(subject)) {
+    suspend fun CommandSender.get(tags: String = "") {
+        val mutex = getSubjectMutex(subject) ?: return
+        if (mutex.isLocked) {
             logger.info("throttled")
             return
         }
-        if (PluginConfig.notify)
-            if (subject != null)
-                sendMessage((this as CommandSenderOnMessage<*>).fromEvent.source.quote() + ReplyConfig.notify)
-            else
-                sendMessage(ReplyConfig.notify)
-        val (r18, recall, cooldown) = ExecutionConfig.create(subject)
-        val tags = tagArgs.joinToString(" ")
-        val body = if (tags.isNotEmpty())
-            RequestBody(
-                r18, 1, listOf(), "", processTags(tags),
+        mutex.withLock {
+            val (r18, recall, cooldown) = ExecutionConfig(subject)
+            val body = if (tags.isNotEmpty())
+                RequestBody(
+                    r18, 1, listOf(), "", processTags(tags),
+                    listOf(PluginConfig.size.name.lowercase()), PluginConfig.proxy
+                )
+            else RequestBody(
+                r18, 1, listOf(), tags, listOf(),
                 listOf(PluginConfig.size.name.lowercase()), PluginConfig.proxy
             )
-        else RequestBody(
-            r18,
-            1,
-            listOf(),
-            tags,
-            listOf(),
-            listOf(PluginConfig.size.name.lowercase()),
-            PluginConfig.proxy
-        )
-        logger.info("request body: $body")
-        val response = processRequest(this, body)
-        if (response == null) {
-            unlock(subject)
-            return
-        }
-        try {
+            logger.info("request body: $body")
+            val notificationReceipt = getNotificationReceipt()
+            val response = processRequest(body) ?: return@withLock
             val imageData = response.data[0]
             if (!areTagsAllowed(imageData.tags)) {
                 sendMessage(ReplyConfig.filteredTag)
-                unlock(subject)
-                return
+                return@withLock
             }
-            val url = imageData.urls[PluginConfig.size.name.lowercase()]
-            if (url == null) {
-                unlock(subject)
-                return
-            }
+            val url = imageData.urls[PluginConfig.size.name.lowercase()] ?: return@withLock
             val imgInfoReceipt =
                 if (subject == null ||
-                    PluginConfig.verbose && PluginConfig.messageType != PluginConfig.Type.Forward)
-                    sendMessage(imageData.toReadable())
+                    PluginConfig.verbose && PluginConfig.messageType != PluginConfig.Type.Forward
+                ) sendMessage(imageData.toReadable())
                 else null
-            var stream: InputStream? = null
+            if (subject == null && !PluginConfig.save)
+                return@withLock
+            val stream: InputStream?
             try {
                 stream = getImageInputStream(url)
-                val img = subject?.uploadImage(stream)
-                if (img != null) {
-                    val imgReceipt = sendMessage(buildMessage(subject!!, imageData.toReadable(), img))
-                    if (imgReceipt == null) {
-                        unlock(subject)
-                        return
-                    } else if (recall > 0 && PluginConfig.recallImg)
-                        recall(RecallType.IMAGE, imgReceipt, recall)
-                    if (cooldown > 0)
-                        cooldown(subject, cooldown)
-                }
             } catch (e: Exception) {
                 logger.error(e)
                 sendMessage(ReplyConfig.networkError)
-            } finally {
-                withContext(Dispatchers.IO) { stream?.close() }
-                if (PluginConfig.verbose && imgInfoReceipt != null && recall > 0 && PluginConfig.recallImgInfo)
-                    recall(RecallType.IMAGE_INFO, imgInfoReceipt, recall)
+                return@withLock
             }
-        } catch (e: Exception) {
-            logger.error(e)
-        } finally {
-            unlock(subject)
+            if (subject == null) {
+                runInterruptible(Dispatchers.IO) {
+                    stream.close()
+                }
+                return@withLock
+            }
+            val image = (subject as Contact).uploadImage(stream)
+            val imgReceipt = sendMessage(buildMessage(subject as Contact, imageData.toReadable(), image))
+            if (notificationReceipt != null)
+                recall(RecallType.NOTIFICATION, notificationReceipt, 0)
+            if (imgReceipt == null)
+                return@withLock
+            else if (recall > 0 && PluginConfig.recallImg)
+                recall(RecallType.IMAGE, imgReceipt, recall)
+            if (PluginConfig.verbose && imgInfoReceipt != null && recall > 0 && PluginConfig.recallImgInfo)
+                recall(RecallType.IMAGE_INFO, imgInfoReceipt, recall)
+            if (cooldown > 0)
+                cooldown(subject, cooldown)
+            runInterruptible(Dispatchers.IO) {
+                stream.close()
+            }
         }
     }
 
-    /**
-     * 子命令adv，根据 [jsonArgs] 从API获取图片
-     *
-     * @param jsonArgs JSON字符串
-     */
     @SubCommand("adv", "高级")
     @Description("根据JSON字符串发送涩图")
-    suspend fun CommandSender.advanced(vararg jsonArgs: String) {
-        if (!checkPermissionAndCooldown(this)) return
-        if (!lock(subject)) {
+    suspend fun CommandSender.advanced(json: String) {
+        val mutex = getSubjectMutex(subject) ?: return
+        if (mutex.isLocked) {
             logger.info("throttled")
             return
         }
-        if (PluginConfig.notify)
-            if (subject != null)
-                sendMessage((this as CommandSenderOnMessage<*>).fromEvent.source.quote() + ReplyConfig.notify)
-            else
-                sendMessage(ReplyConfig.notify)
-        val json = jsonArgs.joinToString(" ")
-        val (r18, recall, cooldown) = ExecutionConfig.create(subject)
-        val body: RequestBody?
-        try {
-            body = Json.decodeFromString<RequestBody>(json)
-        } catch (e: Exception) {
-            unlock(subject)
-            sendMessage(ReplyConfig.invalidJson)
-            logger.warning(e)
-            return
-        }
-        logger.info(body.toString())
-        if (body.r18 != r18) {
-            if (subject is Group && !checkMemberPerm(user)) {
-                sendMessage(ReplyConfig.nonAdminPermissionDenied)
-                unlock(subject)
-                return
+        mutex.withLock {
+            val (r18, recall, cooldown) = ExecutionConfig(subject)
+            val body: RequestBody = runCatching {
+                Json.decodeFromString<RequestBody>(json)
+            }.onFailure {
+                sendMessage(ReplyConfig.invalidJson)
+                logger.warning(it)
+            }.getOrNull() ?: return@withLock
+            logger.info(body.toString())
+            val notificationReceipt = getNotificationReceipt()
+            if (body.r18 != r18) {
+                if (subject is Group && !(user as Member).isOperator()) {
+                    sendMessage(ReplyConfig.nonAdminPermissionDenied)
+                    return@withLock
+                }
+                if (subject is User && !this.hasPermission(trusted)) {
+                    sendMessage(ReplyConfig.untrusted)
+                    return@withLock
+                }
             }
-            if (subject is User && !checkUserPerm(user)) {
-                sendMessage(ReplyConfig.untrusted)
-                unlock(subject)
-                return
-            }
-        }
-        val response = processRequest(this, body)
-        if (response == null) {
-            unlock(subject)
-            return
-        }
-        try {
+            val response = processRequest(body) ?: return@withLock
             if (subject != null && PluginConfig.messageType == PluginConfig.Type.Forward) {
                 val contact = subject as Contact
                 val imageMsgBuilder = ForwardMessageBuilder(contact)
                 imageMsgBuilder.displayStrategy = CustomDisplayStrategy
                 for (imageData in response.data) {
-                    if (imageData.urls.isEmpty()) continue
-                    val url = getUrl(imageData.urls) ?: continue
-                    var stream: InputStream? = null
-                    try {
-                        stream = getImageInputStream(url)
-                        val img = contact.uploadImage(stream)
-                        imageMsgBuilder.add(contact.bot, PlainText(imageData.toReadable()))
-                        imageMsgBuilder.add(contact.bot, img)
-                    } catch (e: Exception) {
-                        logger.error(e)
-                        imageMsgBuilder.add(contact.bot, PlainText(imageData.toReadable()))
-                        imageMsgBuilder.add(contact.bot, PlainText(ReplyConfig.networkError))
-                    } finally {
-                        withContext(Dispatchers.IO) { stream?.close() }
+                    when {
+                        imageData.urls.size > 1 -> {
+                            imageMsgBuilder.add(contact.bot, PlainText(imageData.toReadable()))
+                            for (url in imageData.urls.values) {
+                                runCatching {
+                                    val stream = getImageInputStream(url)
+                                    val image = contact.uploadImage(stream)
+                                    imageMsgBuilder.add(contact.bot, image)
+                                    stream
+                                }.onFailure {
+                                    logger.error(it)
+                                    imageMsgBuilder.add(contact.bot, PlainText(ReplyConfig.networkError))
+                                }.onSuccess {
+                                    runInterruptible(Dispatchers.IO) {
+                                        it.close()
+                                    }
+                                }
+                            }
+                        }
+                        imageData.urls.size == 1 -> {
+                            runCatching {
+                                val stream = getImageInputStream(imageData.urls.values.first())
+                                val image = contact.uploadImage(stream)
+                                imageMsgBuilder.add(contact.bot, PlainText(imageData.toReadable()))
+                                imageMsgBuilder.add(contact.bot, image)
+                                stream
+                            }.onFailure {
+                                logger.error(it)
+                                imageMsgBuilder.add(contact.bot, PlainText(imageData.toReadable()))
+                                imageMsgBuilder.add(contact.bot, PlainText(ReplyConfig.networkError))
+                            }.onSuccess {
+                                runInterruptible(Dispatchers.IO) {
+                                    it.close()
+                                }
+                            }
+                        }
+                        else -> {
+                            continue
+                        }
                     }
                 }
                 val imgReceipt = sendMessage(imageMsgBuilder.build())
+                if (notificationReceipt != null)
+                    recall(RecallType.NOTIFICATION, notificationReceipt, 0)
                 if (imgReceipt == null) {
-                    unlock(subject)
-                    return
+                    return@withLock
                 } else if (recall > 0 && PluginConfig.recallImg)
                     recall(RecallType.IMAGE, imgReceipt, recall)
                 if (cooldown > 0)
@@ -246,203 +217,94 @@ object Lolicon : CompositeCommand(
                 val imageInfoMsgBuilder = MessageChainBuilder()
                 val imageMsgBuilder = MessageChainBuilder()
                 for (imageData in response.data) {
-                    if (imageData.urls.isEmpty()) continue
-                    val url = getUrl(imageData.urls) ?: continue
-                    var stream: InputStream? = null
-                    try {
-                        stream = getImageInputStream(url)
-                        val img = subject?.uploadImage(stream)
-                        if (img != null)
-                            if (PluginConfig.messageType == PluginConfig.Type.Flash)
-                                imageMsgBuilder.add(FlashImage(img))
-                            else
-                                imageMsgBuilder.add(img)
-                        imageInfoMsgBuilder.add(imageData.toReadable())
-                        imageInfoMsgBuilder.add("\n")
-                    } catch (e: Exception) {
-                        logger.error(e)
-                        sendMessage(ReplyConfig.networkError)
-                    } finally {
-                        withContext(Dispatchers.IO) { stream?.close() }
+                    when {
+                        imageData.urls.size > 1 -> {
+                            for (url in imageData.urls.values) {
+                                runCatching {
+                                    val stream = getImageInputStream(url)
+                                    val image = subject?.uploadImage(stream)
+                                    if (image != null)
+                                        if (PluginConfig.messageType == PluginConfig.Type.Flash)
+                                            imageMsgBuilder.add(FlashImage(image))
+                                        else
+                                            imageMsgBuilder.add(image)
+                                    stream
+                                }.onFailure {
+                                    logger.error(it)
+                                    sendMessage(ReplyConfig.networkError)
+                                }.onSuccess {
+                                    imageInfoMsgBuilder.add(imageData.toReadable())
+                                    imageInfoMsgBuilder.add("\n")
+                                    runInterruptible(Dispatchers.IO) {
+                                        it.close()
+                                    }
+                                }
+                            }
+                        }
+                        imageData.urls.size == 1 -> runCatching {
+                            val stream = getImageInputStream(imageData.urls.values.first())
+                            val image = subject?.uploadImage(stream)
+                            if (image != null)
+                                if (PluginConfig.messageType == PluginConfig.Type.Flash)
+                                    imageMsgBuilder.add(FlashImage(image))
+                                else
+                                    imageMsgBuilder.add(image)
+                            stream
+                        }.onFailure {
+                            logger.error(it)
+                            sendMessage(ReplyConfig.networkError)
+                        }.onSuccess {
+                            imageInfoMsgBuilder.add(imageData.toReadable())
+                            imageInfoMsgBuilder.add("\n")
+                            runInterruptible(Dispatchers.IO) {
+                                it.close()
+                            }
+                        }
+                        else -> {
+                            continue
+                        }
                     }
                 }
                 val imgInfoReceipt =
                     if (subject == null || PluginConfig.verbose)
                         sendMessage(imageInfoMsgBuilder.asMessageChain())
                     else null
-                val imgReceipt = sendMessage(imageMsgBuilder.asMessageChain())
+                val imgReceipt = sendMessage(imageMsgBuilder.build())
+                if (notificationReceipt != null)
+                    recall(RecallType.NOTIFICATION, notificationReceipt, 0)
                 if (imgReceipt == null) {
-                    unlock(subject)
-                    return
+                    return@withLock
                 } else if (recall > 0 && PluginConfig.recallImg)
                     recall(RecallType.IMAGE, imgReceipt, recall)
-                if (cooldown > 0)
-                    cooldown(subject, cooldown)
                 if (PluginConfig.verbose && imgInfoReceipt != null && recall > 0 && PluginConfig.recallImgInfo)
                     recall(RecallType.IMAGE_INFO, imgInfoReceipt, recall)
+                if (cooldown > 0)
+                    cooldown(subject, cooldown)
             }
-        } catch (e: Exception) {
-            logger.error(e)
-        } finally {
-            unlock(subject)
         }
     }
 
-    /**
-     * 子命令set，设置 [property] 和对应的 [value]
-     *
-     * @param property 目标属性
-     * @param value 对应值
-     * @see PluginConfig
-     * @see PluginData
-     */
     @SubCommand("set", "设置")
     @Description("设置属性, 详见帮助信息")
-    suspend fun CommandSender.set(property: String, value: String) {
-        if (subject is Group && !checkMemberPerm(user)) {
+    suspend fun CommandSenderOnMessage<MessageEvent>.set(property: PluginData.Property, value: Int) {
+        if (fromEvent !is GroupMessageEvent || fromEvent !is FriendMessageEvent)
+            return
+        if (fromEvent is GroupMessageEvent && !(fromEvent as GroupMessageEvent).sender.isOperator()) {
             sendMessage(ReplyConfig.nonAdminPermissionDenied)
             return
         }
-        when (property) {
-            "r18" -> {
-                if (subject is User && !checkUserPerm(user)) {
-                    sendMessage(ReplyConfig.untrusted)
-                    return
-                }
-                val setting: Int
-                try {
-                    setting = convertValue(value, "r18")
-                } catch (e: NumberFormatException) {
-                    sendMessage(value + ReplyConfig.illegalValue)
-                    return
-                }
-                when (subject) {
-                    is User -> PluginData.customR18Users[(subject as User).id] = setting
-                    is Group -> PluginData.customR18Groups[(subject as Group).id] = setting
-                }
-                sendMessage(ReplyConfig.setSucceeded)
-            }
-            "recall" -> {
-                if (subject is User && !checkUserPerm(user)) {
-                    sendMessage(ReplyConfig.untrusted)
-                    return
-                }
-                val setting: Int
-                try {
-                    setting = convertValue(value, "recall")
-                } catch (e: NumberFormatException) {
-                    sendMessage(value + ReplyConfig.illegalValue)
-                    return
-                }
-                when (subject) {
-                    is User -> PluginData.customRecallUsers[(subject as User).id] = setting
-                    is Group -> PluginData.customRecallGroups[(subject as Group).id] = setting
-                    else -> PluginConfig.recall = setting
-                }
-                sendMessage(ReplyConfig.setSucceeded)
-            }
-            "cooldown" -> {
-                if (subject is User && !checkUserPerm(user)) {
-                    sendMessage(ReplyConfig.untrusted)
-                    return
-                }
-                val setting: Int
-                try {
-                    setting = convertValue(value, "cooldown")
-                } catch (e: NumberFormatException) {
-                    sendMessage(value + ReplyConfig.illegalValue)
-                    return
-                }
-                when (subject) {
-                    is User -> PluginData.customCooldownUsers[(subject as User).id] = setting
-                    is Group -> PluginData.customCooldownGroups[(subject as Group).id] = setting
-                    else -> PluginConfig.cooldown = setting
-                }
-                sendMessage(ReplyConfig.setSucceeded)
-            }
-            else -> sendMessage(property + ReplyConfig.illegalProperty)
-        }
-    }
-
-    /**
-     * 子命令add, 添加用户id或群组id到对应的集合，用于黑白名单
-     *
-     * @param type group/user
-     * @param id 目标ID
-     */
-    @SubCommand("add", "添加")
-    @Description("添加用户id或群组id到对应的集合，用于黑白名单")
-    suspend fun CommandSender.add(type: String, id: Long) {
-        if (!checkMaster(user)) {
-            sendMessage(ReplyConfig.nonMasterPermissionDenied)
-            if (PluginConfig.master == 0L) sendMessage(ReplyConfig.noMasterID)
+        if (fromEvent is FriendMessageEvent && !this.hasPermission(trusted)) {
+            sendMessage(ReplyConfig.untrusted)
             return
         }
-        val success: Boolean = when (type) {
-            "user" -> {
-                PluginData.userSet.add(id)
-                true
-            }
-            "group" -> {
-                PluginData.groupSet.add(id)
-                true
-            }
-            else -> {
-                sendMessage("类型错误")
-                false
-            }
-        }
-        if (success) sendMessage("添加成功")
-    }
-
-    /**
-     * 子命令trust，将用户添加到受信任名单
-     *
-     * @param id 目标ID
-     */
-    @SubCommand("trust", "信任")
-    @Description("将用户添加到受信任名单")
-    suspend fun CommandSender.trust(id: Long) {
-        if (!checkMaster(user)) {
-            sendMessage(ReplyConfig.nonMasterPermissionDenied)
-            if (PluginConfig.master == 0L) sendMessage(ReplyConfig.noMasterID)
+        logger.info("set $property to $value")
+        if (value < 0) {
+            sendMessage(value.toString() + ReplyConfig.illegalValue)
             return
         }
-        if (PluginData.trustedUsers.add(id))
-            sendMessage(ReplyConfig.trustSucceeded)
+        if (setProperty(fromEvent.subject, property, value))
+            sendMessage(ReplyConfig.setSucceeded)
         else
-            sendMessage(ReplyConfig.alreadyExists)
-    }
-
-    /**
-     * 子命令distrust，将用户从受信任名单中移除
-     *
-     * @param id 目标ID
-     */
-    @SubCommand("distrust", "不信任")
-    @Description("将用户从受信任名单中移除")
-    suspend fun CommandSender.distrust(id: Long) {
-        if (!checkMaster(user)) {
-            sendMessage(ReplyConfig.nonMasterPermissionDenied)
-            if (PluginConfig.master == 0L) sendMessage(ReplyConfig.noMasterID)
-            return
-        }
-        if (id == PluginConfig.master) {
-            sendMessage("Bot所有者不能被移除")
-            return
-        }
-        if (PluginData.trustedUsers.remove(id))
-            sendMessage(ReplyConfig.distrustSucceeded)
-        else
-            sendMessage(ReplyConfig.doesNotExists)
-    }
-
-    /**
-     * 子命令help，获取帮助信息
-     */
-    @SubCommand("help", "帮助")
-    @Description("获取帮助信息")
-    suspend fun CommandSender.help() {
-        sendMessage(help)
+            sendMessage(value.toString() + ReplyConfig.illegalValue)
     }
 }

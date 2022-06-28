@@ -18,26 +18,15 @@ package io.github.samarium150.mirai.plugin.lolicon.util
 
 import io.github.samarium150.mirai.plugin.lolicon.MiraiConsoleLolicon
 import io.github.samarium150.mirai.plugin.lolicon.config.PluginConfig
-import io.github.samarium150.mirai.plugin.lolicon.data.ImageData
 import io.github.samarium150.mirai.plugin.lolicon.data.RequestBody
 import io.github.samarium150.mirai.plugin.lolicon.data.ResponseBody
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import kotlinx.serialization.ExperimentalSerializationApi
-import java.io.ByteArrayInputStream
+import java.io.File
 import java.io.InputStream
 
-/**
- * 发送包含 [RequestBody] 的POST请求给 [API](https://api.lolicon.app/setu/v2)
- *
- * @param body 请求参数
- * @return API返回的数据
- * @see RequestBody
- * @see ResponseBody
- */
-@OptIn(ExperimentalSerializationApi::class)
 suspend fun getAPIResponse(body: RequestBody): ResponseBody {
     return MiraiConsoleLolicon.client.post("https://api.lolicon.app/setu/v2") {
         contentType(ContentType.Application.Json)
@@ -45,13 +34,6 @@ suspend fun getAPIResponse(body: RequestBody): ResponseBody {
     }
 }
 
-/**
- * 从 [url] 下载图片, 并返回 [ByteArrayInputStream] 形式的图片数据
- *
- * @param url 来自 [ImageData.urls] 的 URL
- * @return 图片字节输入流
- * @see ImageData
- */
 suspend fun downloadImage(url: String): InputStream {
     val response: HttpResponse = MiraiConsoleLolicon.client.get(url)
     val result: ByteArray = response.receive()
@@ -60,5 +42,15 @@ suspend fun downloadImage(url: String): InputStream {
         val file = cacheFolder.resolve(urlPaths[urlPaths.lastIndex])
         file.writeBytes(result)
     }
-    return ByteArrayInputStream(result)
+    return result.inputStream()
+}
+
+suspend fun getImageInputStream(url: String): InputStream {
+    return if (PluginConfig.save && PluginConfig.cache) {
+        val paths = url.split("/")
+        val path = "$cacheFolder/${paths[paths.lastIndex]}"
+        val cache = File(System.getProperty("user.dir") + path)
+        if (cache.exists()) cache.inputStream()
+        else downloadImage(url)
+    } else downloadImage(url)
 }

@@ -16,27 +16,10 @@
  */
 package io.github.samarium150.mirai.plugin.lolicon.data
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-/**
- * 进行POST请求所需的参数
- *
- * @property r18 是否为R18内容
- * @property num 数量
- * @property uid 作者ID
- * @property keyword 关键词
- * @property tag 标签
- * @property size 图片大小
- * @property proxy 代理地址
- * @property dataAfter 这个时间戳及以后
- * @property dataBefore 这个时间戳及以前
- * @property dsc 是否禁用缩写
- * @constructor 实例化请求参数, 参见: [LoliconAPI](https://api.lolicon.app/#/setu?id=%e8%af%b7%e6%b1%82)
- */
-@ExperimentalSerializationApi
 @Serializable
 data class RequestBody(
     val r18: Int = 0,

@@ -39,13 +39,13 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
       - name: Build with Gradle
-        run: ./gradlew buildPlugin
+        run: ./gradlew buildPlugin && ./gradlew buildPluginLegacy
 
       # Create Release
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: ./build/mirai/${{ github.event.repository.name }}-${{ steps.vars.outputs.tag }}.mirai.jar
+          artifacts: "build/mirai/*.jar"
           artifactContentType: application/jar
           tag: ${{ steps.vars.outputs.tag }}
           token: ${{ secrets.GITHUB_TOKEN }}

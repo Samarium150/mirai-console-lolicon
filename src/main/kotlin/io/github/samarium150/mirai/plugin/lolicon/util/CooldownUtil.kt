@@ -16,68 +16,36 @@
  */
 package io.github.samarium150.mirai.plugin.lolicon.util
 
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
+import io.github.samarium150.mirai.plugin.lolicon.MiraiConsoleLolicon
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.User
+import java.util.*
 
-private val userCooldownLockMap = mutableMapOf<Long, Mutex>()
+private val userCooldownLockMap = Collections.synchronizedMap(mutableMapOf<Long, Mutex>())
 
-private val groupCooldownLockMap = mutableMapOf<Long, Mutex>()
+private val groupCooldownLockMap = Collections.synchronizedMap(mutableMapOf<Long, Mutex>())
 
-private fun getUserCooldownLock(id: Long): Mutex {
-    return userCooldownLockMap.getOrPut(id) { Mutex() }
-}
-
-private fun getGroupCooldownLock(id: Long): Mutex {
-    return groupCooldownLockMap.getOrPut(id) { Mutex() }
-}
-
-private fun getLock(subject: Contact?): Mutex? {
+private fun getCooldownLock(subject: Contact?): Mutex? {
     return when (subject) {
-        is User -> getUserCooldownLock(subject.id)
-        is Group -> getGroupCooldownLock(subject.id)
+        is User -> userCooldownLockMap.getOrPut(subject.id) { Mutex() }
+        is Group -> groupCooldownLockMap.getOrPut(subject.id) { Mutex() }
         else -> null
     }
 }
 
-private fun removeLock(subject: Contact?) {
-    when (subject) {
-        is User -> userCooldownLockMap.remove(subject.id)
-        is Group -> groupCooldownLockMap.remove(subject.id)
-    }
-}
-
-/**
- * 获取冷却状态
- *
- * @param subject 联系对象
- * @return 是否已经冷却
- * @see CommandSender.subject
- */
 fun getCooldownStatus(subject: Contact?): Boolean {
-    return getLock(subject)?.isLocked ?: false
+    return getCooldownLock(subject)?.isLocked ?: false
 }
 
-/**
- * 冷却联系对象
- *
- * @param subject 联系对象
- * @param time 冷却时间
- * @see CommandSender.subject
- */
-@OptIn(DelicateCoroutinesApi::class)
-suspend fun cooldown(subject: Contact?, time: Int) = GlobalScope.launch {
-    getLock(subject)?.withLock {
+suspend fun cooldown(subject: Contact?, time: Int) = MiraiConsoleLolicon.launch {
+    getCooldownLock(subject)?.withLock {
         logger.info("${subject}进入冷却")
         delay(time * 1000L)
         logger.info("${subject}已冷却")
     }
-    removeLock(subject)
 }
