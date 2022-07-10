@@ -30,13 +30,13 @@ import java.io.InputStream
 suspend fun getAPIResponse(body: RequestBody): ResponseBody {
     return MiraiConsoleLolicon.client.post("https://api.lolicon.app/setu/v2") {
         contentType(ContentType.Application.Json)
-        this.body = body
-    }
+        setBody(body)
+    }.body()
 }
 
 suspend fun downloadImage(url: String): InputStream {
     val response: HttpResponse = MiraiConsoleLolicon.client.get(url)
-    val result: ByteArray = response.receive()
+    val result: ByteArray = response.body()
     if (PluginConfig.save) {
         val urlPaths = url.split("/")
         val file = cacheFolder.resolve(urlPaths[urlPaths.lastIndex])

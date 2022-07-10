@@ -20,9 +20,11 @@ import io.github.samarium150.mirai.plugin.lolicon.command.Lolicon
 import io.github.samarium150.mirai.plugin.lolicon.config.*
 import io.github.samarium150.mirai.plugin.lolicon.data.PluginData
 import io.ktor.client.*
-import io.ktor.client.features.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
+import io.ktor.client.engine.okhttp.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.json.Json
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
@@ -33,7 +35,7 @@ import java.net.Proxy
 object MiraiConsoleLolicon : KotlinPlugin(
     JvmPluginDescription(
         id = "io.github.samarium150.mirai.plugin.mirai-console-lolicon",
-        version = "6.0.0-beta.2",
+        version = "6.0.0-beta.3",
         name = "Lolicon"
     ) {
         author("Samarium150")
@@ -52,15 +54,15 @@ object MiraiConsoleLolicon : KotlinPlugin(
         ReplyConfig.reload()
         CommandConfig.reload()
 
-        client = HttpClient {
+        client = HttpClient(OkHttp) {
             engine {
                 proxy = if (ProxyConfig.type != Proxy.Type.DIRECT) Proxy(
                     ProxyConfig.type,
                     InetSocketAddress(ProxyConfig.hostname, ProxyConfig.port)
                 ) else Proxy.NO_PROXY
             }
-            install(JsonFeature) {
-                serializer = KotlinxSerializer(kotlinx.serialization.json.Json {
+            install(ContentNegotiation) {
+                json(Json {
                     prettyPrint = true
                     isLenient = true
                 })

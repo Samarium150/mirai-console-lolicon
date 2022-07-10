@@ -1,6 +1,6 @@
 package io.github.samarium150.mirai.plugin.lolicon.config
 
-import io.ktor.client.features.*
+import io.ktor.client.plugins.*
 import net.mamoe.mirai.console.data.AutoSavePluginConfig
 import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
