@@ -1,3 +1,11 @@
+<a name="6.0.0"></a>
+
+## 6.0.0 (2022/07/27)
+
+## Features
+
+* add the proxy link of the image ([ee4b8e33](https://github.com/Samarium150/mirai-console-lolicon/commits/ee4b8e33))
+
 <a name="6.0.0-beta.3"></a>
 
 # 6.0.0-beta.3 (2022/07/10)
