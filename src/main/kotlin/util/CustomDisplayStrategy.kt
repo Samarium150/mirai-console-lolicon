@@ -19,7 +19,7 @@ package io.github.samarium150.mirai.plugin.lolicon.util
 import net.mamoe.mirai.message.data.ForwardMessage.DisplayStrategy
 import net.mamoe.mirai.message.data.RawForwardMessage
 
-object CustomDisplayStrategy : DisplayStrategy {
+internal object CustomDisplayStrategy : DisplayStrategy {
 
     override fun generateTitle(forward: RawForwardMessage): String = "神秘的聊天记录"
 

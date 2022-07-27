@@ -39,7 +39,7 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
       - name: Build with Gradle
-        run: ./gradlew buildPlugin && ./gradlew buildPluginLegacy
+        run: ./gradlew buildPlugin
 
       # Create Release
       - name: Create Release

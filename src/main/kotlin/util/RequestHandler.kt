@@ -27,14 +27,14 @@ import io.ktor.http.*
 import java.io.File
 import java.io.InputStream
 
-suspend fun getAPIResponse(body: RequestBody): ResponseBody {
+internal suspend fun getAPIResponse(body: RequestBody): ResponseBody {
     return MiraiConsoleLolicon.client.post("https://api.lolicon.app/setu/v2") {
         contentType(ContentType.Application.Json)
         setBody(body)
     }.body()
 }
 
-suspend fun downloadImage(url: String): InputStream {
+internal suspend fun downloadImage(url: String): InputStream {
     val response: HttpResponse = MiraiConsoleLolicon.client.get(url)
     val result: ByteArray = response.body()
     if (PluginConfig.save) {
@@ -45,7 +45,7 @@ suspend fun downloadImage(url: String): InputStream {
     return result.inputStream()
 }
 
-suspend fun getImageInputStream(url: String): InputStream {
+internal suspend fun getImageInputStream(url: String): InputStream {
     return if (PluginConfig.save && PluginConfig.cache) {
         val paths = url.split("/")
         val path = "$cacheFolder/${paths[paths.lastIndex]}"

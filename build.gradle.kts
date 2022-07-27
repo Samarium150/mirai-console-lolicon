@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "io.github.samarium150"
-version = "6.0.0-beta.3"
+version = "6.0.0"
 
 repositories {
     mavenCentral()

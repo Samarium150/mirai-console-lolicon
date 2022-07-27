@@ -56,7 +56,7 @@ object PluginConfig : AutoSavePluginConfig("PluginConfig") {
     val verbose: Boolean by value(true)
 
     @ValueDescription("图片发送模式: Simple/Flash/Forward")
-    val messageType: Type by value(Type.Simple)
+    val messageType: Type by value(Type.Forward)
 
     @ValueDescription("图片大小: Original/Regular/Small/Thumb/Mini")
     val size: Size by value(Size.Regular)

@@ -16,6 +16,7 @@
  */
 package io.github.samarium150.mirai.plugin.lolicon.data
 
+import io.github.samarium150.mirai.plugin.lolicon.config.PluginConfig
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -41,10 +42,13 @@ data class ImageData(
 
     fun toReadable(): String {
         return (
-            "标题: ${title}\n" +
-                "作者: $author (uid: ${uid})\n" +
-                "标签: ${tags}\n" +
-                "链接: https://pixiv.net/artworks/${pid}"
+            """
+            标题: $title
+            作者: $author (uid: ${uid})
+            标签: $tags
+            链接: https://pixiv.net/artworks/${pid}
+            代理链接：${urls[PluginConfig.size.name.lowercase()]}
+            """.trimIndent()
             )
     }
 }
