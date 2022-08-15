@@ -182,6 +182,7 @@ object Lolicon : CompositeCommand(
                                 }
                             }
                         }
+
                         imageData.urls.size == 1 -> {
                             runCatching {
                                 val stream = getImageInputStream(imageData.urls.values.first())
@@ -199,6 +200,7 @@ object Lolicon : CompositeCommand(
                                 }
                             }
                         }
+
                         else -> {
                             continue
                         }
@@ -241,6 +243,7 @@ object Lolicon : CompositeCommand(
                                 }
                             }
                         }
+
                         imageData.urls.size == 1 -> runCatching {
                             val stream = getImageInputStream(imageData.urls.values.first())
                             val image = subject?.uploadImage(stream)
@@ -260,6 +263,7 @@ object Lolicon : CompositeCommand(
                                 it.close()
                             }
                         }
+
                         else -> {
                             continue
                         }
@@ -287,7 +291,7 @@ object Lolicon : CompositeCommand(
     @SubCommand("set", "设置")
     @Description("设置属性, 详见帮助信息")
     suspend fun CommandSenderOnMessage<MessageEvent>.set(property: PluginData.Property, value: Int) {
-        if (fromEvent !is GroupMessageEvent || fromEvent !is FriendMessageEvent)
+        if (fromEvent !is GroupMessageEvent && fromEvent !is FriendMessageEvent)
             return
         if (fromEvent is GroupMessageEvent && !(fromEvent as GroupMessageEvent).sender.isOperator()) {
             sendMessage(ReplyConfig.nonAdminPermissionDenied)
