@@ -1,3 +1,12 @@
+<a name="6.0.1"></a>
+
+# 6.0.1 (2022/08/15)
+
+## Bug Fixes
+
+* correct the logic error in the
+  command ([67cd2421](https://github.com/Samarium150/mirai-console-lolicon/commits/67cd2421))
+
 <a name="6.0.0"></a>
 
 ## 6.0.0 (2022/07/27)
