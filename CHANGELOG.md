@@ -1,3 +1,13 @@
+<a name="6.0.2"></a>
+
+# 6.0.2 (2022/08/30)
+
+## Bug Fixes
+
+* correct properties setting
+  function ([1eddc963](https://github.com/Samarium150/mirai-console-lolicon/commits/1eddc963))
+* correct url display ([0ad38235](https://github.com/Samarium150/mirai-console-lolicon/commits/0ad38235))
+
 <a name="6.0.1"></a>
 
 # 6.0.1 (2022/08/15)
