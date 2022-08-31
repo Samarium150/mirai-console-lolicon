@@ -1,3 +1,10 @@
+<a name="6.0.3"></a>
+# 6.0.3 (2022/08/31)
+
+
+## Bug Fixes
+
+* set parent perm of the trusted-user perm ([b23d8e42](https://github.com/Samarium150/mirai-console-lolicon/commits/b23d8e42))
 <a name="6.0.2"></a>
 
 # 6.0.2 (2022/08/30)
