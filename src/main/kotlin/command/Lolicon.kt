@@ -51,11 +51,16 @@ import java.io.InputStream
 object Lolicon : CompositeCommand(
     MiraiConsoleLolicon,
     primaryName = "lolicon",
-    secondaryNames = CommandConfig.lolicon
+    secondaryNames = CommandConfig.lolicon,
+    description = "Lolicon发图命令"
 ) {
 
     val trusted: Permission by lazy {
-        PermissionService.INSTANCE.register(MiraiConsoleLolicon.permissionId("trusted"), "受信任权限")
+        PermissionService.INSTANCE.register(
+            MiraiConsoleLolicon.permissionId("trusted"),
+            "受信任权限",
+            MiraiConsoleLolicon.parentPermission
+        )
     }
 
     @ExperimentalCommandDescriptors
