@@ -93,7 +93,7 @@ object Lolicon : CompositeCommand(
             val imgInfoReceipt =
                 if (subject == null ||
                     PluginConfig.verbose && PluginConfig.messageType != PluginConfig.Type.Forward
-                ) sendMessage(imageData.toReadable())
+                ) sendMessage(imageData.toReadable(url))
                 else null
             if (subject == null && !PluginConfig.save)
                 return@withLock
@@ -112,7 +112,7 @@ object Lolicon : CompositeCommand(
                 return@withLock
             }
             val image = (subject as Contact).uploadImage(stream)
-            val imgReceipt = sendMessage(buildMessage(subject as Contact, imageData.toReadable(), image))
+            val imgReceipt = sendMessage(buildMessage(subject as Contact, imageData.toReadable(url), image))
             if (notificationReceipt != null)
                 recall(RecallType.NOTIFICATION, notificationReceipt, 0)
             if (imgReceipt == null)
@@ -165,7 +165,7 @@ object Lolicon : CompositeCommand(
                 for (imageData in response.data) {
                     when {
                         imageData.urls.size > 1 -> {
-                            imageMsgBuilder.add(contact.bot, PlainText(imageData.toReadable()))
+                            imageMsgBuilder.add(contact.bot, PlainText(imageData.toReadable(imageData.urls)))
                             for (url in imageData.urls.values) {
                                 runCatching {
                                     val stream = getImageInputStream(url)
@@ -187,12 +187,12 @@ object Lolicon : CompositeCommand(
                             runCatching {
                                 val stream = getImageInputStream(imageData.urls.values.first())
                                 val image = contact.uploadImage(stream)
-                                imageMsgBuilder.add(contact.bot, PlainText(imageData.toReadable()))
+                                imageMsgBuilder.add(contact.bot, PlainText(imageData.toReadable(imageData.urls)))
                                 imageMsgBuilder.add(contact.bot, image)
                                 stream
                             }.onFailure {
                                 logger.error(it)
-                                imageMsgBuilder.add(contact.bot, PlainText(imageData.toReadable()))
+                                imageMsgBuilder.add(contact.bot, PlainText(imageData.toReadable(imageData.urls)))
                                 imageMsgBuilder.add(contact.bot, PlainText(ReplyConfig.networkError))
                             }.onSuccess {
                                 runInterruptible(Dispatchers.IO) {
@@ -235,7 +235,7 @@ object Lolicon : CompositeCommand(
                                     logger.error(it)
                                     sendMessage(ReplyConfig.networkError)
                                 }.onSuccess {
-                                    imageInfoMsgBuilder.add(imageData.toReadable())
+                                    imageInfoMsgBuilder.add(imageData.toReadable(imageData.urls))
                                     imageInfoMsgBuilder.add("\n")
                                     runInterruptible(Dispatchers.IO) {
                                         it.close()
@@ -257,7 +257,7 @@ object Lolicon : CompositeCommand(
                             logger.error(it)
                             sendMessage(ReplyConfig.networkError)
                         }.onSuccess {
-                            imageInfoMsgBuilder.add(imageData.toReadable())
+                            imageInfoMsgBuilder.add(imageData.toReadable(imageData.urls))
                             imageInfoMsgBuilder.add("\n")
                             runInterruptible(Dispatchers.IO) {
                                 it.close()

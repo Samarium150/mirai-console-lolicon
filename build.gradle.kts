@@ -5,27 +5,27 @@ plugins {
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.12.1"
+    id("net.mamoe.mirai-console") version "2.12.2"
     id("com.geoffgranum.gradle-conventional-changelog") version "+"
 }
 
 group = "io.github.samarium150"
-version = "6.0.1"
+version = "6.0.2"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation("io.ktor:ktor-client-okhttp:2.0.3") {
+    implementation("io.ktor:ktor-client-okhttp-jvm:2.1.0") {
         exclude(group = "org.jetbrains.kotlin")
         exclude(group = "org.jetbrains.kotlinx")
     }
-    implementation("io.ktor:ktor-client-content-negotiation:2.0.3") {
+    implementation("io.ktor:ktor-client-content-negotiation:2.1.0") {
         exclude(group = "org.jetbrains.kotlin")
         exclude(group = "org.jetbrains.kotlinx")
     }
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.0.3") {
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.1.0") {
         exclude(group = "org.jetbrains.kotlin")
         exclude(group = "org.jetbrains.kotlinx")
     }

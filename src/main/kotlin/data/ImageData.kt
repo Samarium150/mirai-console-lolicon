@@ -16,7 +16,6 @@
  */
 package io.github.samarium150.mirai.plugin.lolicon.data
 
-import io.github.samarium150.mirai.plugin.lolicon.config.PluginConfig
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -36,19 +35,24 @@ data class ImageData(
     val uploadDate: Long,
     val urls: Map<String, String>
 ) {
+
+    private val template = """
+        标题: $title
+        作者: $author (uid: ${uid})
+        标签: $tags
+        链接: https://pixiv.net/artworks/${pid}
+        代理链接：
+    """.trimIndent()
+
     override fun toString(): String {
         return "ImageData" + Json.encodeToString(this)
     }
 
-    fun toReadable(): String {
-        return (
-            """
-            标题: $title
-            作者: $author (uid: ${uid})
-            标签: $tags
-            链接: https://pixiv.net/artworks/${pid}
-            代理链接：${urls[PluginConfig.size.name.lowercase()]}
-            """.trimIndent()
-            )
+    fun toReadable(url: String): String {
+        return template + url
+    }
+
+    fun toReadable(urls: Map<String, String>): String {
+        return template + urls.toString()
     }
 }
