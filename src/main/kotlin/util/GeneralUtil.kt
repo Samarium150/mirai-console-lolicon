@@ -95,6 +95,7 @@ internal fun isTagAllowed(tag: String): Boolean {
             }
             false
         }
+
         PluginConfig.Mode.Blacklist -> {
             for (filter in PluginConfig.tagFilter) {
                 if (filter.toRegex(setOf(RegexOption.IGNORE_CASE)).matches(tag)) return false
@@ -117,6 +118,7 @@ internal fun areTagsAllowed(tags: List<String>): Boolean {
             }
             flag
         }
+
         PluginConfig.Mode.Blacklist -> {
             var flag = true
             for (tag in tags) {
@@ -149,6 +151,7 @@ internal fun setProperty(subject: Contact, property: PluginData.Property, value:
             }
             PluginData.customR18Users
         }
+
         PluginData.Property.RECALL -> PluginData.customRecallUsers
         PluginData.Property.COOLDOWN -> PluginData.customCooldownUsers
     } else when (property) {
@@ -158,9 +161,10 @@ internal fun setProperty(subject: Contact, property: PluginData.Property, value:
             }
             PluginData.customR18Groups
         }
+
         PluginData.Property.RECALL -> PluginData.customRecallGroups
         PluginData.Property.COOLDOWN -> PluginData.customCooldownGroups
-    }).toMutableMap()
+    })
     target[subject.id] = value
     return true
 }
