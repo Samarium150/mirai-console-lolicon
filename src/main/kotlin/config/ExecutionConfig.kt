@@ -33,10 +33,11 @@ internal data class ExecutionConfig(
                 is User -> {
                     ExecutionConfig(
                         PluginData.customR18Users[subject.id] ?: 0,
-                        PluginData.customR18Users[subject.id] ?: PluginConfig.recall,
+                        PluginData.customRecallUsers[subject.id] ?: PluginConfig.recall,
                         PluginData.customCooldownUsers[subject.id] ?: PluginConfig.cooldown
                     )
                 }
+
                 is Group -> {
                     ExecutionConfig(
                         PluginData.customR18Groups[subject.id] ?: 0,
@@ -44,6 +45,7 @@ internal data class ExecutionConfig(
                         PluginData.customCooldownGroups[subject.id] ?: PluginConfig.cooldown
                     )
                 }
+
                 else -> ExecutionConfig()
             }
         }
