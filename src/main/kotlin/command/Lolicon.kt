@@ -117,7 +117,13 @@ object Lolicon : CompositeCommand(
                 return@withLock
             }
             val image = (subject as Contact).uploadImage(stream)
-            val imgReceipt = sendMessage(buildMessage(subject as Contact, imageData.toReadable(url), image))
+            val imgReceipt = sendMessage(
+                buildMessage(
+                    subject as Contact,
+                    if (PluginConfig.verbose) imageData.toReadable(url) else "",
+                    image
+                )
+            )
             if (notificationReceipt != null)
                 recall(RecallType.NOTIFICATION, notificationReceipt, 0)
             if (imgReceipt == null)

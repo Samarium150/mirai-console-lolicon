@@ -137,7 +137,8 @@ internal fun buildMessage(contact: Contact, imageInfo: String, image: Image): Si
         PluginConfig.Type.Simple -> image
         PluginConfig.Type.Flash -> FlashImage(image)
         PluginConfig.Type.Forward -> buildForwardMessage(contact, CustomDisplayStrategy) {
-            add(contact.bot, PlainText(imageInfo))
+            if (imageInfo.isNotEmpty())
+                add(contact.bot, PlainText(imageInfo))
             add(contact.bot, image)
         }
     }
