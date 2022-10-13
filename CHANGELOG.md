@@ -1,3 +1,13 @@
+<a name="6.0.5"></a>
+
+# 6.0.5 (2022/10/13)
+
+## Bug Fixes
+
+* correct verbose setting in forward mode (
+  #84) ([2c88080a](https://github.com/Samarium150/mirai-console-lolicon/commits/2c88080a),
+  closes [#83](https://github.com/Samarium150/mirai-console-lolicon/issues/issues/83))
+
 <a name="6.0.4"></a>
 
 # 6.0.4 (2022/09/04)
