@@ -1,3 +1,11 @@
+<a name="6.0.6"></a>
+
+# 6.0.6 (2022/10/29)
+
+## Bug Fixes
+
+* downgrade Kotlin version ([2eff20cc](https://github.com/Samarium150/mirai-console-lolicon/commits/2eff20cc))
+
 <a name="6.0.5"></a>
 
 # 6.0.5 (2022/10/13)
