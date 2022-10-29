@@ -34,11 +34,12 @@ jobs:
         with:
           distribution: 'microsoft'
           java-version: 11
+          cache: 'gradle'
       
       # Validate Gradle Wrapper
       - name: Gradle Wrapper Validation
         uses: gradle/wrapper-validation-action@v1.0.4
-        
+
       # Build
       - name: Make gradlew executable
         run: chmod +x ./gradlew
