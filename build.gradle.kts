@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    val kotlinVersion = "1.7.20"
+    val kotlinVersion = "1.7.10"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "io.github.samarium150"
-version = "6.0.5"
+version = "6.0.6"
 
 repositories {
     mavenCentral()
