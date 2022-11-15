@@ -1,3 +1,13 @@
+<a name="6.0.7"></a>
+
+# 6.0.7 (2022/11/15)
+
+## Bug Fixes
+
+* correct ImageData according to the API
+  update ([a722f33b](https://github.com/Samarium150/mirai-console-lolicon/commits/a722f33b),
+  closes [#86](https://github.com/Samarium150/mirai-console-lolicon/issues/issues/86))
+
 <a name="6.0.6"></a>
 
 # 6.0.6 (2022/10/29)
