@@ -32,6 +32,7 @@ data class ImageData(
     val height: Int,
     val tags: List<String>,
     val ext: String,
+    val aiType: Int,
     val uploadDate: Long,
     val urls: Map<String, String>
 ) {

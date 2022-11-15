@@ -35,7 +35,7 @@ import java.net.Proxy
 object MiraiConsoleLolicon : KotlinPlugin(
     JvmPluginDescription(
         id = "io.github.samarium150.mirai.plugin.mirai-console-lolicon",
-        version = "6.0.6",
+        version = "6.0.7",
         name = "Lolicon"
     ) {
         author("Samarium150")
@@ -65,6 +65,7 @@ object MiraiConsoleLolicon : KotlinPlugin(
                 json(Json {
                     prettyPrint = true
                     isLenient = true
+                    ignoreUnknownKeys = true
                 })
             }
             install(HttpTimeout) {
