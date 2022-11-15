@@ -17,15 +17,15 @@ repositories {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-client-okhttp-jvm:2.1.2") {
+    implementation("io.ktor:ktor-client-okhttp-jvm:2.1.3") {
         exclude(group = "org.jetbrains.kotlin")
         exclude(group = "org.jetbrains.kotlinx")
     }
-    implementation("io.ktor:ktor-client-content-negotiation:2.1.2") {
+    implementation("io.ktor:ktor-client-content-negotiation:2.1.3") {
         exclude(group = "org.jetbrains.kotlin")
         exclude(group = "org.jetbrains.kotlinx")
     }
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.1.2") {
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.1.3") {
         exclude(group = "org.jetbrains.kotlin")
         exclude(group = "org.jetbrains.kotlinx")
     }
