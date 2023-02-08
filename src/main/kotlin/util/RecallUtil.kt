@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2020-2022 Samarium
+/*
+ * Copyright (c) 2020-2023 Samarium
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -13,7 +13,6 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>
- *
  */
 package io.github.samarium150.mirai.plugin.lolicon.util
 
