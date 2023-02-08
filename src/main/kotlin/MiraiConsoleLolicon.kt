@@ -35,7 +35,7 @@ import java.net.Proxy
 object MiraiConsoleLolicon : KotlinPlugin(
     JvmPluginDescription(
         id = "io.github.samarium150.mirai.plugin.mirai-console-lolicon",
-        version = "6.0.7",
+        version = "6.0.8",
         name = "Lolicon"
     ) {
         author("Samarium150")
@@ -75,12 +75,11 @@ object MiraiConsoleLolicon : KotlinPlugin(
                     socketTimeoutMillis = third
                 }
             }
+            expectSuccess = true
         }
 
         Lolicon.trusted
         Lolicon.register()
-
-        logger.info("Plugin loaded")
     }
 
     override fun onDisable() {
@@ -88,7 +87,5 @@ object MiraiConsoleLolicon : KotlinPlugin(
         Lolicon.unregister()
 
         client.close()
-
-        logger.info("Plugin unloaded")
     }
 }
