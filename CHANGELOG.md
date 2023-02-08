@@ -1,3 +1,12 @@
+<a name="6.0.8"></a>
+
+# 6.0.8 (2023/02/08)
+
+## Bug Fixes
+
+* handle 404 when downloading the
+  image ([efefc409](https://github.com/Samarium150/mirai-console-lolicon/commits/efefc409))
+
 <a name="6.0.7"></a>
 
 # 6.0.7 (2022/11/15)
