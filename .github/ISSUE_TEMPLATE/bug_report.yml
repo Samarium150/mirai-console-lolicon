@@ -1,0 +1,84 @@
+name: Bug 报告
+description: 提交一个 bug
+labels:
+  - "question"
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢你来到这里
+
+        在反馈前, 请确认你已经做了下面这些事情
+        - 阅读过 [「提问的智慧」](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way/blob/main/README-zh_CN.md)
+        - 阅读过 [「如何有效地报告 Bug」](https://www.chiark.greenend.org.uk/~sgtatham/bugs-cn.html)
+        - 搜索了已有的 [issues](https://github.com/mamoe/mirai/issues?q=is%3Aissue) 列表中有没相关的信息
+        - 阅读了 [插件的相关文档](https://github.com/Samarium150/mirai-console-lolicon/wiki)
+
+  - type: textarea
+    id: issue-description
+    attributes:
+      label: 问题描述
+      description: 在此详细描述你遇到的问题
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 复现
+      description: 在这里简略说明如何让这个问题再次发生
+      placeholder: |
+        在这里简略说明如何让这个问题再次发生
+        可使用 1.  2.  3.  的列表格式，或其他任意恰当的格式
+        如果你不确定如何复现, 请尽量描述发生当时的情景
+        
+        建议提供相关代码
+    validations:
+      required: true
+
+  - type: input
+    id: mirai-console-version
+    attributes:
+      label: mirai-console 版本
+      description: "填写你正在使用的版本号，如 `2.14.0`"
+      placeholder: 2.14.0
+    validations:
+      required: true
+
+  - type: input
+    id: plugin-version
+    attributes:
+      label: 插件版本
+      description: "填写你正在使用的版本号，如 `6.0.8`"
+      placeholder: 6.0.8
+    validations:
+      required: true
+
+  - type: textarea
+    id: log
+    attributes:
+      label: 日志
+      description: |
+        请提供全面的相关日志. 请不要截图.
+        如果日志过大, 可以在 `补充信息` 上传文件.
+      render: 'text'
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 补充信息
+      description: 如有必要，你可以在下文继续添加其他信息
+
+  - type: markdown
+    attributes:
+      value: |
+        ----
+
+        在发出 issue 前, 请确认
+
+        - 全部信息已经填写完毕
+        - 报告中没有令人反感的语言
+        - 「复现」的描述是否足够详细准确
