@@ -18,7 +18,7 @@ jobs:
       # Checkout repository
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       # Get tag version from ref
       - name: Get tag version
         id: vars
@@ -34,7 +34,7 @@ jobs:
 
       # Validate Gradle Wrapper
       - name: Gradle Wrapper Validation
-        uses: gradle/wrapper-validation-action@v2.0.0
+        uses: gradle/wrapper-validation-action@v2
 
       # Build
       - name: Make gradlew executable

@@ -1,6 +1,6 @@
 name: Gradle CI
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   # Triggers the workflow on push and pull request events but only for the master branch
   push:
@@ -18,7 +18,7 @@ jobs:
   build:
 
     name: Gradle-Build
-    
+
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -27,7 +27,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       # Setup JDK
       - name: Setup Java JDK
         uses: actions/setup-java@v4
@@ -35,10 +35,10 @@ jobs:
           distribution: 'microsoft'
           java-version: 11
           cache: 'gradle'
-      
+
       # Validate Gradle Wrapper
       - name: Gradle Wrapper Validation
-        uses: gradle/wrapper-validation-action@v2.0.0
+        uses: gradle/wrapper-validation-action@v2
 
       # Build
       - name: Make gradlew executable
