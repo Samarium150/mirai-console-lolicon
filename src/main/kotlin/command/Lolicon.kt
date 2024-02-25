@@ -176,7 +176,7 @@ object Lolicon : CompositeCommand(
                 for (imageData in response.data) {
                     when {
                         imageData.urls.size > 1 -> {
-                            imageMsgBuilder.add(contact.bot, PlainText(imageData.toReadable(imageData.urls)))
+                            imageMsgBuilder.add(contact.bot, PlainText(imageData.toReadable()))
                             for (url in imageData.urls.values) {
                                 runCatching {
                                     val stream = getImageInputStream(url)
@@ -198,12 +198,12 @@ object Lolicon : CompositeCommand(
                             runCatching {
                                 val stream = getImageInputStream(imageData.urls.values.first())
                                 val image = contact.uploadImage(stream)
-                                imageMsgBuilder.add(contact.bot, PlainText(imageData.toReadable(imageData.urls)))
+                                imageMsgBuilder.add(contact.bot, PlainText(imageData.toReadable()))
                                 imageMsgBuilder.add(contact.bot, image)
                                 stream
                             }.onFailure {
                                 logger.error(it)
-                                imageMsgBuilder.add(contact.bot, PlainText(imageData.toReadable(imageData.urls)))
+                                imageMsgBuilder.add(contact.bot, PlainText(imageData.toReadable()))
                                 imageMsgBuilder.add(contact.bot, PlainText(ReplyConfig.networkError))
                             }.onSuccess {
                                 runInterruptible(Dispatchers.IO) {
@@ -246,7 +246,7 @@ object Lolicon : CompositeCommand(
                                     logger.error(it)
                                     sendMessage(ReplyConfig.networkError)
                                 }.onSuccess {
-                                    imageInfoMsgBuilder.add(imageData.toReadable(imageData.urls))
+                                    imageInfoMsgBuilder.add(imageData.toReadable())
                                     imageInfoMsgBuilder.add("\n")
                                     runInterruptible(Dispatchers.IO) {
                                         it.close()
@@ -268,7 +268,7 @@ object Lolicon : CompositeCommand(
                             logger.error(it)
                             sendMessage(ReplyConfig.networkError)
                         }.onSuccess {
-                            imageInfoMsgBuilder.add(imageData.toReadable(imageData.urls))
+                            imageInfoMsgBuilder.add(imageData.toReadable())
                             imageInfoMsgBuilder.add("\n")
                             runInterruptible(Dispatchers.IO) {
                                 it.close()

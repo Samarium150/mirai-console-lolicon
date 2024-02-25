@@ -42,28 +42,16 @@ data class ImageData(
         return "ImageData" + Json.encodeToString(this)
     }
 
-    fun toReadable(url: String): String {
-        return replyStringGenerate(url)
-    }
-
-    fun toReadable(urls: Map<String, String>): String {
-        return replyStringGenerate(urls)
-    }
-
-    private fun replyStringGenerate(url: Any): String {
-        val builder = StringBuilder()
-        ReplyConfig.replyMessageTemplate.iterator().forEach {
-            val line = it.trimIndent()
-                .replace("{Title}", title,ignoreCase = true)
-                .replace("{Pid}", pid.toString(),ignoreCase = true)
-                .replace("{Tags}", tags.toString(),ignoreCase = true)
-                .replace("{AuthorName}",author,ignoreCase = true)
-                .replace("{AuthorUid}",uid.toString(),ignoreCase = true)
-                .replace("{PixivUrl}","https://pixiv.net/artworks/${pid}",ignoreCase = true)
-                .replace("{ProxyUrls}",url.toString(),ignoreCase = true)
-            builder.append(line)
-            builder.append("\n")
-        }
-        return builder.toString()
+    fun toReadable(url: String? = null): String {
+        return StringBuilder().append(
+            ReplyConfig.imageDataMessageTemplate
+                .replace("{Title}", title, ignoreCase = true)
+                .replace("{Author}", author, ignoreCase = true)
+                .replace("{UID}", uid.toString(), ignoreCase = true)
+                .replace("{Tags}", tags.toString(), ignoreCase = true)
+                .replace("{PID}", pid.toString(), ignoreCase = true)
+                .replace("{PixivURL}", "https://pixiv.net/artworks/${pid}", ignoreCase = true)
+                .replace("{ProxyUrls}", url ?: urls.toString(), ignoreCase = true)
+        ).toString()
     }
 }
