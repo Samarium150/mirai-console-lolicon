@@ -16,6 +16,7 @@
  */
 package io.github.samarium150.mirai.plugin.lolicon.data
 
+import io.github.samarium150.mirai.plugin.lolicon.config.ReplyConfig
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -37,23 +38,20 @@ data class ImageData(
     val urls: Map<String, String>
 ) {
 
-    private val template = """
-        标题: $title
-        作者: $author (uid: ${uid})
-        标签: $tags
-        链接: https://pixiv.net/artworks/${pid}
-        代理链接：
-    """.trimIndent()
-
     override fun toString(): String {
         return "ImageData" + Json.encodeToString(this)
     }
 
-    fun toReadable(url: String): String {
-        return template + url
-    }
-
-    fun toReadable(urls: Map<String, String>): String {
-        return template + urls.toString()
+    fun toReadable(url: String? = null): String {
+        return StringBuilder().append(
+            ReplyConfig.imageDataMessageTemplate
+                .replace("{Title}", title, ignoreCase = true)
+                .replace("{Author}", author, ignoreCase = true)
+                .replace("{UID}", uid.toString(), ignoreCase = true)
+                .replace("{Tags}", tags.toString(), ignoreCase = true)
+                .replace("{PID}", pid.toString(), ignoreCase = true)
+                .replace("{PixivURL}", "https://pixiv.net/artworks/${pid}", ignoreCase = true)
+                .replace("{ProxyUrls}", url ?: urls.toString(), ignoreCase = true)
+        ).toString()
     }
 }

@@ -22,6 +22,24 @@ import net.mamoe.mirai.console.data.value
 
 object ReplyConfig : AutoSavePluginConfig("ReplyConfig") {
 
+    @ValueDescription(
+        """
+        图片信息消息模板, 可用占位符:
+        标题 {Title}, 图片PID {PID}, 图片标签 {Tags}
+        作者名称 {Author}, 作者UID {UID}
+        P站链接 {PixivURL}, 图片代理链接 {ProxyURLs}
+        """
+    )
+    val imageDataMessageTemplate: String by value(
+        """ 
+        标题: {Title}
+        作者: {Author} (uid: {UID})
+        标签: {Tags}
+        链接: {PixivURL}
+        代理链接：{ProxyURLs}
+        """.trimIndent()
+    )
+
     @ValueDescription("API返回了错误")
     val invokeException: String by value("API调用错误，请检查日志")
 
