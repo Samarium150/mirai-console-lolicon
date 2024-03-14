@@ -1,3 +1,12 @@
+<a name="6.1.0"></a>
+
+## 6.1.0 (2024/03/14)
+
+## Features
+
+* support configure ImageData.toReadable ([#96](https://github.com/Samarium150/mirai-console-lolicon/pull/96))
+  ([8c8fd41c](https://github.com/Samarium150/mirai-console-lolicon/commits/8c8fd41c))
+
 <a name="6.0.8"></a>
 
 # 6.0.8 (2023/02/08)
