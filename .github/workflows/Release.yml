@@ -17,7 +17,7 @@ jobs:
     steps:
       # Checkout repository
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       # Get tag version from ref
       - name: Get tag version
